@@ -1,0 +1,627 @@
+<title>シフト作成ヘルプ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap">
+<style>
+/* 画面構成: 操作バー（デモ用の切り替え）→ タブ6枚。職員用iPadは①だけ、担当者用は①〜⑥。表は横スクロール、氏名列は固定。 */
+:root{
+  --font:'BIZ UDGothic','BIZ UDPGothic','Hiragino Sans','Yu Gothic','Meiryo',sans-serif;
+  --bg:#f3f6f7; --surface:#ffffff; --ink:#1c2a32; --muted:#5a6a74; --line:#d3dce1;
+  --accent:#1d6a74; --accent-ink:#ffffff; --accent-soft:#d3eaee; --bezel:#2b3640;
+  --warn:#b3261e; --warn-bg:#fbe8e6; --ok:#2b7a4b; --caution:#8a5a00;
+  --sat:#2a62b0; --sun:#b3261e;
+  --f1-bg:#dbe8f7; --f1-ink:#1b4a82;
+  --f2-bg:#d8eedf; --f2-ink:#1d5a33;
+  --f3-bg:#e9def5; --f3-ink:#5a2f86;
+  --wish-bg:#fbefd2; --wish-ink:#85600d;
+  --blocked:#eef1f3; --blocked-ink:#9aa7af;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10171b; --surface:#172026; --ink:#e5edf1; --muted:#9aa9b3; --line:#2b3841;
+    --accent:#6cc3cc; --accent-ink:#0b2124; --accent-soft:#1b4048; --bezel:#3a4852;
+    --warn:#ff8f85; --warn-bg:#3b1f1d; --ok:#7bd19b; --caution:#f0c36a;
+    --sat:#82b3f2; --sun:#ff9d93;
+    --f1-bg:#203852; --f1-ink:#acd0f6;
+    --f2-bg:#1e3b2b; --f2-ink:#a2ddb7;
+    --f3-bg:#392852; --f3-ink:#d0b7f0;
+    --wish-bg:#40331a; --wish-ink:#f0cf86;
+    --blocked:#1f2a30; --blocked-ink:#6c7c86;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10171b; --surface:#172026; --ink:#e5edf1; --muted:#9aa9b3; --line:#2b3841;
+  --accent:#6cc3cc; --accent-ink:#0b2124; --accent-soft:#1b4048; --bezel:#3a4852;
+  --warn:#ff8f85; --warn-bg:#3b1f1d; --ok:#7bd19b; --caution:#f0c36a;
+  --sat:#82b3f2; --sun:#ff9d93;
+  --f1-bg:#203852; --f1-ink:#acd0f6;
+  --f2-bg:#1e3b2b; --f2-ink:#a2ddb7;
+  --f3-bg:#392852; --f3-ink:#d0b7f0;
+  --wish-bg:#40331a; --wish-ink:#f0cf86;
+  --blocked:#1f2a30; --blocked-ink:#6c7c86;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.6;
+  padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1{font-size:1.5rem;line-height:1.3;margin:0;text-wrap:balance}
+h2{font-size:1.05rem;margin:0 0 6px}
+h3{font-size:1rem;margin:0 0 6px}
+p{margin:0}
+.sub{color:var(--muted);font-size:.9rem}
+.notice{background:var(--accent-soft);border-radius:8px;padding:10px 14px;font-size:.88rem}
+.bar{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.bar label{display:flex;align-items:center;gap:10px;font-size:.9rem}
+.bar output{font-weight:700;min-width:2.5em;display:inline-block;text-align:right;font-variant-numeric:tabular-nums}
+input[type=range]{width:min(220px,50vw);accent-color:var(--accent)}
+input[type=number],select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+input[type=number]{width:9em}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 12px}
+.btn:hover{border-color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--surface);padding:6px 14px}
+.seg button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);font-weight:700}
+.tabs{display:flex;gap:2px;flex-wrap:wrap;border-bottom:2px solid var(--line)}
+.tab{background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:10px 12px;font-weight:700;color:var(--muted)}
+.tab[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent)}
+.panel{display:flex;flex-direction:column;gap:14px}
+.scroll{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:separate;border-spacing:0;font-size:12px}
+th,td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center;padding:0;height:32px;min-width:34px;white-space:nowrap}
+thead th{background:var(--surface);position:sticky;top:0;z-index:1;height:44px;font-weight:400;line-height:1.2}
+thead th small{display:block;font-size:10px;color:var(--muted)}
+th.sat,th.sat small{color:var(--sat)} th.sun,th.sun small{color:var(--sun)}
+.name{position:sticky;left:0;z-index:2;background:var(--surface);text-align:left;min-width:150px;padding:0 10px;font-weight:700;font-size:13px}
+thead .name{z-index:3}
+tr.grp th{background:var(--accent-soft);text-align:left;padding:0 10px;position:static;height:26px;font-size:12px}
+.tag{display:inline-block;font-weight:400;font-size:10px;color:var(--muted);margin-left:6px}
+.sum{min-width:64px;padding:0 8px;font-variant-numeric:tabular-nums;background:var(--surface)}
+.cell{display:block;width:100%;height:31px;border:0;background:transparent;border-radius:0}
+td.wishon .cell{background:var(--wish-bg);color:var(--wish-ink);font-weight:700}
+td.blocked{background:var(--blocked);color:var(--blocked-ink)}
+td.pl{font-weight:700}
+td.f1{background:var(--f1-bg);color:var(--f1-ink)}
+td.f2{background:var(--f2-bg);color:var(--f2-ink)}
+td.f3{background:var(--f3-bg);color:var(--f3-ink)}
+td.wishshow{background:var(--wish-bg);color:var(--wish-ink)}
+tr.cov td,tr.cov th{background:var(--surface)}
+.short{display:inline-block;min-width:22px;border-radius:11px;background:var(--warn-bg);color:var(--warn);font-weight:700;padding:1px 6px;font-size:.78rem}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:.82rem;color:var(--muted)}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:4px;border:1px solid var(--line)}
+.gaplist{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:.88rem}
+.gaplist ul{margin:6px 0 0;padding-left:1.2em;display:grid;gap:2px}
+.gaplist .none{color:var(--ok);font-weight:700}
+.fl1{background:var(--f1-bg);color:var(--f1-ink)} .fl2{background:var(--f2-bg);color:var(--f2-ink)} .fl3{background:var(--f3-bg);color:var(--f3-ink)}
+.pbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.pstat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:.9rem;display:flex;flex-wrap:wrap;gap:4px 18px}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal .dh{text-align:center;font-size:.8rem;color:var(--muted);padding:2px 0}
+.cal .dh.sat{color:var(--sat)} .cal .dh.sun{color:var(--sun)}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:8px;min-height:68px;padding:4px 5px;text-align:left;display:flex;flex-direction:column;gap:3px;font-size:.78rem;min-width:0;overflow:hidden}
+button.day[aria-pressed=true]{border:2px solid var(--accent);background:var(--accent-soft);padding:3px 4px}
+.day .dn{font-weight:700;font-size:.85rem}
+.day .dn.sat{color:var(--sat)} .day .dn.sun{color:var(--sun)}
+.day .tag2{border-radius:5px;padding:1px 4px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.day.wishd{background:var(--wish-bg);color:var(--wish-ink);border-color:var(--wish-ink)}
+.day.blk{background:var(--blocked);color:var(--blocked-ink)}
+.okc{color:var(--ok);font-weight:700}
+.need{color:var(--warn);font-weight:700}
+.calwrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:start}
+.dlead{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.dt{width:100%;font-size:13px}
+.dt th,.dt td{text-align:left;padding:5px 9px;white-space:normal;min-width:0;height:auto}
+.dt th{background:var(--accent-soft);font-weight:700}
+.dt td.t{color:var(--muted);font-size:12px}
+.dgroup{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.dgroup h3{margin:0}
+.ipad{max-width:680px;width:100%;margin:0 auto;border:10px solid var(--bezel);border-radius:26px;background:var(--bg);padding:16px;display:flex;flex-direction:column;gap:12px}
+.ipad .day{min-height:62px}
+.ipad button.day{font-size:.85rem}
+.ipadtop{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ipadtop b{font-size:1.2rem}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.tile{border:2px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 8px;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.tile small{font-size:.74rem;color:var(--muted)}
+.tile b{font-size:1rem}
+.tile.done{background:var(--accent-soft);border-color:var(--accent)}
+.tile.done small{color:var(--accent);font-weight:700}
+.ifoot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.submit{margin-left:auto;background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:12px 24px;font-weight:700;font-size:1rem}
+.back{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 16px}
+.lockmsg{background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:8px 12px;font-weight:700;font-size:.9rem}
+.demo{font-size:.8rem;color:var(--muted);border:1px dashed var(--line);border-radius:8px;padding:6px 10px}
+.pinbox{display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 0}
+.pinbox b{font-size:1.2rem}
+.dots{display:flex;gap:14px;font-size:1.8rem;letter-spacing:2px;min-height:2.4rem}
+.dots span{width:20px;height:20px;border-radius:50%;border:2px solid var(--ink);display:inline-block}
+.dots span.on{background:var(--ink)}
+.pad9{display:grid;grid-template-columns:repeat(3,76px);gap:10px}
+.pad9 button{height:64px;border-radius:14px;border:1px solid var(--line);background:var(--surface);font-size:1.4rem;font-weight:700}
+.pad9 button.fn{font-size:.9rem;font-weight:400;color:var(--muted)}
+.fcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;font-size:.88rem}
+.meter{height:10px;background:var(--line);border-radius:5px;overflow:hidden;min-width:70px}
+.meter i{display:block;height:100%;background:var(--accent)}
+.meter.warn i{background:var(--warn)} .meter.mid i{background:var(--caution)}
+.j-ok{color:var(--ok);font-weight:700} .j-mid{color:var(--caution);font-weight:700} .j-ng{color:var(--warn);font-weight:700}
+.ht{font-size:13px;min-width:520px;width:100%}
+.ht td{text-align:right;padding:0 12px;font-variant-numeric:tabular-nums}
+.ht thead th{text-align:right;padding:0 12px;height:36px}
+.ht thead th.name{text-align:left}
+.ht td.l{text-align:left}
+@media (max-width:860px){ .calwrap{grid-template-columns:1fr} }
+@media (max-width:520px){ .name{min-width:112px} .tag{display:none} .tab{padding:9px 8px;font-size:.85rem} .pad9{grid-template-columns:repeat(3,68px)} }
+@media (prefers-reduced-motion:no-preference){ .cell,.tab,.tile{transition:background .12s,border-color .12s} }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>シフト作成ヘルプ</h1>
+    <p class="sub">希望休の入力から、勤務表づくり、勤務時間の確認まで通して見られる試作です</p>
+  </header>
+  <p class="notice">名前・希望休・勤務条件はすべて<b>架空のサンプル</b>です（令和8年5月の曜日）。<b>勤務表を自動で組むのはSPだけ</b>で、看護師とヘルパーは見せ方を確かめるための固定サンプルです。SPの「午前のみ・午後のみ」は、写真から私が推測した条件です。</p>
+
+  <div class="bar" id="modebar">
+    <span class="sub">デモ用の切り替え</span>
+    <span class="seg" role="group" aria-label="画面の種類">
+      <button type="button" data-mode="staff" aria-pressed="false">職員用iPad</button>
+      <button type="button" data-mode="admin" aria-pressed="true">担当者用</button>
+    </span>
+    <label><input type="checkbox" id="lockchk">入力期限を過ぎた状態にする</label>
+    <span class="sub">入力期限：4月17日（金）まで（サンプル）</span>
+  </div>
+  <div class="bar" id="adminbar">
+    <label for="max">SP 1人あたりの月の上限
+      <input type="range" id="max" min="10" max="20" value="16"><output id="maxout">16回</output>
+    </label>
+    <button class="btn" id="reset" type="button">入力内容をサンプルに戻す</button>
+    <span class="sub" id="cap"></span>
+  </div>
+
+  <div class="tabs" id="tabs" role="tablist" aria-label="画面の切り替え">
+    <button class="tab" role="tab" id="t-in" aria-selected="true" aria-controls="p-in" type="button">① 希望入力（iPad）</button>
+    <button class="tab" role="tab" id="t-wish" aria-selected="false" aria-controls="p-wish" type="button">② 希望の集約</button>
+    <button class="tab" role="tab" id="t-plan" aria-selected="false" aria-controls="p-plan" type="button">③ 一覧表</button>
+    <button class="tab" role="tab" id="t-person" aria-selected="false" aria-controls="p-person" type="button">④ 人ごと</button>
+    <button class="tab" role="tab" id="t-cal" aria-selected="false" aria-controls="p-cal" type="button">⑤ カレンダー</button>
+    <button class="tab" role="tab" id="t-hours" aria-selected="false" aria-controls="p-hours" type="button">⑥ 勤務時間</button>
+  </div>
+
+  <div class="pstat" id="sumbar" hidden></div>
+
+  <section class="panel" id="p-in" role="tabpanel" aria-labelledby="t-in">
+    <div id="inbody"></div>
+  </section>
+
+  <section class="panel" id="p-wish" role="tabpanel" aria-labelledby="t-wish" hidden>
+    <div>
+      <h2>全員の希望休と入力状況（担当者だけが見る画面）</h2>
+      <p class="sub">職員が入れた希望休がここに集まります。紙で出された分は、セルをタップして代わりに入力できます。番号を忘れた人は「番号を消す」で、次に開くときに決め直せます。看護師・ヘルパーは集約まで、自動で組むのはSPだけです。</p>
+    </div>
+    <div class="scroll"><table id="wishtbl" aria-label="希望休の一覧"></table></div>
+    <div class="legend"><span><i style="background:var(--wish-bg)"></i>希望休</span><span><i style="background:var(--blocked)"></i>勤務パターン上、入れない日</span></div>
+  </section>
+
+  <section class="panel" id="p-plan" role="tabpanel" aria-labelledby="t-plan" hidden>
+    <div class="scroll"><table id="plantbl" aria-label="SPの勤務表"></table></div>
+    <div class="legend">
+      <span><i style="background:var(--f1-bg)"></i>1F</span><span><i style="background:var(--f2-bg)"></i>2F</span><span><i style="background:var(--f3-bg)"></i>3F</span>
+      <span>前＝午前 6:45〜13:30</span><span>後＝午後 13:00〜19:00</span><span><i style="background:var(--wish-bg)"></i>希望休</span>
+    </div>
+    <div class="gaplist" id="gaplist"></div>
+  </section>
+
+  <section class="panel" id="p-person" role="tabpanel" aria-labelledby="t-person" hidden>
+    <div id="personbody" class="panel"></div>
+  </section>
+
+  <section class="panel" id="p-cal" role="tabpanel" aria-labelledby="t-cal" hidden>
+    <div id="calbody"></div>
+  </section>
+
+  <section class="panel" id="p-hours" role="tabpanel" aria-labelledby="t-hours" hidden>
+    <div>
+      <h2>勤務時間の集計</h2>
+      <p class="sub">今月の回数と時間、前月の時間、2か月の累計です。休憩は引いていない拘束時間で、前月の数字はサンプルです。</p>
+    </div>
+    <div class="scroll"><table class="ht" id="hourstbl" aria-label="勤務時間の集計"></table></div>
+    <div>
+      <h2>上限の確認（非常勤）</h2>
+      <p class="sub">年間の上限を時間に直して、ここまでの勤務時間と年末までの見込みを比べます。金額は仮の値です。扶養などの実際の基準は、勤務先の条件や制度で変わるので、確認した金額を入れてください。1〜12月で数える想定で、1〜4月分はサンプルです。</p>
+    </div>
+    <div class="bar">
+      <label for="wage">時給（円）<input type="number" id="wage" value="1200" min="800" step="50"></label>
+      <label for="capy">年間の上限（円）<input type="number" id="capy" value="1300000" min="500000" step="10000"></label>
+      <span class="sub" id="caph"></span>
+    </div>
+    <div class="scroll"><table class="ht" id="fuyoutbl" aria-label="上限の確認"></table></div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var DAYS=31, DOW=['日','月','火','水','木','金','土'];
+  var dow=function(d){return new Date(2026,4,d).getDay()};
+  /* sh: 午前のみ(A)・午後のみ(P)・どちらも可(B)。写真とひとみさんの話から決めた条件 */
+  var P=[
+    {n:'A子',fl:[1,2,3],pat:'any',sh:'A'},
+    {n:'B子',fl:[1,2,3],pat:'any',sh:'P'},
+    {n:'C子',fl:[2,3],pat:'any',sh:'A'},
+    {n:'D子',fl:[1,3],pat:'any',sh:'A'},
+    {n:'E子',fl:[2],pat:'any',sh:'A'},
+    {n:'F子',fl:[1,2,3],pat:'mwf',sh:'A'},
+    {n:'G子',fl:[1,2,3],pat:'cycle',off:0,sh:'P'},
+    {n:'H子',fl:[1,2],pat:'any',sh:'A'},
+    {n:'I子',fl:[1,2,3],pat:'any',sh:'P'},
+    {n:'J子',fl:[2,3],pat:'mwf',sh:'P'},
+    {n:'K子',fl:[1,2,3],pat:'any',sh:'B'},
+    {n:'L子',fl:[1,3],pat:'cycle',off:1,sh:'P'}
+  ];
+  var N=[{n:'看護A',t:'常勤',w:[1,2,3,4,5],c:'NS1'},{n:'看護B',t:'常勤',w:[2,3,4,5,6],c:'NS1'},{n:'看護C',t:'非常勤',w:[1,3,5,0],c:'NS1'}];
+  var NSTIME={NS1:'9:00〜18:00',NS2:'9:30〜18:30',NS3:'10:00〜19:00'};
+  var H=[]; 'ABCDEFGHIJKL'.split('').forEach(function(c,k){H.push({n:'ヘルパー'+c,t:'常勤',off:k%6})});
+  var HCYC=['夜勤','明け','休み','日1','日2','休み'];
+  var HTIME={'夜勤':'16:00〜翌9:00','明け':'〜9:00','日1':'6:30〜15:30','日2':'11:30〜20:30'};
+  var HHOURS={'夜勤':17,'日1':9,'日2':9};
+  N.forEach(function(p){p.g='看護師'}); H.forEach(function(p){p.g='ヘルパー'}); P.forEach(function(p){p.g='SP'});
+  var ALL=N.concat(H,P), GROUPS=['看護師','ヘルパー','SP'];
+  var MAXSTREAK=5, MAX=16, WAGE=1200, CAPY=1300000, R=null, tab='in', mode='admin', locked=false;
+  var day=1, pidx=0, scr='list', who=0, pinBuf='', pinStep='enter', pinFirst='', pinMsg='';
+  var SL=[[1,'A'],[1,'P'],[2,'A'],[2,'P'],[3,'A'],[3,'P']];
+  var $=function(id){return document.getElementById(id)};
+
+  function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+  function tagOf(p){
+    if(p.g!=='SP') return p.t||'';
+    var f=p.fl.length===3?'':(p.fl.join('・')+'階のみ');
+    var w=p.pat==='mwf'?'月水金のみ':p.pat==='cycle'?'2勤1休':'';
+    return [p.sh==='A'?'午前のみ':p.sh==='B'?'午前も午後も可':'午後のみ',f,w].filter(Boolean).join(' / ');
+  }
+  function blocked(p,d){
+    if(p.pat==='mwf') return [1,3,5].indexOf(dow(d))<0;
+    if(p.pat==='cycle') return (d+p.off)%3===0;
+    return false;
+  }
+  function nurseShift(i,d){return N[i].w.indexOf(dow(d))>=0?N[i].c:null}
+  function helperShift(k,d){return HCYC[(d+H[k].off)%6]}
+  function helpersOn(d){
+    var out=[], nights=0;
+    H.forEach(function(p,k){
+      var s=helperShift(k,d); if(s==='休み') return;
+      var label=s; if(s==='夜勤'){nights++; label='夜勤'+nights}
+      out.push({n:p.n,code:s,label:label});
+    });
+    return out;
+  }
+  function isPart(p){return p.g==='SP'||p.t==='非常勤'}
+  function initState(){
+    var r=rng(42), r2=rng(11);
+    ALL.forEach(function(p,k){
+      var s={}, n=4+Math.floor(r()*6)+(k%5===2?4:0), c=0;
+      while(c<n){var d=1+Math.floor(r()*DAYS); if(!s[d]){s[d]=1;c++}}
+      p.wish=s; p.pin=(k%4===3)?null:'1234'; p.done=!!p.pin&&k%5!==1;
+      var base=p.g==='SP'?60:(p.t==='非常勤'?70:(p.g==='看護師'?150:140));
+      p.prevH=Math.round((base+r2()*(p.g==='SP'?50:25))*2)/2;
+      p.ytd0=Math.round(p.prevH*4*(0.9+r2()*0.2));
+    });
+  }
+  /* 組み方は「人が足りない枠を最小にする」ものだけを使う */
+  function build(){
+    var r=rng(7919+13), n=P.length, i, d;
+    var asg=P.map(function(){return []}), cnt=[],cA=[],cP=[],st=[], gaps=[];
+    for(i=0;i<n;i++){cnt[i]=cA[i]=cP[i]=st[i]=0}
+    for(d=1;d<=DAYS;d++){
+      var av=[];
+      for(i=0;i<n;i++) if(!P[i].wish[d]&&!blocked(P[i],d)&&cnt[i]<MAX&&st[i]<MAXSTREAK) av.push(i);
+      var fits=function(i,f,s){return P[i].fl.indexOf(f)>=0&&(P[i].sh===s||P[i].sh==='B')};
+      var order=SL.map(function(s){return {s:s,c:av.filter(function(i){return fits(i,s[0],s[1])}).length}})
+        .sort(function(a,b){return a.c-b.c}).map(function(o){return o.s});
+      var used={};
+      order.forEach(function(sl){
+        var f=sl[0], s=sl[1];
+        var cs=av.filter(function(i){return !used[i]&&fits(i,f,s)});
+        if(!cs.length){gaps.push({d:d,f:f,s:s});return}
+        var best=-1,bs=1e9;
+        cs.forEach(function(i){
+          var sc=r()*0.6+P[i].fl.length*2+cnt[i]*1.2;
+          if(sc<bs){bs=sc;best=i}
+        });
+        used[best]=1; asg[best][d]={f:f,s:s}; cnt[best]++; if(s==='A')cA[best]++; else cP[best]++;
+      });
+      for(i=0;i<n;i++) st[i]=asg[i][d]?st[i]+1:0;
+    }
+    var ms=0, run;
+    for(i=0;i<n;i++){run=0;for(d=1;d<=DAYS;d++){run=asg[i][d]?run+1:0; if(run>ms)ms=run}}
+    return {asg:asg,cnt:cnt,cA:cA,cP:cP,gaps:gaps,maxStreak:ms,lo:Math.min.apply(null,cnt),hi:Math.max.apply(null,cnt)};
+  }
+  function rebuild(){
+    R=build();
+    $('cap').textContent='SPの枠は 31日×6＝'+(DAYS*6)+'。'+P.length+'人×'+MAX+'回で最大 '+(P.length*MAX)+'枠';
+  }
+
+  function head(){
+    var h='<thead><tr><th class="name">名前（サンプル）</th>';
+    for(var d=1;d<=DAYS;d++){var w=dow(d);h+='<th class="'+(w===6?'sat':w===0?'sun':'')+'">'+d+'<small>'+DOW[w]+'</small></th>'}
+    for(var k=0;k<arguments.length;k++) h+='<th class="sum">'+arguments[k]+'</th>';
+    return h+'</tr></thead>';
+  }
+  function nameCell(p){return '<th class="name" scope="row">'+p.n+'<span class="tag">'+tagOf(p)+'</span></th>'}
+  function calHtml(cellFn){
+    var h='<div class="cal">', k, d;
+    DOW.forEach(function(w,k){h+='<div class="dh'+(k===6?' sat':k===0?' sun':'')+'">'+w+'</div>'});
+    for(k=0;k<dow(1);k++) h+='<div></div>';
+    for(d=1;d<=DAYS;d++) h+=cellFn(d);
+    return h+'</div>';
+  }
+  function dnCls(d){var w=dow(d);return w===6?' sat':w===0?' sun':''}
+  function personOpts(sel){var o='';P.forEach(function(q,i){o+='<option value="'+i+'"'+(i===sel?' selected':'')+'>'+q.n+'</option>'});return o}
+  function fmt(x){return String(Math.round(x*100)/100)}
+
+  /* 上限の確認：thisH が null なら「前月まで」の実績で見る */
+  function fuyou(p,thisH){
+    var m=4+(thisH==null?0:1), ytd=p.ytd0+(thisH||0), capH=CAPY/WAGE, avg=ytd/m, rem=12-m;
+    var proj=ytd+avg*rem, left=capH-ytd;
+    var j=proj<=capH*0.95?['余裕あり','j-ok','']:proj<=capH?['ぎりぎり','j-mid','mid']:['超える見込み','j-ng','warn'];
+    return {m:m,ytd:ytd,capH:capH,rem:rem,proj:proj,left:left,perM:left/rem,pct:Math.min(100,ytd/capH*100),j:j};
+  }
+  function fuyouCard(p){
+    var f=fuyou(p,null);
+    return '<div class="fcard"><h3>あなたの勤務時間と上限の目安（あなたにだけ見えます）</h3>'+
+      '<div class="meter '+f.j[2]+'" role="img" aria-label="上限の'+Math.round(f.pct)+'%"><i style="width:'+f.pct+'%"></i></div>'+
+      '<p>1〜4月の勤務時間 <b>'+fmt(f.ytd)+'</b>時間 ／ 年間の上限の目安 <b>'+fmt(f.capH)+'</b>時間（'+Math.round(f.pct)+'%）</p>'+
+      '<p>上限まであと <b>'+fmt(Math.max(0,f.left))+'</b>時間。残り'+f.rem+'か月で、月 <b>'+fmt(Math.max(0,f.perM))+'</b>時間までなら収まります。</p>'+
+      '<p>いまのペースだと年末で約 '+fmt(f.proj)+'時間　<span class="'+f.j[1]+'">'+f.j[0]+'</span></p></div>';
+  }
+
+  /* ① 希望入力（iPad） */
+  function renderIn(){
+    var el=$('inbody');
+    if(scr==='list') el.innerHTML=inList();
+    else if(scr==='pin') el.innerHTML=inPin();
+    else el.innerHTML=inEdit();
+  }
+  function inList(){
+    var h='<div class="ipad"><div class="ipadtop"><b>自分の名前をタップ</b><span class="sub">令和8年5月分</span></div>'+
+      '<div class="legend"><span><i style="background:var(--accent-soft);border-color:var(--accent)"></i>入力済み</span><span><i style="background:var(--surface)"></i>まだ</span></div>'+
+      (locked?'<p class="lockmsg">入力期限を過ぎました。変更したいときは担当者に伝えてください。</p>':'<p class="sub">入力期限までは、何回でも入れ直せます。他の人の希望休は見えません。</p>');
+    GROUPS.forEach(function(g){
+      h+='<h3>'+g+'</h3><div class="tiles">';
+      ALL.forEach(function(p,k){
+        if(p.g!==g) return;
+        h+='<button type="button" class="tile'+(p.done?' done':'')+'" data-who="'+k+'"><b>'+p.n+'</b><small>'+(p.done?'入力済み ✓':'まだ')+'</small></button>';
+      });
+      h+='</div>';
+    });
+    return h+'<p class="demo">サンプルの約束事：番号を決めてある人の番号は、すべて 1234 です。「まだ」で番号を決めていない人は、開くときに自分で決めます。</p></div>';
+  }
+  function inPin(){
+    var p=ALL[who], dots='';
+    for(var k=0;k<4;k++) dots+='<span'+(k<pinBuf.length?' class="on"':'')+'></span>';
+    var prompt=pinStep==='enter'?'自分で決めた4けたの番号を入れてください':
+      pinStep==='set1'?'はじめての人は、4けたの番号を決めてください（覚えやすい数字）':'もう一度、同じ番号を入れてください';
+    var keys='';
+    ['1','2','3','4','5','6','7','8','9'].forEach(function(k){keys+='<button type="button" data-k="'+k+'" aria-label="'+k+'">'+k+'</button>'});
+    keys+='<button type="button" class="fn" data-k="back">戻る</button><button type="button" data-k="0" aria-label="0">0</button><button type="button" class="fn" data-k="del">消す</button>';
+    return '<div class="ipad"><div class="pinbox"><b>'+p.n+'さん</b><p>'+prompt+'</p><div class="dots" role="img" aria-label="入力した桁数 '+pinBuf.length+'">'+dots+'</div>'+
+      '<p class="need" role="alert">'+pinMsg+'</p><div class="pad9">'+keys+'</div></div></div>';
+  }
+  function inEdit(){
+    var p=ALL[who], nw=Object.keys(p.wish).length;
+    var cal=calHtml(function(d){
+      if(blocked(p,d)) return '<div class="day blk"><span class="dn'+dnCls(d)+'">'+d+'</span>–</div>';
+      var on=!!p.wish[d];
+      return '<button type="button" role="checkbox" class="day'+(on?' wishd':'')+'" data-d="'+d+'" aria-checked="'+on+'"'+(locked?' disabled':'')+' aria-label="5月'+d+'日を希望休にする">'+
+        '<span class="dn'+dnCls(d)+'">'+d+'</span>'+(on?'<b>希望休</b>':'')+'</button>';
+    });
+    return '<div class="ipad"><div class="ipadtop"><b>'+p.n+'さんの希望休</b><span class="sub">令和8年5月分</span></div>'+
+      (locked?'<p class="lockmsg">入力期限を過ぎたので、見るだけです。変更は担当者に伝えてください。</p>':
+      '<p class="sub">休みたい日をタップします。もう一度タップすると取り消せます。変更はその場で保存されます。'+(tagOf(p)&&p.g==='SP'?'（働き方：'+tagOf(p)+'）':'')+'</p>')+cal+
+      '<div class="ifoot"><span>希望休 <b>'+nw+'</b>日</span>'+
+      (p.done?'<span class="okc">入力済み</span>':'<span class="need">「完了」を押すと入力済みになります</span>')+
+      '<button type="button" class="back" data-act="back">戻る</button>'+
+      (locked?'':'<button type="button" class="submit" data-act="done">完了して戻る</button>')+'</div>'+
+      (isPart(p)?fuyouCard(p):'')+'</div>';
+  }
+
+  /* ② 希望の集約 */
+  function renderWish(){
+    var body='<tbody>', g='', cols=DAYS+4;
+    ALL.forEach(function(p,k){
+      if(p.g!==g){g=p.g; body+='<tr class="grp"><th colspan="'+cols+'">'+g+'</th></tr>'}
+      body+='<tr>'+nameCell(p);
+      for(var d=1;d<=DAYS;d++){
+        if(blocked(p,d)) body+='<td class="blocked">–</td>';
+        else body+='<td class="'+(p.wish[d]?'wishon':'')+'"><button type="button" class="cell" data-k="'+k+'" data-d="'+d+'" aria-pressed="'+(p.wish[d]?'true':'false')+'" aria-label="'+p.n+' '+d+'日 希望休">'+(p.wish[d]?'希':'')+'</button></td>';
+      }
+      body+='<td class="sum">'+Object.keys(p.wish).length+'日</td><td class="sum">'+(p.done?'<span class="okc">入力済</span>':'<span class="need">未</span>')+'</td>'+
+        '<td class="sum">'+(p.pin?'<button type="button" class="btn" data-reset="'+k+'" style="padding:2px 8px;font-size:11px">番号を消す</button>':'<span class="sub">未設定</span>')+'</td></tr>';
+    });
+    $('wishtbl').innerHTML=head('希休','状況','番号')+body+'</tbody>';
+  }
+  function renderSum(){
+    var el=$('sumbar'); el.hidden=!(tab==='plan'||tab==='person'||tab==='cal');
+    el.innerHTML='<span class="sub">SPは、人が足りない枠が最も少なくなるように組んでいます</span>'+
+      '<span>不足 <b>'+R.gaps.length+'</b>枠（'+(DAYS*6)+'枠中）</span><span>回数 '+R.lo+'〜'+R.hi+'</span><span>最長 '+R.maxStreak+'連勤</span>';
+  }
+  function renderPlanTable(){
+    var h=head('回数'), body='<tbody>', d;
+    P.forEach(function(p,i){
+      body+='<tr>'+nameCell(p);
+      for(d=1;d<=DAYS;d++){
+        var a=R.asg[i][d];
+        if(a) body+='<td class="pl f'+a.f+'">'+a.f+(a.s==='A'?'前':'後')+'</td>';
+        else if(p.wish[d]) body+='<td class="wishshow">希</td>';
+        else body+='<td></td>';
+      }
+      body+='<td class="sum">'+R.cnt[i]+'/'+MAX+'</td></tr>';
+    });
+    var miss={}; R.gaps.forEach(function(g){miss[g.d]=(miss[g.d]||0)+1});
+    body+='<tr class="cov"><th class="name" scope="row">不足の枠数</th>';
+    for(d=1;d<=DAYS;d++) body+='<td>'+(miss[d]?'<span class="short">'+miss[d]+'</span>':'')+'</td>';
+    body+='<td class="sum">'+R.gaps.length+'</td></tr>';
+    $('plantbl').innerHTML=h+body+'</tbody>';
+    var g=$('gaplist');
+    if(!R.gaps.length){g.innerHTML='<p class="none">6枠すべて埋まっています。</p>';return}
+    var by={}; R.gaps.forEach(function(x){(by[x.d]=by[x.d]||[]).push(x.f+'F'+(x.s==='A'?'午前':'午後'))});
+    var days=Object.keys(by), li='';
+    days.slice(0,14).forEach(function(d){li+='<li>5/'+d+'（'+DOW[dow(+d)]+'）　'+by[d].join('、')+'</li>'});
+    g.innerHTML='<h2>人が足りない枠（誰かにお願いする分）</h2><p class="sub">'+days.length+'日・計'+R.gaps.length+'枠。希望休や上限のため、SPだけでは埋まらなかった枠です。</p><ul>'+li+(days.length>14?'<li>ほか '+(days.length-14)+'日</li>':'')+'</ul>';
+  }
+  function renderPerson(){
+    var p=P[pidx], fc={1:0,2:0,3:0}, d, nw=Object.keys(p.wish).length;
+    for(d=1;d<=DAYS;d++){var a=R.asg[pidx][d]; if(a) fc[a.f]++}
+    $('personbody').innerHTML='<div class="pbar"><button type="button" class="btn" data-pstep="-1">‹ 前の人</button>'+
+      '<select id="psel" aria-label="職員を選ぶ">'+personOpts(pidx)+'</select>'+
+      '<button type="button" class="btn" data-pstep="1">次の人 ›</button>'+
+      '<span class="sub">'+tagOf(p)+'</span></div>'+
+      '<div class="pstat"><span>出勤 <b>'+R.cnt[pidx]+'</b>回（午前 '+R.cA[pidx]+'・午後 '+R.cP[pidx]+'）</span>'+
+      '<span>1F '+fc[1]+'・2F '+fc[2]+'・3F '+fc[3]+'</span><span>希望休 '+nw+'日</span></div>'+
+      calHtml(function(d){
+        var a=R.asg[pidx][d], cls='day', inner;
+        if(a) inner='<span class="tag2 fl'+a.f+'">'+a.f+'F'+(a.s==='A'?'前':'後')+'</span>';
+        else if(p.wish[d]){cls+=' wishd';inner='希望休'}
+        else if(blocked(p,d)){cls+=' blk';inner='–'}
+        else inner='<span class="sub">休み</span>';
+        return '<div class="'+cls+'"><span class="dn'+dnCls(d)+'">'+d+'</span>'+inner+'</div>';
+      })+
+      '<div class="legend"><span><i style="background:var(--f1-bg)"></i>1F</span><span><i style="background:var(--f2-bg)"></i>2F</span><span><i style="background:var(--f3-bg)"></i>3F</span><span>前＝午前 6:45〜13:30</span><span>後＝午後 13:00〜19:00</span><span><i style="background:var(--wish-bg)"></i>希望休</span></div>';
+  }
+  function renderCal(){
+    var who2={}, miss={}, w=dow(day);
+    P.forEach(function(p,i){var a=R.asg[i][day]; if(a) who2[a.f+a.s]=p.n});
+    R.gaps.forEach(function(g){miss[g.d]=(miss[g.d]||0)+1});
+    var cal=calHtml(function(d){
+      return '<button type="button" class="day" data-day="'+d+'" aria-pressed="'+(d===day)+'" aria-label="5月'+d+'日">'+
+        '<span class="dn'+dnCls(d)+'">'+d+'</span>'+
+        (miss[d]?'<span class="short">SP不足'+miss[d]+'</span>':'<span class="okc">SP 6/6</span>')+'</button>';
+    });
+    var nrows='';
+    N.forEach(function(p,i){var c=nurseShift(i,day); if(c) nrows+='<tr><td>'+p.n+'<span class="tag">'+p.t+'</span></td><td>'+c+'</td><td class="t">'+NSTIME[c]+'</td></tr>'});
+    if(!nrows) nrows='<tr><td colspan="3" class="need">看護師が入っていません</td></tr>';
+    var hrows='';
+    helpersOn(day).forEach(function(x){hrows+='<tr><td>'+x.n+'</td><td>'+x.label+'</td><td class="t">'+HTIME[x.code]+'</td></tr>'});
+    var srows='';
+    [1,2,3].forEach(function(f){
+      var c=function(s){var nm=who2[f+s];return nm?'<td><b>'+nm+'</b></td>':'<td class="need">要応援</td>'};
+      srows+='<tr><th class="fl'+f+'">'+f+'F</th>'+c('A')+c('P')+'</tr>';
+    });
+    var det='<div class="dlead">5月'+day+'日（'+DOW[w]+'）の担当</div>'+
+      '<div class="dgroup"><h3>看護師</h3><div class="scroll"><table class="dt"><tbody><tr><th>名前</th><th>勤務</th><th>時間</th></tr>'+nrows+'</tbody></table></div></div>'+
+      '<div class="dgroup"><h3>ヘルパー</h3><div class="scroll"><table class="dt"><tbody><tr><th>名前</th><th>勤務</th><th>時間</th></tr>'+hrows+'</tbody></table></div></div>'+
+      '<div class="dgroup"><h3>SP</h3><div class="scroll"><table class="dt"><tbody><tr><th>階</th><th>午前 6:45〜13:30</th><th>午後 13:00〜19:00</th></tr>'+srows+'</tbody></table></div></div>';
+    $('calbody').innerHTML='<div class="calwrap"><div><p class="sub" style="margin-bottom:8px">日付をタップすると、その日の看護師・ヘルパー・SPの担当が右（スマホでは下）に出ます。</p>'+cal+'</div><div>'+det+'</div></div>';
+  }
+  function renderHours(){
+    var rows=[], d, c, h, thisH=new Map();
+    N.forEach(function(p,i){c=0;for(d=1;d<=DAYS;d++) if(nurseShift(i,d)) c++; rows.push({p:p,c:c,h:c*9})});
+    H.forEach(function(p,k){c=0;h=0;for(d=1;d<=DAYS;d++){var s=helperShift(k,d); if(HHOURS[s]){c++;h+=HHOURS[s]}} rows.push({p:p,c:c,h:h})});
+    P.forEach(function(p,i){rows.push({p:p,c:R.cnt[i],h:R.cA[i]*6.75+R.cP[i]*6})});
+    var out='<thead><tr><th class="name">名前（サンプル）</th><th>今月の回数</th><th>今月の時間</th><th>前月の時間</th><th>2か月の累計</th></tr></thead><tbody>', g='';
+    rows.forEach(function(r){
+      if(r.p.g!==g){g=r.p.g; out+='<tr class="grp"><th colspan="5">'+g+'</th></tr>'}
+      out+='<tr><th class="name" scope="row">'+r.p.n+(r.p.t?'<span class="tag">'+r.p.t+'</span>':'')+'</th><td>'+r.c+'回</td><td>'+fmt(r.h)+'</td><td>'+fmt(r.p.prevH)+'</td><td><b>'+fmt(r.h+r.p.prevH)+'</b></td></tr>';
+    });
+    $('hourstbl').innerHTML=out+'</tbody>';
+    $('caph').textContent='上限は '+fmt(CAPY/WAGE)+' 時間／年（上限 ÷ 時給）';
+    var fo='<thead><tr><th class="name">名前（サンプル）</th><th>今年ここまで（時間）</th><th>使った割合</th><th>残りの月あたり（時間）</th><th>年末の見込み（時間）</th><th>見立て</th></tr></thead><tbody>';
+    rows.forEach(function(r){
+      if(!isPart(r.p)) return;
+      var f=fuyou(r.p,r.h);
+      fo+='<tr><th class="name" scope="row">'+r.p.n+'<span class="tag">'+r.p.g+'</span></th><td>'+fmt(f.ytd)+'</td>'+
+        '<td class="l"><div class="meter '+f.j[2]+'"><i style="width:'+f.pct+'%"></i></div>'+Math.round(f.pct)+'%</td>'+
+        '<td>'+fmt(Math.max(0,f.perM))+'</td><td>'+fmt(f.proj)+'</td><td class="l"><span class="'+f.j[1]+'">'+f.j[0]+'</span></td></tr>';
+    });
+    $('fuyoutbl').innerHTML=fo+'</tbody>';
+  }
+
+  function show(t){
+    tab=t;
+    ['in','wish','plan','person','cal','hours'].forEach(function(k){
+      $('p-'+k).hidden=(k!==t);
+      $('t-'+k).setAttribute('aria-selected',k===t);
+    });
+    renderAll();
+  }
+  function renderAll(){
+    renderSum();
+    if(tab==='in') renderIn();
+    else if(tab==='wish') renderWish();
+    else if(tab==='plan') renderPlanTable();
+    else if(tab==='person') renderPerson();
+    else if(tab==='cal') renderCal();
+    else renderHours();
+  }
+  function setMode(m){
+    mode=m; scr='list'; pinBuf='';
+    $('adminbar').hidden=(m==='staff'); $('tabs').hidden=(m==='staff');
+    document.querySelectorAll('[data-mode]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.mode===m)});
+    if(m==='staff') show('in'); else renderAll();
+  }
+  function pinKey(k){
+    var p=ALL[who];
+    if(k==='back'){scr='list';pinBuf='';pinMsg='';return}
+    if(k==='del') pinBuf=pinBuf.slice(0,-1);
+    else if(pinBuf.length<4){pinBuf+=k; pinMsg=''}
+    if(pinBuf.length<4) return;
+    if(pinStep==='enter'){
+      if(pinBuf===p.pin){scr='edit';pinMsg=''} else pinMsg='番号が違います。もう一度入れてください。';
+    }else if(pinStep==='set1'){pinFirst=pinBuf;pinStep='set2';pinMsg=''}
+    else if(pinBuf===pinFirst){p.pin=pinBuf;scr='edit';pinMsg=''}
+    else{pinMsg='1回目と違います。はじめからやり直してください。';pinStep='set1'}
+    pinBuf='';
+  }
+
+  document.querySelectorAll('.tab').forEach(function(b){b.addEventListener('click',function(){show(b.id.slice(2))})});
+  document.querySelectorAll('[data-mode]').forEach(function(b){b.addEventListener('click',function(){setMode(b.dataset.mode)})});
+  $('lockchk').addEventListener('change',function(e){locked=e.target.checked; renderAll()});
+  $('max').addEventListener('input',function(e){
+    MAX=+e.target.value; $('maxout').textContent=MAX+'回'; rebuild(); renderAll();
+  });
+  $('wage').addEventListener('input',function(e){WAGE=Math.max(1,+e.target.value||1200); renderHours()});
+  $('capy').addEventListener('input',function(e){CAPY=Math.max(1,+e.target.value||1300000); renderHours()});
+  $('reset').addEventListener('click',function(){initState();scr='list';rebuild();renderAll()});
+  $('wishtbl').addEventListener('click',function(e){
+    var b=e.target.closest('.cell'), r=e.target.closest('[data-reset]');
+    if(b){
+      var p=ALL[+b.dataset.k], d=+b.dataset.d;
+      if(p.wish[d]) delete p.wish[d]; else p.wish[d]=1;
+      p.done=true; rebuild(); renderWish();
+    }else if(r){ALL[+r.dataset.reset].pin=null; renderWish()}
+  });
+  $('p-in').addEventListener('click',function(e){
+    var t=e.target.closest('[data-who]'), k=e.target.closest('[data-k]'), d=e.target.closest('[data-d]'), a=e.target.closest('[data-act]');
+    if(t){
+      who=+t.dataset.who; scr='pin'; pinBuf=''; pinMsg=''; pinFirst='';
+      pinStep=ALL[who].pin?'enter':'set1';
+    }else if(k) pinKey(k.dataset.k);
+    else if(d){
+      var p=ALL[who], n=+d.dataset.d;
+      if(locked) return;
+      if(p.wish[n]) delete p.wish[n]; else p.wish[n]=1;
+      p.done=false; rebuild();
+    }else if(a){
+      if(a.dataset.act==='done') ALL[who].done=true;
+      scr='list';
+    }else return;
+    renderIn();
+  });
+  $('p-person').addEventListener('click',function(e){
+    var s=e.target.closest('[data-pstep]'); if(!s) return;
+    pidx=(pidx+(+s.dataset.pstep)+P.length)%P.length; renderPerson();
+  });
+  $('p-person').addEventListener('change',function(e){
+    if(e.target.id==='psel'){pidx=+e.target.value; renderPerson()}
+  });
+  $('p-cal').addEventListener('click',function(e){
+    var b=e.target.closest('[data-day]'); if(!b) return;
+    day=+b.dataset.day; renderCal();
+  });
+
+  initState(); rebuild(); renderAll();
+})();
+</script>
