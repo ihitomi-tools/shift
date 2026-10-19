@@ -647,7 +647,7 @@ td.rk2,td.rk3{color:var(--warn);font-weight:700;background:var(--warn-bg)}
   });
   $('wage').addEventListener('input',function(e){WAGE=Math.max(1,+e.target.value||1200); renderHours()});
   $('capy').addEventListener('input',function(e){CAPY=Math.max(1,+e.target.value||1300000); renderHours()});
-  $('reset').addEventListener('click',function(){initState();scr='list';rebuild();renderAll()});
+  $('reset').addEventListener('click',function(){initState();defaultView();rebuild();renderAll()});
   $('wishtbl').addEventListener('click',function(e){
     var b=e.target.closest('.cell'), r=e.target.closest('[data-reset]');
     if(b){
@@ -695,6 +695,8 @@ td.rk2,td.rk3{color:var(--warn);font-weight:700;background:var(--warn-bg)}
     day=+b.dataset.day; renderCal();
   });
 
-  initState(); rebuild(); renderAll();
+  /* 開いたとき、SPの1人（B子）の希望入力画面を、番号なしで最初から出しておく */
+  function defaultView(){who=16; startEdit(ALL[who])}
+  initState(); defaultView(); rebuild(); renderAll();
 })();
 </script>
