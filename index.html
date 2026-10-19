@@ -16,6 +16,7 @@
   --f3-bg:#e9def5; --f3-ink:#5a2f86;
   --wish-bg:#fbefd2; --wish-ink:#85600d;
   --blocked:#eef1f3; --blocked-ink:#9aa7af;
+  --risk-y:#d99a00; --risk-r:#c4271d;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -28,6 +29,7 @@
     --f3-bg:#392852; --f3-ink:#d0b7f0;
     --wish-bg:#40331a; --wish-ink:#f0cf86;
     --blocked:#1f2a30; --blocked-ink:#6c7c86;
+    --risk-y:#f2c14e; --risk-r:#ff6b5f;
     color-scheme: dark;
   }
 }
@@ -41,6 +43,7 @@
   --f3-bg:#392852; --f3-ink:#d0b7f0;
   --wish-bg:#40331a; --wish-ink:#f0cf86;
   --blocked:#1f2a30; --blocked-ink:#6c7c86;
+  --risk-y:#f2c14e; --risk-r:#ff6b5f;
   color-scheme: dark;
 }
 *{box-sizing:border-box}
@@ -110,6 +113,13 @@ button.day[aria-pressed=true]{border:2px solid var(--accent);background:var(--ac
 .day .tag2{border-radius:5px;padding:1px 4px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .day.wishd{background:var(--wish-bg);color:var(--wish-ink);border-color:var(--wish-ink)}
 .day.blk{background:var(--blocked);color:var(--blocked-ink)}
+.day.r1{border:3px dashed var(--risk-y);padding:2px 3px}
+.day.r2,.day.r3{border:3px solid var(--risk-r);padding:2px 3px}
+.day{position:relative}
+.day .em{position:absolute;right:4px;bottom:2px;font-size:1.3rem;line-height:1}
+td.rk1{color:var(--caution);font-weight:700}
+td.rk2,td.rk3{color:var(--warn);font-weight:700;background:var(--warn-bg)}
+.thanks{background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;padding:10px 14px;font-weight:700}
 .okc{color:var(--ok);font-weight:700}
 .need{color:var(--warn);font-weight:700}
 .calwrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:start}
@@ -271,7 +281,7 @@ button.day[aria-pressed=true]{border:2px solid var(--accent);background:var(--ac
   N.forEach(function(p){p.g='看護師'}); H.forEach(function(p){p.g='ヘルパー'}); P.forEach(function(p){p.g='SP'});
   var ALL=N.concat(H,P), GROUPS=['看護師','ヘルパー','SP'];
   var MAXSTREAK=5, MAX=16, WAGE=1200, CAPY=1300000, R=null, tab='in', mode='admin', locked=false;
-  var day=1, pidx=0, scr='list', who=0, pinBuf='', pinStep='enter', pinFirst='', pinMsg='';
+  var flash='', day=1, pidx=0, scr='list', who=0, pinBuf='', pinStep='enter', pinFirst='', pinMsg='';
   var SL=[[1,'A'],[1,'P'],[2,'A'],[2,'P'],[3,'A'],[3,'P']];
   var $=function(id){return document.getElementById(id)};
 
@@ -378,6 +388,44 @@ button.day[aria-pressed=true]{border:2px solid var(--accent);background:var(--ac
       '<p>いまのペースだと年末で約 '+fmt(f.proj)+'時間　<span class="'+f.j[1]+'">'+f.j[0]+'</span></p></div>';
   }
 
+  /* 人が足りなくなりそうな日（SP）。全員の希望休から、その日に入れる人数と各枠の候補を数えた目安。
+     0=ふつう 1=黄(ぎりぎり・予備がいない) 2=赤(1人足りない) 3=😢(2人以上足りない) */
+  function riskAll(){
+    var out=[0], d;
+    for(d=1;d<=DAYS;d++){
+      var aA=0, aP=0, cand={}, m;
+      SL.forEach(function(s){cand[s[0]+s[1]]=0});
+      P.forEach(function(p){
+        if(p.wish[d]||blocked(p,d)) return;
+        if(p.sh!=='P') aA++;
+        if(p.sh!=='A') aP++;
+        SL.forEach(function(s){if(p.fl.indexOf(s[0])>=0&&(p.sh===s[1]||p.sh==='B')) cand[s[0]+s[1]]++});
+      });
+      m=Math.min(aA-3,aP-3);
+      SL.forEach(function(s){m=Math.min(m,cand[s[0]+s[1]]-1)});
+      out.push(m<=-2?3:m===-1?2:m===0?1:0);
+    }
+    return out;
+  }
+  function thanksCount(p){
+    if(p.g!=='SP') return 0;
+    var rk=riskAll(), n=0, d;
+    for(d=1;d<=DAYS;d++) if(rk[d]>0&&!blocked(p,d)&&!p.wish[d]) n++;
+    return n;
+  }
+  function riskLegend(sp){
+    if(!sp) return '<p class="sub">看護師・ヘルパーの「人が足りなくなりそうな日」の表示は、人数のルールが決まったら入れます。</p>';
+    return '<div class="legend"><span><i style="border:3px dashed var(--risk-y);background:var(--surface)"></i>黄　ぎりぎり</span>'+
+      '<span><i style="border:3px solid var(--risk-r);background:var(--surface)"></i>赤　足りなくなりそう</span><span>😢　かなり足りない</span></div>'+
+      '<p class="sub">全員の希望休から数えた目安です。誰が休みかは見えません。ほかの人の入力で変わります。</p>';
+  }
+  function riskThanks(p,rk){
+    if(p.g!=='SP') return '';
+    var n=thanksCount(p), any=rk.some(function(v){return v>0});
+    if(n>0) return '<p class="thanks" role="status">人が足りなくなりそうな日に、'+n+'日入れる状態です。ありがとうございます！！</p>';
+    return any?'<p class="sub">もし入れる日があれば、黄色や赤の日を空けてもらえると助かります。</p>':'';
+  }
+
   /* ① 希望入力（iPad） */
   function renderIn(){
     var el=$('inbody');
@@ -388,6 +436,7 @@ button.day[aria-pressed=true]{border:2px solid var(--accent);background:var(--ac
   function inList(){
     var h='<div class="ipad"><div class="ipadtop"><b>自分の名前をタップ</b><span class="sub">令和8年5月分</span></div>'+
       '<div class="legend"><span><i style="background:var(--accent-soft);border-color:var(--accent)"></i>入力済み</span><span><i style="background:var(--surface)"></i>まだ</span></div>'+
+      (flash?'<p class="thanks" role="status">'+flash+'</p>':'')+
       (locked?'<p class="lockmsg">入力期限を過ぎました。変更したいときは担当者に伝えてください。</p>':'<p class="sub">入力期限までは、何回でも入れ直せます。他の人の希望休は見えません。</p>');
     GROUPS.forEach(function(g){
       h+='<h3>'+g+'</h3><div class="tiles">';
@@ -411,16 +460,18 @@ button.day[aria-pressed=true]{border:2px solid var(--accent);background:var(--ac
       '<p class="need" role="alert">'+pinMsg+'</p><div class="pad9">'+keys+'</div></div></div>';
   }
   function inEdit(){
-    var p=ALL[who], nw=Object.keys(p.wish).length;
+    var p=ALL[who], nw=Object.keys(p.wish).length, sp=p.g==='SP', rk=riskAll();
     var cal=calHtml(function(d){
       if(blocked(p,d)) return '<div class="day blk"><span class="dn'+dnCls(d)+'">'+d+'</span>–</div>';
-      var on=!!p.wish[d];
-      return '<button type="button" role="checkbox" class="day'+(on?' wishd':'')+'" data-d="'+d+'" aria-checked="'+on+'"'+(locked?' disabled':'')+' aria-label="5月'+d+'日を希望休にする">'+
-        '<span class="dn'+dnCls(d)+'">'+d+'</span>'+(on?'<b>希望休</b>':'')+'</button>';
+      var on=!!p.wish[d], lv=sp?rk[d]:0;
+      var em=lv===3?'<span class="em" aria-hidden="true">😢</span>':'';
+      var lab=['','（ぎりぎり）','（人が足りなくなりそう）','（人がかなり足りない）'][lv];
+      return '<button type="button" role="checkbox" class="day'+(on?' wishd':'')+(lv?' r'+lv:'')+'" data-d="'+d+'" aria-checked="'+on+'"'+(locked?' disabled':'')+' aria-label="5月'+d+'日を希望休にする'+lab+'">'+
+        '<span class="dn'+dnCls(d)+'">'+d+'</span>'+(on?'<b>希望休</b>':'')+em+'</button>';
     });
     return '<div class="ipad"><div class="ipadtop"><b>'+p.n+'さんの希望休</b><span class="sub">令和8年5月分</span></div>'+
       (locked?'<p class="lockmsg">入力期限を過ぎたので、見るだけです。変更は担当者に伝えてください。</p>':
-      '<p class="sub">休みたい日をタップします。もう一度タップすると取り消せます。変更はその場で保存されます。'+(tagOf(p)&&p.g==='SP'?'（働き方：'+tagOf(p)+'）':'')+'</p>')+cal+
+      '<p class="sub">休みたい日をタップします。もう一度タップすると取り消せます。変更はその場で保存されます。'+(tagOf(p)&&p.g==='SP'?'（働き方：'+tagOf(p)+'）':'')+'</p>')+riskLegend(sp)+cal+riskThanks(p,rk)+
       '<div class="ifoot"><span>希望休 <b>'+nw+'</b>日</span>'+
       (p.done?'<span class="okc">入力済み</span>':'<span class="need">「完了」を押すと入力済みになります</span>')+
       '<button type="button" class="back" data-act="back">戻る</button>'+
@@ -441,6 +492,10 @@ button.day[aria-pressed=true]{border:2px solid var(--accent);background:var(--ac
       body+='<td class="sum">'+Object.keys(p.wish).length+'日</td><td class="sum">'+(p.done?'<span class="okc">入力済</span>':'<span class="need">未</span>')+'</td>'+
         '<td class="sum">'+(p.pin?'<button type="button" class="btn" data-reset="'+k+'" style="padding:2px 8px;font-size:11px">番号を消す</button>':'<span class="sub">未設定</span>')+'</td></tr>';
     });
+    var rk=riskAll();
+    body+='<tr class="grp"><th colspan="'+cols+'">人が足りなくなりそうな日（SP）</th></tr><tr class="cov"><th class="name" scope="row">SPの余裕<span class="tag">△ぎりぎり ▲不足 😢かなり不足</span></th>';
+    for(var d=1;d<=DAYS;d++) body+='<td class="rk'+rk[d]+'">'+['','△','▲','😢'][rk[d]]+'</td>';
+    body+='<td></td><td></td><td></td></tr>';
     $('wishtbl').innerHTML=head('希休','状況','番号')+body+'</tbody>';
   }
   function renderSum(){
@@ -596,7 +651,7 @@ button.day[aria-pressed=true]{border:2px solid var(--accent);background:var(--ac
   $('p-in').addEventListener('click',function(e){
     var t=e.target.closest('[data-who]'), k=e.target.closest('[data-k]'), d=e.target.closest('[data-d]'), a=e.target.closest('[data-act]');
     if(t){
-      who=+t.dataset.who; scr='pin'; pinBuf=''; pinMsg=''; pinFirst='';
+      who=+t.dataset.who; scr='pin'; pinBuf=''; pinMsg=''; pinFirst=''; flash='';
       pinStep=ALL[who].pin?'enter':'set1';
     }else if(k) pinKey(k.dataset.k);
     else if(d){
@@ -605,7 +660,10 @@ button.day[aria-pressed=true]{border:2px solid var(--accent);background:var(--ac
       if(p.wish[n]) delete p.wish[n]; else p.wish[n]=1;
       p.done=false; rebuild();
     }else if(a){
-      if(a.dataset.act==='done') ALL[who].done=true;
+      if(a.dataset.act==='done'){
+        var q=ALL[who]; q.done=true;
+        flash=thanksCount(q)>0?q.n+'さん、人が足りなくなりそうな日に入れる状態にしてくれて、ありがとうございます！！':'';
+      }
       scr='list';
     }else return;
     renderIn();
