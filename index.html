@@ -120,6 +120,9 @@ button.day[aria-pressed=true]{border:2px solid var(--accent);background:var(--ac
 td.rk1{color:var(--caution);font-weight:700}
 td.rk2,td.rk3{color:var(--warn);font-weight:700;background:var(--warn-bg)}
 .thanks{background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;padding:10px 14px;font-weight:700}
+.thanks.big{background:var(--accent);color:var(--accent-ink);font-size:1.2rem;line-height:1.5;padding:14px 16px}
+@keyframes pop{0%{transform:scale(.94)}60%{transform:scale(1.03)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:no-preference){.thanks.big{animation:pop .45s ease-out}}
 .okc{color:var(--ok);font-weight:700}
 .need{color:var(--warn);font-weight:700}
 .calwrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:start}
@@ -281,7 +284,7 @@ td.rk2,td.rk3{color:var(--warn);font-weight:700;background:var(--warn-bg)}
   N.forEach(function(p){p.g='看護師'}); H.forEach(function(p){p.g='ヘルパー'}); P.forEach(function(p){p.g='SP'});
   var ALL=N.concat(H,P), GROUPS=['看護師','ヘルパー','SP'];
   var MAXSTREAK=5, MAX=16, WAGE=1200, CAPY=1300000, R=null, tab='in', mode='admin', locked=false;
-  var flash='', day=1, pidx=0, scr='list', who=0, pinBuf='', pinStep='enter', pinFirst='', pinMsg='';
+  var flash='', flashBig=false, day=1, pidx=0, scr='list', who=0, pinBuf='', pinStep='enter', pinFirst='', pinMsg='';
   var SL=[[1,'A'],[1,'P'],[2,'A'],[2,'P'],[3,'A'],[3,'P']];
   var $=function(id){return document.getElementById(id)};
 
@@ -314,6 +317,7 @@ td.rk2,td.rk3{color:var(--warn);font-weight:700;background:var(--warn-bg)}
     ALL.forEach(function(p,k){
       var s={}, n=4+Math.floor(r()*6)+(k%5===2?4:0), c=0;
       while(c<n){var d=1+Math.floor(r()*DAYS); if(!s[d]){s[d]=1;c++}}
+      p.freed={}; p.base=null;
       p.wish=s; p.pin=(k%4===3)?null:'1234'; p.done=!!p.pin&&k%5!==1;
       var base=p.g==='SP'?60:(p.t==='非常勤'?70:(p.g==='看護師'?150:140));
       p.prevH=Math.round((base+r2()*(p.g==='SP'?50:25))*2)/2;
@@ -421,7 +425,9 @@ td.rk2,td.rk3{color:var(--warn);font-weight:700;background:var(--warn-bg)}
   }
   function riskThanks(p,rk){
     if(p.g!=='SP') return '';
-    var n=thanksCount(p), any=rk.some(function(v){return v>0});
+    var n=thanksCount(p), any=rk.some(function(v){return v>0}), fc=Object.keys(p.freed).length;
+    if(fc>0) return '<p class="thanks big" role="status">休みを入れていた日のうち、人が足りなくなりそうな '+fc+'日を空けてくれたんですね！！ 本当に、本当に、ありがとうございます！！！ 🙏🙏🙏</p>'+
+      '<p class="thanks" role="status">いま、人が足りなくなりそうな日に合わせて '+n+'日入れる状態です。ありがとうございます！！</p>';
     if(n>0) return '<p class="thanks" role="status">人が足りなくなりそうな日に、'+n+'日入れる状態です。ありがとうございます！！</p>';
     return any?'<p class="sub">もし入れる日があれば、黄色や赤の日を空けてもらえると助かります。</p>':'';
   }
@@ -436,7 +442,7 @@ td.rk2,td.rk3{color:var(--warn);font-weight:700;background:var(--warn-bg)}
   function inList(){
     var h='<div class="ipad"><div class="ipadtop"><b>自分の名前をタップ</b><span class="sub">令和8年5月分</span></div>'+
       '<div class="legend"><span><i style="background:var(--accent-soft);border-color:var(--accent)"></i>入力済み</span><span><i style="background:var(--surface)"></i>まだ</span></div>'+
-      (flash?'<p class="thanks" role="status">'+flash+'</p>':'')+
+      (flash?'<p class="thanks'+(flashBig?' big':'')+'" role="status">'+flash+'</p>':'')+
       (locked?'<p class="lockmsg">入力期限を過ぎました。変更したいときは担当者に伝えてください。</p>':'<p class="sub">入力期限までは、何回でも入れ直せます。他の人の希望休は見えません。</p>');
     GROUPS.forEach(function(g){
       h+='<h3>'+g+'</h3><div class="tiles">';
@@ -617,6 +623,8 @@ td.rk2,td.rk3{color:var(--warn);font-weight:700;background:var(--warn-bg)}
     document.querySelectorAll('[data-mode]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.mode===m)});
     if(m==='staff') show('in'); else renderAll();
   }
+  /* 編集を始めた時点の希望休を控えておく（空けてくれた日の判定に使う） */
+  function startEdit(p){scr='edit'; pinMsg=''; p.base=Object.assign({},p.wish); p.freed={}}
   function pinKey(k){
     var p=ALL[who];
     if(k==='back'){scr='list';pinBuf='';pinMsg='';return}
@@ -624,9 +632,9 @@ td.rk2,td.rk3{color:var(--warn);font-weight:700;background:var(--warn-bg)}
     else if(pinBuf.length<4){pinBuf+=k; pinMsg=''}
     if(pinBuf.length<4) return;
     if(pinStep==='enter'){
-      if(pinBuf===p.pin){scr='edit';pinMsg=''} else pinMsg='番号が違います。もう一度入れてください。';
+      if(pinBuf===p.pin) startEdit(p); else pinMsg='番号が違います。もう一度入れてください。';
     }else if(pinStep==='set1'){pinFirst=pinBuf;pinStep='set2';pinMsg=''}
-    else if(pinBuf===pinFirst){p.pin=pinBuf;scr='edit';pinMsg=''}
+    else if(pinBuf===pinFirst){p.pin=pinBuf;startEdit(p)}
     else{pinMsg='1回目と違います。はじめからやり直してください。';pinStep='set1'}
     pinBuf='';
   }
@@ -651,18 +659,25 @@ td.rk2,td.rk3{color:var(--warn);font-weight:700;background:var(--warn-bg)}
   $('p-in').addEventListener('click',function(e){
     var t=e.target.closest('[data-who]'), k=e.target.closest('[data-k]'), d=e.target.closest('[data-d]'), a=e.target.closest('[data-act]');
     if(t){
-      who=+t.dataset.who; scr='pin'; pinBuf=''; pinMsg=''; pinFirst=''; flash='';
+      who=+t.dataset.who; scr='pin'; pinBuf=''; pinMsg=''; pinFirst=''; flash=''; flashBig=false;
       pinStep=ALL[who].pin?'enter':'set1';
     }else if(k) pinKey(k.dataset.k);
     else if(d){
       var p=ALL[who], n=+d.dataset.d;
       if(locked) return;
-      if(p.wish[n]) delete p.wish[n]; else p.wish[n]=1;
+      var rk0=riskAll();
+      if(p.wish[n]){
+        delete p.wish[n];
+        if(p.g==='SP'&&p.base&&p.base[n]&&rk0[n]>0) p.freed[n]=1;
+      }else{p.wish[n]=1; delete p.freed[n]}
       p.done=false; rebuild();
     }else if(a){
       if(a.dataset.act==='done'){
         var q=ALL[who]; q.done=true;
-        flash=thanksCount(q)>0?q.n+'さん、人が足りなくなりそうな日に入れる状態にしてくれて、ありがとうございます！！':'';
+        var fc=Object.keys(q.freed).length;
+        flashBig=fc>0;
+        flash=fc>0?q.n+'さん、休みを入れていた日を空けてくれて、本当に本当に本当にありがとうございます！！！！ とっっっても助かります！！！ 🙏🙏🙏':
+          (thanksCount(q)>0?q.n+'さん、人が足りなくなりそうな日に入れる状態にしてくれて、ありがとうございます！！':'');
       }
       scr='list';
     }else return;
