@@ -177,6 +177,20 @@ section { display: grid; gap: 20px; min-width: 0; }
 .mini i { background: var(--p-sub); opacity: .35; border-radius: 1px; }
 .mini i.a { background: var(--p-f2); opacity: 1; } .mini i.b { background: var(--p-f1); opacity: 1; } .mini i.c { background: var(--p-f3); opacity: 1; }
 
+/* 建物の図 */
+.roof { height: 12px; margin: 0 14px; background: var(--p-sub); opacity: .55; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.bld { border: var(--p-border); border-radius: var(--p-r); overflow: hidden; background: var(--p-card); }
+.fr { display: flex; align-items: center; gap: 6px; padding: 4px 6px; border-top: 1px solid var(--p-sub); }
+.fr:first-child { border-top: 0; }
+.ppl { display: flex; flex: 1; min-width: 0; justify-content: space-around; }
+.pp { width: 40px; display: flex; flex-direction: column; align-items: center; font-size: 9px; line-height: 1.25; color: var(--p-sub); }
+.pp svg { width: 20px; height: 22px; fill: currentColor; }
+.pp b { color: var(--p-fg); font-weight: 400; white-space: nowrap; }
+.pp i { font-style: normal; font-size: 8px; }
+.pp.me { color: var(--p-accent); }
+.pp.me b { color: var(--p-accent); font-weight: 700; }
+.pp.me svg { filter: drop-shadow(0 0 3px var(--p-accent)); }
+
 /* 流れ */
 .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; counter-reset: s; padding: 0; margin: 0; list-style: none; }
 .flow li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; counter-increment: s; position: relative; min-width: 0; }
@@ -209,6 +223,7 @@ td.rec, th.rec { background: var(--accent-soft); }
 @media (prefers-reduced-motion: no-preference) { .seg button { transition: background .15s; } }
 </style>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="pp" viewBox="0 0 20 22"><circle cx="10" cy="5" r="4.2"/><path d="M2 21c0-6 3-9.5 8-9.5s8 3.5 8 9.5z"/></symbol></svg>
 <div class="wrap">
 
 <header>
@@ -259,20 +274,27 @@ td.rec, th.rec { background: var(--accent-soft); }
       <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
         <div class="status"><span>9:41</span><span>●●● 5G</span></div>
         <div class="body">
-          <div class="title-row"><b>11月12日（木）</b><span class="chip">勤務</span></div>
-          <div class="win"><div class="row"><div class="grow"><h4>日勤</h4><span class="sub">8:30–17:00</span></div><span class="fl f1">1F</span></div></div>
-          <div class="win">
-            <h4>同じ1階の人</h4>
-            <div class="who"><span class="role h">ヘルパー</span><span class="grow">佐藤さん</span><span class="sub">日勤</span></div>
-            <div class="who"><span class="role n">看護師</span><span class="grow">田中さん</span><span class="sub">日勤</span></div>
-            <div class="who"><span class="role h">ヘルパー</span><span class="grow">鈴木さん</span><span class="sub">遅番</span></div>
+          <div class="title-row"><b>11月12日（木）</b><span class="chip">1F 午前</span></div>
+          <div>
+            <div class="roof"></div>
+            <div class="bld">
+              <div class="fr"><span class="fl f3">3F</span><div class="ppl"><span class="pp"><svg><use href="#pp"/></svg><b>山田</b><i>前</i></span><span class="pp"><svg><use href="#pp"/></svg><b>中村</b><i>後</i></span></div></div>
+              <div class="fr"><span class="fl f2">2F</span><div class="ppl"><span class="pp"><svg><use href="#pp"/></svg><b>小川</b><i>前</i></span><span class="pp"><svg><use href="#pp"/></svg><b>木村</b><i>後</i></span><span class="pp"><svg><use href="#pp"/></svg><b>森</b><i>後</i></span></div></div>
+              <div class="fr"><span class="fl f1">1F</span><div class="ppl"><span class="pp me"><svg><use href="#pp"/></svg><b>自分</b><i>前</i></span><span class="pp"><svg><use href="#pp"/></svg><b>林</b><i>後</i></span><span class="pp"><svg><use href="#pp"/></svg><b>井上</b><i>後</i></span></div></div>
+            </div>
           </div>
-          <div class="win"><h4>この日の予定</h4><span class="sub">予定はありません</span></div>
-          <div class="btn ghost">＋ 予定を足す</div>
+          <div class="win">
+            <h4>ほかの職種</h4>
+            <div class="who"><span class="role h">常勤介護</span><span class="grow">高田</span><span class="sub">日1</span></div>
+            <div class="who"><span class="role h">常勤介護</span><span class="grow">石井</span><span class="sub">日2</span></div>
+            <div class="who"><span class="role h">夜勤</span><span class="grow">岡田</span><span class="sub">夜勤1</span></div>
+            <div class="who"><span class="role n">看護</span><span class="grow">松本</span><span class="sub">NS1</span></div>
+          </div>
+          <div class="sub" style="text-align:center">色つきが自分 ・ 前=午前 後=午後</div>
         </div>
         <div class="tabbar"><span><i>▦</i>月</span><span class="on"><i>☺</i>今日</span><span><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
       </div></div>
-      <figcaption><b>② 日ごとの詳細</b>その日の担当階と、同じ階で働くヘルパーさん・看護師さんが並びます。</figcaption>
+      <figcaption><b>② その日の職場</b>3階建ての建物に、その日いる非常勤の介護職員を階ごとに表示。自分は色つき、ほかの人は名前つき。違う職種は下の表に。</figcaption>
     </figure>
 
     <figure class="fig">
@@ -391,6 +413,7 @@ td.rec, th.rec { background: var(--accent-soft); }
       <li><b>読み取りの精度は、実物を見るまで保証できません。</b>手書き、小さい文字、色分けの多い表だと間違いが出ます。だから確認画面を必ず挟む設計にしています。</li>
       <li><b>Webアプリ方式で細かい動作（通知・保存の安定性など）は、iPhoneのバージョンで差が出ることがあります。</b>最初に小さい試作を入れて実機で確かめるのが安全です。</li>
       <li><b>病院の予定は、配慮が必要な個人情報です。</b>共有の初期設定は「送らない」にして、送る時に毎回選べる形を考えています。</li>
+      <li><b>同僚の名前を読み取るには、写真を読み取りサービスに送る方式が現実的です。</b>端末内だけで読む方式にもできますが、表の読み取りは精度が落ちると思います（推測）。職場の方針として問題がないか、確認しておくと安心です。</li>
     </ul>
   </div>
 </section>
@@ -401,11 +424,11 @@ td.rec, th.rec { background: var(--accent-soft); }
     <p>壁打ちしたいのは、この5つです。分かる所からで大丈夫。</p>
   </div>
   <ol class="qs">
-    <li><b>シフト表は何が載っていますか？</b><span>自分だけ？ 職場の全員分？ 全員分なら「同じ階の人」は自動で出せます。自分だけなら、スタッフ名簿を最初に作ります。</span></li>
+    <li><b>お母さんの行はどれ？</b><span>下段の「介護職員（非）」のブロックで合っていますか？ 自分の行を見つけるために、名前の書き方を知りたいです。</span></li>
     <li><b>勤務の種類と時間は？</b><span>日勤・早番・遅番など、実際の名前と時間を教えてください。固定なら選ぶだけになります。</span></li>
-    <li><b>担当階は、日ごとに変わりますか？ 月で決まりますか？</b><span>日ごとなら、日付を押した時に階も選ぶ形にします。</span></li>
+    <li><b>「SP」と「介護職員（非）」は同じ意味ですか？</b><span>アプリ内の呼び方を合わせます。出し分けたい略称が他にもあれば教えてください。</span></li>
     <li><b>ひとみに見せたい情報は、どこまで？</b><span>勤務だけ？ 通院の日時だけ？ 病院名まで？ ここで共有の初期設定が決まります。</span></li>
-    <li><b>シフト表の写真（個人名は隠して）を1枚見せてもらえますか？</b><span>読み取りの方針は、実物で決まります。いちばん効く一手です。</span></li>
+    <li><b>1月からの過去分を何枚か見せてもらえますか？</b><span>月ごとにレイアウトが変わるか、読み取りのテストができます。</span></li>
   </ol>
 </section>
 
