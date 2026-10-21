@@ -1,0 +1,460 @@
+<title>シフト手帳</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: 縦に読める提案書。中央に「画面イメージ」(iPhoneの枠5つ)、前後を文章と表で挟む。
+   ページ自体は落ち着いた配色にして、アプリの見た目は .phone[data-skin] だけで切り替える */
+:root {
+  --bg: #f4f6f8;
+  --fg: #1b2330;
+  --sub: #5b6676;
+  --line: #d9dee5;
+  --card: #ffffff;
+  --accent: #1d6a96;
+  --accent-soft: #e2eff6;
+  --warn: #b25b00;
+  --warn-soft: #fdf0dc;
+  --ok: #1f7a4d;
+  --f-body: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --f-head: "M PLUS Rounded 1c", "BIZ UDPGothic", "Hiragino Maru Gothic ProN", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12171e; --fg: #e8ecf1; --sub: #9aa6b6; --line: #2a333f; --card: #1a212b;
+    --accent: #6cb6dc; --accent-soft: #1b2f3c; --warn: #f0a85a; --warn-soft: #33260f; --ok: #62c796;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12171e; --fg: #e8ecf1; --sub: #9aa6b6; --line: #2a333f; --card: #1a212b;
+  --accent: #6cb6dc; --accent-soft: #1b2f3c; --warn: #f0a85a; --warn-soft: #33260f; --ok: #62c796;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--f-body); font-size: 16px; line-height: 1.75;
+  padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1040px; margin: 0 auto; display: grid; gap: 56px; }
+h1, h2, h3 { font-family: var(--f-head); line-height: 1.35; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(28px, 6vw, 42px); font-weight: 800; letter-spacing: .01em; }
+h2 { font-size: clamp(21px, 4vw, 26px); font-weight: 800; }
+h3 { font-size: 17px; font-weight: 700; }
+p { margin: 0; }
+.lead { color: var(--sub); max-width: 40em; margin-top: 12px; }
+.eyebrow { font-size: 12px; letter-spacing: .14em; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+section { display: grid; gap: 20px; min-width: 0; }
+.sec-head { display: grid; gap: 6px; }
+.sec-head p { color: var(--sub); max-width: 42em; }
+
+/* 結論 */
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.sum { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; min-width: 0; }
+.sum b { display: block; font-family: var(--f-head); font-size: 17px; margin-bottom: 6px; }
+.sum span { color: var(--sub); font-size: 15px; }
+
+/* 見た目の切り替え */
+.skinbar { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--card); }
+.seg button {
+  font: inherit; font-size: 14px; border: 0; background: none; color: var(--sub);
+  padding: 7px 16px; border-radius: 999px; cursor: pointer;
+}
+.seg button[aria-pressed="true"] { background: var(--accent); color: #fff; font-weight: 700; }
+.seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.note { font-size: 14px; color: var(--sub); }
+.tag-sample { display: inline-block; font-size: 12px; background: var(--warn-soft); color: var(--warn); padding: 1px 8px; border-radius: 4px; margin-right: 6px; font-weight: 700; }
+
+/* 画面イメージ */
+.phones { display: grid; grid-template-columns: repeat(auto-fit, minmax(262px, 1fr)); gap: 40px 20px; justify-items: center; }
+.fig { display: grid; gap: 12px; justify-items: center; min-width: 0; }
+.fig figcaption { max-width: 262px; font-size: 14px; color: var(--sub); line-height: 1.6; }
+.fig figcaption b { display: block; color: var(--fg); font-family: var(--f-head); font-size: 15px; margin-bottom: 2px; }
+
+.phone {
+  width: 262px; height: 548px; border-radius: 42px; padding: 8px;
+  background: #11151b; border: 1px solid #2c3440;
+  box-shadow: 0 18px 36px -18px rgba(10, 20, 40, .45);
+}
+.screen {
+  height: 100%; border-radius: 34px; overflow: hidden; position: relative;
+  background: var(--p-bg); color: var(--p-fg);
+  font-size: 11.5px; line-height: 1.45; display: flex; flex-direction: column;
+}
+.island { position: absolute; top: 9px; left: 50%; width: 74px; height: 20px; border-radius: 12px; background: #000; transform: translateX(-50%); z-index: 3; }
+.status { height: 38px; flex: none; padding: 12px 20px 0; display: flex; justify-content: space-between; font-size: 10.5px; font-weight: 700; }
+.body { padding: 4px 12px 10px; display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; }
+.tabbar { flex: none; display: grid; grid-template-columns: repeat(4, 1fr); padding: 7px 8px 14px; border-top: var(--p-hair); font-size: 9.5px; text-align: center; color: var(--p-sub); }
+.tabbar span.on { color: var(--p-accent); font-weight: 700; }
+.tabbar i { display: block; font-style: normal; font-size: 14px; line-height: 1.2; }
+
+/* 見た目ごとの色・角・枠 */
+.phone[data-skin="stylish"] {
+  --p-bg: #f7f8fb; --p-fg: #1a2233; --p-sub: #7a8496; --p-card: #ffffff;
+  --p-border: 1px solid #e3e7ee; --p-hair: 1px solid #e3e7ee; --p-r: 12px; --p-accent: #3257d6;
+  --p-f1: #e08a1e; --p-f2: #1a9d8f; --p-f3: #7a5bd1; --p-warn-bg: #fff3dc; --p-warn: #a85a00; --p-ok: #1f8a57;
+  --p-head-font: var(--f-head); --p-shadow: 0 1px 2px rgba(20, 30, 60, .06);
+}
+.phone[data-skin="dq"] {
+  --p-bg: #000; --p-fg: #fff; --p-sub: #b8c0ff; --p-card: #0b1170;
+  --p-border: 2px solid #fff; --p-hair: 2px solid #fff; --p-r: 5px; --p-accent: #ffe14d;
+  --p-f1: #ff9a3c; --p-f2: #4de0c0; --p-f3: #c9a0ff; --p-warn-bg: #5a1010; --p-warn: #ffe14d; --p-ok: #7dff9a;
+  --p-head-font: var(--f-body); --p-shadow: none;
+}
+.win { background: var(--p-card); border: var(--p-border); border-radius: var(--p-r); padding: 8px 10px; box-shadow: var(--p-shadow); min-width: 0; }
+.win h4 { margin: 0 0 4px; font-family: var(--p-head-font); font-size: 12px; font-weight: 700; }
+.sub { color: var(--p-sub); font-size: 10.5px; }
+.row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.grow { flex: 1; min-width: 0; }
+.right { margin-left: auto; text-align: right; }
+.title-row { display: flex; align-items: baseline; justify-content: space-between; padding: 0 2px; }
+.title-row b { font-family: var(--p-head-font); font-size: 16px; }
+.chip { display: inline-block; padding: 0 7px; border-radius: 999px; font-size: 10px; font-weight: 700; background: var(--p-accent); color: #fff; }
+.phone[data-skin="dq"] .chip { background: transparent; color: var(--p-accent); border: 1px solid var(--p-accent); border-radius: 3px; }
+.fl { display: inline-block; min-width: 24px; text-align: center; font-weight: 800; font-size: 10px; line-height: 15px; border-radius: 4px; color: #fff; padding: 0 4px; }
+.phone[data-skin="dq"] .fl { color: #000; }
+.fl.f1 { background: var(--p-f1); } .fl.f2 { background: var(--p-f2); } .fl.f3 { background: var(--p-f3); }
+
+/* カレンダー */
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+.cal .dow { font-size: 9.5px; color: var(--p-sub); padding-bottom: 2px; }
+.cal .dow.sun { color: #e0607a; } .cal .dow.sat { color: #5a8fe0; }
+.cal .c { min-height: 41px; border-radius: 6px; padding: 2px 0 1px; display: flex; flex-direction: column; align-items: center; gap: 1px; font-size: 10.5px; }
+.phone[data-skin="stylish"] .cal .c.work { background: #fff; box-shadow: inset 0 0 0 1px #e3e7ee; }
+.phone[data-skin="dq"] .cal .c.work { box-shadow: inset 0 0 0 1px #5560d8; }
+.cal .c.today { outline: 2px solid var(--p-accent); outline-offset: -2px; }
+.cal .c .fl { min-width: 22px; font-size: 9.5px; line-height: 14px; }
+.cal .c .ap { font-size: 8.5px; line-height: 12px; padding: 0 4px; border-radius: 3px; background: var(--p-warn-bg); color: var(--p-warn); font-weight: 700; }
+.cal .c .ap.clash { outline: 1px solid var(--p-warn); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 10px; color: var(--p-sub); }
+
+/* 一緒に働く人 */
+.who { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-top: 1px dashed var(--p-sub); }
+.who:first-of-type { border-top: 0; }
+.role { font-size: 9.5px; font-weight: 700; padding: 0 6px; border-radius: 4px; line-height: 15px; border: 1px solid currentColor; }
+.role.h { color: var(--p-f2); } .role.n { color: var(--p-f1); }
+.phone[data-skin="stylish"] .role.h { color: #137a6f; } .phone[data-skin="stylish"] .role.n { color: #b86a0a; }
+.btn { display: block; text-align: center; padding: 8px; border-radius: var(--p-r); font-weight: 700; background: var(--p-accent); color: #fff; font-size: 11.5px; }
+.phone[data-skin="dq"] .btn { background: transparent; color: var(--p-accent); border: 2px solid var(--p-accent); }
+.btn.ghost { background: transparent; color: var(--p-accent); border: 1px dashed var(--p-accent); }
+
+/* 読み取り確認 */
+.photo { height: 82px; border-radius: var(--p-r); position: relative; overflow: hidden; border: var(--p-border);
+  background: repeating-linear-gradient(0deg, transparent 0 11px, rgba(130,140,170,.35) 11px 12px), repeating-linear-gradient(90deg, transparent 0 28px, rgba(130,140,170,.35) 28px 29px), var(--p-card); }
+.photo::after { content: ""; position: absolute; inset: 8px; border: 2px solid var(--p-accent); border-radius: 6px; }
+.photo span { position: absolute; z-index: 1; right: 12px; bottom: 11px; font-size: 9.5px; font-weight: 700; background: var(--p-accent); color: #fff; padding: 0 6px; border-radius: 3px; }
+.phone[data-skin="dq"] .photo span { color: #000; }
+.rd { display: grid; grid-template-columns: 38px 1fr auto; gap: 6px; align-items: center; padding: 4px 0; border-top: 1px dashed var(--p-sub); }
+.rd:first-of-type { border-top: 0; }
+.rd.q { background: var(--p-warn-bg); margin: 0 -6px; padding: 4px 6px; border-radius: 4px; border-top: 0; }
+.ok { color: var(--p-ok); font-weight: 700; }
+.qm { color: var(--p-warn); font-weight: 700; }
+
+/* 予定 */
+.ev { display: grid; grid-template-columns: 36px 1fr; gap: 8px; align-items: start; }
+.ev .d { text-align: center; font-family: var(--p-head-font); font-weight: 700; font-size: 15px; line-height: 1.1; }
+.ev .d small { display: block; font-size: 9.5px; color: var(--p-sub); font-weight: 400; }
+.who-tag { display: inline-block; font-size: 9.5px; font-weight: 700; padding: 0 6px; border-radius: 3px; margin-right: 4px; background: var(--p-warn-bg); color: var(--p-warn); }
+.who-tag.me { background: var(--p-accent); color: #fff; }
+.phone[data-skin="dq"] .who-tag.me { color: #000; }
+.warnbox { background: var(--p-warn-bg); color: var(--p-warn); border-radius: 5px; padding: 3px 7px; font-size: 10px; margin-top: 3px; font-weight: 700; }
+
+/* 共有 */
+.opt { display: grid; grid-template-columns: 14px 1fr; gap: 6px; padding: 5px 0; border-top: 1px dashed var(--p-sub); }
+.opt:first-of-type { border-top: 0; }
+.opt b { font-size: 11.5px; }
+.phone[data-skin="dq"] .opt.sel::before { content: "▶"; color: var(--p-accent); }
+.phone[data-skin="stylish"] .opt.sel::before { content: "●"; color: var(--p-accent); }
+.opt::before { content: ""; }
+.tog { width: 30px; height: 17px; border-radius: 9px; background: var(--p-sub); position: relative; flex: none; opacity: .6; }
+.tog::after { content: ""; position: absolute; width: 13px; height: 13px; border-radius: 50%; background: #fff; top: 2px; left: 2px; }
+.mini { height: 54px; border-radius: 4px; border: var(--p-border); display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; padding: 3px; }
+.mini i { background: var(--p-sub); opacity: .35; border-radius: 1px; }
+.mini i.a { background: var(--p-f2); opacity: 1; } .mini i.b { background: var(--p-f1); opacity: 1; } .mini i.c { background: var(--p-f3); opacity: 1; }
+
+/* 流れ */
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; counter-reset: s; padding: 0; margin: 0; list-style: none; }
+.flow li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; counter-increment: s; position: relative; min-width: 0; }
+.flow li::before { content: counter(s); font-family: var(--f-head); font-weight: 800; color: var(--accent); font-size: 22px; display: block; line-height: 1; margin-bottom: 8px; }
+.flow b { font-family: var(--f-head); display: block; margin-bottom: 4px; }
+.flow span { color: var(--sub); font-size: 15px; }
+
+/* 表 */
+.tw { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 15px; }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-family: var(--f-head); font-size: 14px; color: var(--sub); background: var(--bg); white-space: nowrap; }
+td.rec, th.rec { background: var(--accent-soft); }
+.pill { display: inline-block; font-size: 12px; font-weight: 700; padding: 0 8px; border-radius: 999px; background: var(--accent); color: #fff; margin-left: 4px; }
+
+/* 注意・質問 */
+.callout { background: var(--warn-soft); border-radius: 12px; padding: 18px 20px; display: grid; gap: 8px; }
+.callout h3 { color: var(--warn); }
+.callout ul, .qs { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; }
+.qs { counter-reset: q; list-style: none; padding: 0; gap: 10px; }
+.qs li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px 14px 48px; position: relative; }
+.qs li::before { counter-increment: q; content: "Q" counter(q); position: absolute; left: 14px; top: 14px; font-family: var(--f-head); font-weight: 800; color: var(--accent); }
+.qs b { font-family: var(--f-head); }
+.qs span { display: block; color: var(--sub); font-size: 14.5px; }
+.phases { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.ph { border-left: 4px solid var(--accent); background: var(--card); padding: 14px 16px; border-radius: 0 12px 12px 0; border-top: 1px solid var(--line); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); min-width: 0; }
+.ph h3 { margin-bottom: 4px; }
+.ph p { color: var(--sub); font-size: 15px; }
+@media (prefers-reduced-motion: no-preference) { .seg button { transition: background .15s; } }
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">企画案 ・ たたき台</div>
+  <h1>シフト手帳（仮）</h1>
+  <p class="lead">パートの勤務を月ごとに入れて、担当階と一緒に働く人がすぐ分かる。父の通院も自分の通院も同じ画面に置いて、できあがったらひとみに送れる。まずは中身を固める用の提案です。お母さんがiPhone Airで使い、ひとみが受け取る、という前提で書いています（違っていたら直します）。</p>
+</header>
+
+<section>
+  <div class="summary">
+    <div class="sum"><b>入力は「1タップ」</b><span>勤務時間は固定なので、日付を押して「日勤」などを選ぶだけ。担当階は1階・2階・3階の色分けで見分けます。</span></div>
+    <div class="sum"><b>撮影で自動入力</b><span>配付シフト表を撮ると候補を作り、あやしい所だけ黄色で確認。最後は人の目で「OK」を押す形にします。</span></div>
+    <div class="sum"><b>共有は段階的に</b><span>最初は画像で送る、次にカレンダーに取り込めるファイル、最後に自動更新。通院の詳細は初期設定では送りません。</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2>画面イメージ</h2>
+    <p><span class="tag-sample">サンプル</span>名前・時間・日付はすべて仮です。下のボタンで見た目の方向性を2つ見比べられます（外観は中身が固まってから決めましょう）。</p>
+  </div>
+  <div class="skinbar">
+    <div class="seg" role="group" aria-label="見た目の切り替え">
+      <button type="button" id="skin-stylish" aria-pressed="true">スタイリッシュ</button>
+      <button type="button" id="skin-dq" aria-pressed="false">ドラクエ風</button>
+    </div>
+    <span class="note">フォントはBIZ UDPゴシックとM PLUS Rounded 1cで作っています。</span>
+  </div>
+
+  <div class="phones">
+
+    <figure class="fig">
+      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+        <div class="body">
+          <div class="title-row"><b>2026年11月</b><span class="sub" id="m-sum"></span></div>
+          <div class="cal" id="cal"></div>
+          <div class="legend"><span><i class="fl f1">1F</i> 1階</span><span><i class="fl f2">2F</i> 2階</span><span><i class="fl f3">3F</i> 3階</span><span><i class="ap" style="font-style:normal;font-size:9px;padding:0 4px;border-radius:3px;background:var(--p-warn-bg);color:var(--p-warn);font-weight:700">父</i> 通院</span></div>
+          <div class="win"><div class="row"><div class="grow"><h4>次の勤務</h4><span>11/2（月） 日勤 <span class="sub">8:30–17:00</span></span></div><span class="fl f2">2F</span></div></div>
+          <div class="win" style="border-color:var(--p-warn)"><div class="row"><div class="grow"><span class="qm">24日は勤務と通院が重なっています</span></div></div></div>
+        </div>
+        <div class="tabbar"><span class="on"><i>▦</i>月</span><span><i>☺</i>今日</span><span><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
+      </div></div>
+      <figcaption><b>① 月のカレンダー</b>勤務日に担当階のバッジ。通院の日は「父」「自」の札が付き、勤務と重なると教えてくれます。</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+        <div class="body">
+          <div class="title-row"><b>11月12日（木）</b><span class="chip">勤務</span></div>
+          <div class="win"><div class="row"><div class="grow"><h4>日勤</h4><span class="sub">8:30–17:00</span></div><span class="fl f1">1F</span></div></div>
+          <div class="win">
+            <h4>同じ1階の人</h4>
+            <div class="who"><span class="role h">ヘルパー</span><span class="grow">佐藤さん</span><span class="sub">日勤</span></div>
+            <div class="who"><span class="role n">看護師</span><span class="grow">田中さん</span><span class="sub">日勤</span></div>
+            <div class="who"><span class="role h">ヘルパー</span><span class="grow">鈴木さん</span><span class="sub">遅番</span></div>
+          </div>
+          <div class="win"><h4>この日の予定</h4><span class="sub">予定はありません</span></div>
+          <div class="btn ghost">＋ 予定を足す</div>
+        </div>
+        <div class="tabbar"><span><i>▦</i>月</span><span class="on"><i>☺</i>今日</span><span><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
+      </div></div>
+      <figcaption><b>② 日ごとの詳細</b>その日の担当階と、同じ階で働くヘルパーさん・看護師さんが並びます。</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+        <div class="body">
+          <div class="title-row"><b>読み取り結果</b><span class="sub">12件 / 要確認 1件</span></div>
+          <div class="photo"><span>撮影済み</span></div>
+          <div class="win">
+            <div class="rd"><span>2(月)</span><span>日勤</span><span class="ok">2F ✓</span></div>
+            <div class="rd"><span>4(水)</span><span>日勤</span><span class="ok">2F ✓</span></div>
+            <div class="rd q"><span>5(木)</span><span>日勤 <span class="sub">文字がにじみ</span></span><span class="qm">3F？</span></div>
+            <div class="rd"><span>9(月)</span><span>日勤</span><span class="ok">1F ✓</span></div>
+            <div class="rd"><span>11(水)</span><span>日勤</span><span class="ok">1F ✓</span></div>
+            <div class="rd"><span>12(木)</span><span>日勤</span><span class="ok">1F ✓</span></div>
+          </div>
+          <div class="btn">この内容で入れる（12件）</div>
+          <div class="sub" style="text-align:center">黄色の行だけ直せばOK</div>
+        </div>
+        <div class="tabbar"><span><i>▦</i>月</span><span><i>☺</i>今日</span><span class="on"><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
+      </div></div>
+      <figcaption><b>③ 撮影して読み取り</b>自信のない所だけ黄色で止まります。全部入れる前に必ず確認できます。</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+        <div class="body">
+          <div class="title-row"><b>通院・予定</b><span class="chip">＋ 追加</span></div>
+          <div class="row"><span class="chip">すべて</span><span class="sub">父</span><span class="sub">自分</span></div>
+          <div class="win"><div class="ev"><div class="d">6<small>金</small></div><div><span class="who-tag">父</span><b>○○病院 整形外科</b><div class="sub">10:30 ・ 送迎あり ・ 保険証</div></div></div></div>
+          <div class="win"><div class="ev"><div class="d">13<small>金</small></div><div><span class="who-tag me">自分</span><b>△△クリニック</b><div class="sub">14:00 ・ お薬手帳</div></div></div></div>
+          <div class="win"><div class="ev"><div class="d">20<small>金</small></div><div><span class="who-tag">父</span><b>リハビリ</b><div class="sub">9:30 ・ 送迎あり</div></div></div></div>
+          <div class="win" style="border-color:var(--p-warn)"><div class="ev"><div class="d">24<small>火</small></div><div><span class="who-tag">父</span><b>○○病院 内科</b><div class="sub">11:00</div><div class="warnbox">この日は日勤（2F）と重なっています</div></div></div></div>
+        </div>
+        <div class="tabbar"><span><i>▦</i>月</span><span><i>☺</i>今日</span><span class="on"><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
+      </div></div>
+      <figcaption><b>④ 父の通院・自分の通院</b>「誰の予定か」で色分け。時間・持ち物・送迎のメモも書けます。</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+        <div class="body">
+          <div class="title-row"><b>ひとみに送る</b></div>
+          <div class="mini" id="mini"></div>
+          <div class="win">
+            <div class="opt sel"><span></span><div><b>画像で送る</b><div class="sub">今月のシフト表を1枚の画像に。LINEやメッセージですぐ</div></div></div>
+            <div class="opt"><span></span><div><b>カレンダー用ファイル</b><div class="sub">タップで相手のカレンダーに取り込めます</div></div></div>
+            <div class="opt"><span></span><div><b>自動で更新（購読）</b><div class="sub">変更が相手のカレンダーに自動で反映</div></div></div>
+          </div>
+          <div class="win">
+            <div class="row"><div class="grow"><b>通院の予定も送る</b><div class="sub">オフの時は「予定あり」とだけ表示</div></div><span class="tog"></span></div>
+          </div>
+          <div class="btn">送る</div>
+        </div>
+        <div class="tabbar"><span><i>▦</i>月</span><span><i>☺</i>今日</span><span><i>✚</i>予定</span><span class="on"><i>➤</i>送る</span></div>
+      </div></div>
+      <figcaption><b>⑤ 共有</b>通院の詳細はオフが初期設定。病院名や病名は、送りたい時だけ送ります。</figcaption>
+    </figure>
+
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2>撮影から入力までの流れ</h2>
+    <p>順番に意味があるので番号を振っています。</p>
+  </div>
+  <ol class="flow">
+    <li><b>撮る</b><span>配付のシフト表をカメラで撮影。斜めでも、枠に合わせれば補正します。</span></li>
+    <li><b>読む</b><span>AIが表を読んで、自分の名前の行と、同じ日の他の人を拾います。</span></li>
+    <li><b>確認する</b><span>自信のない日は黄色で止めて、写真と見比べながら直せます。</span></li>
+    <li><b>入る</b><span>OKを押すと、1か月分がカレンダーに入ります。</span></li>
+  </ol>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2>ひとみに共有する方法</h2>
+    <p>「カレンダーごと」か「シフト表送信」かは、手間と便利さのバランスです。わたしのおすすめは、A→Bの順で始めて、必要になったらCです。</p>
+  </div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>方法</th><th>受け取る側</th><th>自動更新</th><th>ひとことで</th></tr></thead>
+      <tbody>
+        <tr><td class="rec"><b>A. 画像・PDFで送る</b><span class="pill">最初はこれ</span></td><td>LINEなどで見るだけ</td><td>なし</td><td>いちばん簡単で壊れにくい。変更があれば送り直し。</td></tr>
+        <tr><td class="rec"><b>B. カレンダー用ファイル（.ics）</b><span class="pill">次に</span></td><td>タップでカレンダーに取り込み</td><td>なし</td><td>ひとみのカレンダーに予定として入る。iCloudの共有カレンダーに取り込めば、家族で共有も可能。</td></tr>
+        <tr><td><b>C. 購読カレンダー</b></td><td>URLを登録すると自動で反映</td><td>あり</td><td>一番ラク。ただしデータを置くサーバーが必要で、URLを知っている人には見える点に注意。</td></tr>
+        <tr><td><b>D. アプリ内で閲覧共有</b></td><td>同じアプリを入れる</td><td>あり</td><td>ログインや保存先が必要で、手間が一番大きい。</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2>作り方の選択肢</h2>
+    <p>iPhone Airで使うには、大きく2通りあります。</p>
+  </div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>方式</th><th>できること</th><th>気をつける所</th></tr></thead>
+      <tbody>
+        <tr><td class="rec"><b>ホーム画面に置くWebアプリ</b><span class="pill">おすすめ</span></td><td>アプリのように起動、カメラで撮影、通院の予定、画像・ファイル共有。App Store審査なしで、ここで作ってすぐ試せる。</td><td>iPhoneの標準カレンダーに直接書き込めない（Bのファイル経由になる）。データは端末内に保存するので、バックアップの仕組みも付けたい。</td></tr>
+        <tr><td><b>ネイティブのiPhoneアプリ</b></td><td>標準カレンダーへ直接書き込み、通知の自由度が高い。</td><td>Macでの開発環境と、Apple Developer Program（有料・年額）が必要。ひとみの環境次第で、作るハードルが一段上がる。</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="callout">
+    <h3>正直に言うと、まだ分からないところ</h3>
+    <ul>
+      <li><b>読み取りの精度は、実物を見るまで保証できません。</b>手書き、小さい文字、色分けの多い表だと間違いが出ます。だから確認画面を必ず挟む設計にしています。</li>
+      <li><b>Webアプリ方式で細かい動作（通知・保存の安定性など）は、iPhoneのバージョンで差が出ることがあります。</b>最初に小さい試作を入れて実機で確かめるのが安全です。</li>
+      <li><b>病院の予定は、配慮が必要な個人情報です。</b>共有の初期設定は「送らない」にして、送る時に毎回選べる形を考えています。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2>ここから決めたいこと</h2>
+    <p>壁打ちしたいのは、この5つです。分かる所からで大丈夫。</p>
+  </div>
+  <ol class="qs">
+    <li><b>シフト表は何が載っていますか？</b><span>自分だけ？ 職場の全員分？ 全員分なら「同じ階の人」は自動で出せます。自分だけなら、スタッフ名簿を最初に作ります。</span></li>
+    <li><b>勤務の種類と時間は？</b><span>日勤・早番・遅番など、実際の名前と時間を教えてください。固定なら選ぶだけになります。</span></li>
+    <li><b>担当階は、日ごとに変わりますか？ 月で決まりますか？</b><span>日ごとなら、日付を押した時に階も選ぶ形にします。</span></li>
+    <li><b>ひとみに見せたい情報は、どこまで？</b><span>勤務だけ？ 通院の日時だけ？ 病院名まで？ ここで共有の初期設定が決まります。</span></li>
+    <li><b>シフト表の写真（個人名は隠して）を1枚見せてもらえますか？</b><span>読み取りの方針は、実物で決まります。いちばん効く一手です。</span></li>
+  </ol>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2>進め方の案</h2>
+  </div>
+  <div class="phases">
+    <div class="ph"><h3>第1段階</h3><p>手入力でシフトと通院を入れる。月カレンダー、日の詳細、画像で共有。</p></div>
+    <div class="ph"><h3>第2段階</h3><p>撮影で読み取り。確認画面と、同じ階の人の自動表示。</p></div>
+    <div class="ph"><h3>第3段階</h3><p>カレンダー用ファイル、必要なら購読。外観はここでドラクエ風か、スタイリッシュに決めて仕上げる。</p></div>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function () {
+  var shifts = {2:2,4:2,5:3,9:1,11:1,12:1,16:3,18:3,19:3,24:2,26:2,27:2};
+  var appts = {6:['父'],13:['自'],20:['父'],24:['父']};
+  var cal = document.getElementById('cal');
+  var h = '';
+  ['日','月','火','水','木','金','土'].forEach(function (d, i) {
+    h += '<div class="dow ' + (i === 0 ? 'sun' : i === 6 ? 'sat' : '') + '">' + d + '</div>';
+  });
+  for (var d = 1; d <= 30; d++) {
+    var f = shifts[d], a = appts[d];
+    h += '<div class="c' + (f ? ' work' : '') + '"><span>' + d + '</span>' +
+      (f ? '<span class="fl f' + f + '">' + f + 'F</span>' : '') +
+      (a ? '<span class="ap' + (f ? ' clash' : '') + '">' + a[0] + '</span>' : '') + '</div>';
+  }
+  cal.innerHTML = h;
+  var cnt = Object.keys(shifts).length;
+  document.getElementById('m-sum').textContent = '勤務 ' + cnt + '日';
+  var mini = document.getElementById('mini'), m = '';
+  for (var i = 0; i < 35; i++) {
+    var day = i - 0 + 1, f2 = shifts[day];
+    m += '<i' + (f2 && day <= 30 ? ' class="' + ['', 'b', 'a', 'c'][f2] + '"' : '') + '></i>';
+  }
+  mini.innerHTML = m;
+
+  var phones = document.querySelectorAll('.phone');
+  var bS = document.getElementById('skin-stylish'), bD = document.getElementById('skin-dq');
+  function setSkin(s) {
+    phones.forEach(function (p) { p.setAttribute('data-skin', s); });
+    bS.setAttribute('aria-pressed', s === 'stylish');
+    bD.setAttribute('aria-pressed', s === 'dq');
+  }
+  bS.addEventListener('click', function () { setSkin('stylish'); });
+  bD.addEventListener('click', function () { setSkin('dq'); });
+})();
+</script>
