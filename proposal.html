@@ -190,6 +190,15 @@ section { display: grid; gap: 20px; min-width: 0; }
 .pp.me { color: var(--p-accent); }
 .pp.me b { color: var(--p-accent); font-weight: 700; }
 .pp.me svg { filter: drop-shadow(0 0 3px var(--p-accent)); }
+.pp.am { width: 54px; opacity: .85; }
+.pp.am svg { width: 15px; height: 17px; }
+.pp.am i { font-size: 8px; }
+.pp.pm { flex: 1; width: auto; min-width: 0; flex-direction: row; justify-content: center; gap: 7px; padding: 5px 6px; border-radius: 7px; background: var(--p-bg); border: 1px solid var(--p-sub); }
+.pp.pm svg { width: 25px; height: 28px; flex: none; }
+.pp.pm .tx { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.pp.pm b { font-size: 12px; }
+.pp.pm i { font-size: 9px; }
+.pp.pm.me { border: 2px solid var(--p-accent); background: var(--p-card); }
 
 /* 流れ */
 .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; counter-reset: s; padding: 0; margin: 0; list-style: none; }
@@ -234,7 +243,7 @@ td.rec, th.rec { background: var(--accent-soft); }
 
 <section>
   <div class="summary">
-    <div class="sum"><b>入力は「1タップ」</b><span>勤務時間は固定なので、日付を押して「日勤」などを選ぶだけ。担当階は1階・2階・3階の色分けで見分けます。</span></div>
+    <div class="sum"><b>入力は「1タップ」</b><span>お母さんは午後固定なので、日付を押して担当階（1〜3階）を選ぶだけ。階は色分けで見分けます。</span></div>
     <div class="sum"><b>撮影で自動入力</b><span>配付シフト表を撮ると候補を作り、あやしい所だけ黄色で確認。最後は人の目で「OK」を押す形にします。</span></div>
     <div class="sum"><b>共有は段階的に</b><span>最初は画像で送る、次にカレンダーに取り込めるファイル、最後に自動更新。通院の詳細は初期設定では送りません。</span></div>
   </div>
@@ -262,7 +271,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="title-row"><b>2026年11月</b><span class="sub" id="m-sum"></span></div>
           <div class="cal" id="cal"></div>
           <div class="legend"><span><i class="fl f1">1F</i> 1階</span><span><i class="fl f2">2F</i> 2階</span><span><i class="fl f3">3F</i> 3階</span><span><i class="ap" style="font-style:normal;font-size:9px;padding:0 4px;border-radius:3px;background:var(--p-warn-bg);color:var(--p-warn);font-weight:700">父</i> 通院</span></div>
-          <div class="win"><div class="row"><div class="grow"><h4>次の勤務</h4><span>11/2（月） 日勤 <span class="sub">8:30–17:00</span></span></div><span class="fl f2">2F</span></div></div>
+          <div class="win"><div class="row"><div class="grow"><h4>次の勤務</h4><span>11/2（月） 午後 <span class="sub">13:00–19:00</span></span></div><span class="fl f2">2F</span></div></div>
           <div class="win" style="border-color:var(--p-warn)"><div class="row"><div class="grow"><span class="qm">24日は勤務と通院が重なっています</span></div></div></div>
         </div>
         <div class="tabbar"><span class="on"><i>▦</i>月</span><span><i>☺</i>今日</span><span><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
@@ -274,13 +283,13 @@ td.rec, th.rec { background: var(--accent-soft); }
       <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
         <div class="status"><span>9:41</span><span>●●● 5G</span></div>
         <div class="body">
-          <div class="title-row"><b>11月12日（木）</b><span class="chip">1F 午前</span></div>
+          <div class="title-row"><b>11月12日（木）</b><span class="chip">1F 午後</span></div>
           <div>
             <div class="roof"></div>
             <div class="bld">
-              <div class="fr"><span class="fl f3">3F</span><div class="ppl"><span class="pp"><svg><use href="#pp"/></svg><b>山田</b><i>前</i></span><span class="pp"><svg><use href="#pp"/></svg><b>中村</b><i>後</i></span></div></div>
-              <div class="fr"><span class="fl f2">2F</span><div class="ppl"><span class="pp"><svg><use href="#pp"/></svg><b>小川</b><i>前</i></span><span class="pp"><svg><use href="#pp"/></svg><b>木村</b><i>後</i></span><span class="pp"><svg><use href="#pp"/></svg><b>森</b><i>後</i></span></div></div>
-              <div class="fr"><span class="fl f1">1F</span><div class="ppl"><span class="pp me"><svg><use href="#pp"/></svg><b>自分</b><i>前</i></span><span class="pp"><svg><use href="#pp"/></svg><b>林</b><i>後</i></span><span class="pp"><svg><use href="#pp"/></svg><b>井上</b><i>後</i></span></div></div>
+              <div class="fr"><span class="fl f3">3F</span><span class="pp am"><svg><use href="#pp"/></svg><b>山田</b><i>午前</i></span><span class="pp pm"><svg><use href="#pp"/></svg><span class="tx"><b>中村</b><i>午後</i></span></span></div>
+              <div class="fr"><span class="fl f2">2F</span><span class="pp am"><svg><use href="#pp"/></svg><b>小川</b><i>午前</i></span><span class="pp pm"><svg><use href="#pp"/></svg><span class="tx"><b>木村</b><i>午後</i></span></span></div>
+              <div class="fr"><span class="fl f1">1F</span><span class="pp am"><svg><use href="#pp"/></svg><b>林</b><i>午前</i></span><span class="pp pm me"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>午後</i></span></span></div>
             </div>
           </div>
           <div class="win">
@@ -290,11 +299,11 @@ td.rec, th.rec { background: var(--accent-soft); }
             <div class="who"><span class="role h">夜勤</span><span class="grow">岡田</span><span class="sub">夜勤1</span></div>
             <div class="who"><span class="role n">看護</span><span class="grow">松本</span><span class="sub">NS1</span></div>
           </div>
-          <div class="sub" style="text-align:center">色つきが自分 ・ 前=午前 後=午後</div>
+          <div class="sub" style="text-align:center">色つきが自分（午後 13:00–19:00）・ 午前は参考</div>
         </div>
         <div class="tabbar"><span><i>▦</i>月</span><span class="on"><i>☺</i>今日</span><span><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
       </div></div>
-      <figcaption><b>② その日の職場</b>3階建ての建物に、その日いる非常勤の介護職員を階ごとに表示。自分は色つき、ほかの人は名前つき。違う職種は下の表に。</figcaption>
+      <figcaption><b>② その日の職場</b>各階に午前1人・午後1人。お母さんは午後固定なので、午後の枠を大きく、午前は参考として小さく表示。自分は色つき、ほかの人は名前つき。違う職種は下の表に。</figcaption>
     </figure>
 
     <figure class="fig">
@@ -304,12 +313,12 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="title-row"><b>読み取り結果</b><span class="sub">12件 / 要確認 1件</span></div>
           <div class="photo"><span>撮影済み</span></div>
           <div class="win">
-            <div class="rd"><span>2(月)</span><span>日勤</span><span class="ok">2F ✓</span></div>
-            <div class="rd"><span>4(水)</span><span>日勤</span><span class="ok">2F ✓</span></div>
-            <div class="rd q"><span>5(木)</span><span>日勤 <span class="sub">文字がにじみ</span></span><span class="qm">3F？</span></div>
-            <div class="rd"><span>9(月)</span><span>日勤</span><span class="ok">1F ✓</span></div>
-            <div class="rd"><span>11(水)</span><span>日勤</span><span class="ok">1F ✓</span></div>
-            <div class="rd"><span>12(木)</span><span>日勤</span><span class="ok">1F ✓</span></div>
+            <div class="rd"><span>2(月)</span><span>午後</span><span class="ok">2F ✓</span></div>
+            <div class="rd"><span>4(水)</span><span>午後</span><span class="ok">2F ✓</span></div>
+            <div class="rd q"><span>5(木)</span><span>午後 <span class="sub">文字がにじみ</span></span><span class="qm">3F？</span></div>
+            <div class="rd"><span>9(月)</span><span>午後</span><span class="ok">1F ✓</span></div>
+            <div class="rd"><span>11(水)</span><span>午後</span><span class="ok">1F ✓</span></div>
+            <div class="rd"><span>12(木)</span><span>午後</span><span class="ok">1F ✓</span></div>
           </div>
           <div class="btn">この内容で入れる（12件）</div>
           <div class="sub" style="text-align:center">黄色の行だけ直せばOK</div>
@@ -328,7 +337,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="win"><div class="ev"><div class="d">6<small>金</small></div><div><span class="who-tag">父</span><b>○○病院 整形外科</b><div class="sub">10:30 ・ 送迎あり ・ 保険証</div></div></div></div>
           <div class="win"><div class="ev"><div class="d">13<small>金</small></div><div><span class="who-tag me">自分</span><b>△△クリニック</b><div class="sub">14:00 ・ お薬手帳</div></div></div></div>
           <div class="win"><div class="ev"><div class="d">20<small>金</small></div><div><span class="who-tag">父</span><b>リハビリ</b><div class="sub">9:30 ・ 送迎あり</div></div></div></div>
-          <div class="win" style="border-color:var(--p-warn)"><div class="ev"><div class="d">24<small>火</small></div><div><span class="who-tag">父</span><b>○○病院 内科</b><div class="sub">11:00</div><div class="warnbox">この日は日勤（2F）と重なっています</div></div></div></div>
+          <div class="win" style="border-color:var(--p-warn)"><div class="ev"><div class="d">24<small>火</small></div><div><span class="who-tag">父</span><b>○○病院 内科</b><div class="sub">14:00</div><div class="warnbox">この日は午後勤務（2F）と重なっています</div></div></div></div>
         </div>
         <div class="tabbar"><span><i>▦</i>月</span><span><i>☺</i>今日</span><span class="on"><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
       </div></div>
@@ -425,7 +434,7 @@ td.rec, th.rec { background: var(--accent-soft); }
   </div>
   <ol class="qs">
     <li><b>お母さんの行はどれ？</b><span>下段の「介護職員（非）」のブロックで合っていますか？ 自分の行を見つけるために、名前の書き方を知りたいです。</span></li>
-    <li><b>勤務の種類と時間は？</b><span>日勤・早番・遅番など、実際の名前と時間を教えてください。固定なら選ぶだけになります。</span></li>
+    <li><b>午後に入らない日（休み・希望休・有休）は、どう扱いたい？</b><span>表の「休み」「希休」「有休」を、カレンダーに印として入れるかどうかを決めたいです。</span></li>
     <li><b>「SP」と「介護職員（非）」は同じ意味ですか？</b><span>アプリ内の呼び方を合わせます。出し分けたい略称が他にもあれば教えてください。</span></li>
     <li><b>ひとみに見せたい情報は、どこまで？</b><span>勤務だけ？ 通院の日時だけ？ 病院名まで？ ここで共有の初期設定が決まります。</span></li>
     <li><b>1月からの過去分を何枚か見せてもらえますか？</b><span>月ごとにレイアウトが変わるか、読み取りのテストができます。</span></li>
@@ -438,7 +447,7 @@ td.rec, th.rec { background: var(--accent-soft); }
   </div>
   <div class="phases">
     <div class="ph"><h3>第1段階</h3><p>手入力でシフトと通院を入れる。月カレンダー、日の詳細、画像で共有。</p></div>
-    <div class="ph"><h3>第2段階</h3><p>撮影で読み取り。確認画面と、同じ階の人の自動表示。</p></div>
+    <div class="ph"><h3>第2段階</h3><p>撮影で読み取り。確認画面と、その日の職場の自動表示。</p></div>
     <div class="ph"><h3>第3段階</h3><p>カレンダー用ファイル、必要なら購読。外観はここでドラクエ風か、スタイリッシュに決めて仕上げる。</p></div>
   </div>
 </section>
