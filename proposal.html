@@ -101,6 +101,7 @@ section { display: grid; gap: 20px; min-width: 0; }
   --p-f1: #e08a1e; --p-f2: #1a9d8f; --p-f3: #7a5bd1; --p-warn-bg: #fff3dc; --p-warn: #a85a00; --p-ok: #1f8a57;
   --p-head-font: var(--f-head); --p-shadow: 0 1px 2px rgba(20, 30, 60, .06);
   --p-today-bg: #e6ecfd; --p-me: #3257d6; --p-p1: #d6457a; --p-p2: #5a8f1f;
+  --pal1: #3257d6; --pal2: #d6457a; --pal3: #5a8f1f; --pal4: #d9432f; --pal5: #d9a400; --pal6: #1ea0d6; --pal7: #8a5a3c;
 }
 .phone[data-skin="dq"] {
   --p-bg: #000; --p-fg: #fff; --p-sub: #b8c0ff; --p-card: #0b1170;
@@ -108,6 +109,7 @@ section { display: grid; gap: 20px; min-width: 0; }
   --p-f1: #ff9a3c; --p-f2: #4de0c0; --p-f3: #c9a0ff; --p-warn-bg: #5a1010; --p-warn: #ffe14d; --p-ok: #7dff9a;
   --p-head-font: var(--f-body); --p-shadow: none;
   --p-today-bg: #1a22a8; --p-me: #ffe14d; --p-p1: #ff7ac8; --p-p2: #9dff7a;
+  --pal1: #ffe14d; --pal2: #ff7ac8; --pal3: #9dff7a; --pal4: #ff6b5e; --pal5: #ffb347; --pal6: #6fd8ff; --pal7: #d0a27a;
 }
 .win { background: var(--p-card); border: var(--p-border); border-radius: var(--p-r); padding: 8px 10px; box-shadow: var(--p-shadow); min-width: 0; }
 .win h4 { margin: 0 0 4px; font-family: var(--p-head-font); font-size: 12px; font-weight: 700; }
@@ -234,6 +236,24 @@ section { display: grid; gap: 20px; min-width: 0; }
 .wk .fl { min-width: 0; padding: 0 2px; font-size: 9px; line-height: 15px; font-style: normal; }
 .wk .rest { color: var(--p-sub); font-size: 9px; }
 
+/* スワイプの目印・重ね表示・色の選択 */
+.pager { display: flex; justify-content: center; gap: 5px; }
+.pager i { width: 6px; height: 6px; border-radius: 3px; background: var(--p-sub); opacity: .4; }
+.pager i.on { width: 16px; background: var(--p-accent); opacity: 1; }
+.pc.off { opacity: .55; border-style: dashed; }
+.dots { display: flex; justify-content: center; gap: 2px; margin-top: 3px; }
+.dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--pc); }
+.dots i.me { --pc: var(--p-me); } .dots i.p1 { --pc: var(--p-p1); } .dots i.p2 { --pc: var(--p-p2); }
+.crow { display: flex; align-items: center; gap: 7px; padding: 5px 0; border-top: 1px dashed var(--p-sub); }
+.crow:first-of-type { border-top: 0; }
+.crow.me { --pc: var(--p-me); } .crow.p1 { --pc: var(--p-p1); } .crow.p2 { --pc: var(--p-p2); }
+.crow svg { flex: none; width: 24px; height: 24px; padding: 4px; border-radius: 50%; background: var(--pc); fill: #fff; }
+.phone[data-skin="dq"] .crow svg { fill: #000; }
+.crow b { width: 30px; font-size: 11px; }
+.sw { display: flex; gap: 4px; margin-left: auto; }
+.sw i { width: 14px; height: 14px; border-radius: 50%; background: var(--c); flex: none; }
+.sw i.on { box-shadow: 0 0 0 2px var(--p-card), 0 0 0 3.5px var(--c); }
+
 /* 流れ */
 .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; counter-reset: s; padding: 0; margin: 0; list-style: none; }
 .flow li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; counter-increment: s; position: relative; min-width: 0; }
@@ -308,29 +328,45 @@ td.rec, th.rec { background: var(--accent-soft); }
       <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
         <div class="status"><span>9:41</span><span>●●● 5G</span></div>
         <div class="body">
-          <div class="title-row"><b>2026年11月</b><span class="sub" id="m-sum"></span></div>
+          <div class="title-row"><b>‹ 2026年11月 ›</b><span class="sub" id="m-sum"></span></div>
           <div class="cal" id="cal"></div>
-          <div class="legend"><span><i class="fl f1">1F</i> 1階</span><span><i class="fl f2">2F</i> 2階</span><span><i class="fl f3">3F</i> 3階</span><span><i class="ap" style="font-style:normal;font-size:9px;padding:0 4px;border-radius:3px;background:var(--p-warn-bg);color:var(--p-warn);font-weight:700">父</i> 通院</span></div>
-          <div class="people"><span class="pc me sel"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>午後 1F</i></span></span><span class="pc p1"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>午後 2F</i></span></span><span class="pc p2"><svg><use href="#pp"/></svg><span class="tx"><b>森</b><i>お休み</i></span></span></div>
+          <div class="pager"><i class="on"></i><i></i><i></i><i></i></div>
           <div class="win"><div class="row"><span class="grow"><b>今日</b> 午後 <span class="sub">13:00–19:00</span></span><span class="fl f1">1F</span></div></div>
         </div>
         <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
-      <figcaption><b>① 月のカレンダー</b>勤務日に担当階のバッジ。今日は塗りつぶしの丸と枠で目立たせます。下の人物アイコンは今日の様子が見えて、押すとその人のカレンダーに切り替わります。</figcaption>
+      <figcaption><b>① 月のカレンダー（トップ）</b>自分の勤務だけのシンプルな画面。今日は丸と枠で目立たせます。下の●○は、横にスワイプできるサインです。</figcaption>
     </figure>
     <figure class="fig">
       <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
         <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+        <div class="body">
+          <div class="title-row"><b>‹ 2026年11月 ›</b><span class="sub">みんな</span></div>
+          <div class="cal" id="cal3"></div>
+          <div class="pager"><i></i><i class="on"></i><i></i><i></i></div>
+          <div class="people"><span class="pc me"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>午後 1F</i></span></span><span class="pc p1"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>午後 2F</i></span></span><span class="pc p2 off"><svg><use href="#pp"/></svg><span class="tx"><b>森</b><i>お休み</i></span></span></div>
+          <div class="sub" style="text-align:center">凡例は横にスワイプ（人の色 ⇄ 階の色）</div>
+          <div class="win"><div class="row"><span class="grow"><b>今日</b> 自分・田中が出勤</span><span class="sub">森はお休み</span></div></div>
+        </div>
+        <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+      </div></div>
+      <figcaption><b>①-2 横にスワイプ：みんなの重ね表示</b>誰が出る日かを、人の色の丸で表示。凡例も、この画面ではじめて出ます。凡例の行を横にスワイプすると、階の色の凡例に回ります。</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
         <div class="body" style="--p-accent: var(--p-p1)">
-          <div class="title-row"><b style="color:var(--p-p1)">田中さんの11月</b><span class="sub">出勤 14日</span></div>
+          <div class="title-row"><b style="color:var(--p-p1)">‹ 田中さんの11月 ›</b><span class="sub">出勤 14日</span></div>
           <div class="cal" id="cal2"></div>
+          <div class="pager"><i></i><i></i><i class="on"></i><i></i></div>
           <div class="legend"><span><i class="fl f1">1F</i> 1階</span><span><i class="fl f2">2F</i> 2階</span><span><i class="fl f3">3F</i> 3階</span><span>2後 = 2階・午後</span></div>
-          <div class="people"><span class="pc me"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>午後 1F</i></span></span><span class="pc p1 sel"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>午後 2F</i></span></span><span class="pc p2"><svg><use href="#pp"/></svg><span class="tx"><b>森</b><i>お休み</i></span></span></div>
+          <div class="people"><span class="pc me"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>午後 1F</i></span></span><span class="pc p1 sel"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>午後 2F</i></span></span><span class="pc p2 off"><svg><use href="#pp"/></svg><span class="tx"><b>森</b><i>お休み</i></span></span></div>
           <div class="win"><div class="row"><span class="grow"><b>今日</b> 午後 <span class="sub">13:00–19:00</span></span><span class="fl f2">2F</span></div></div>
         </div>
         <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
-      <figcaption><b>①-2 田中さんを選ぶと</b>カレンダーが田中さんの勤務に切り替わり、色もピンクに。午前・午後は「前」「後」で出ます。</figcaption>
+      <figcaption><b>①-3 さらにスワイプ：田中さん</b>田中さんの勤務に切り替わります。この先は森さん、その次は自分に戻って、くるっと1周します。午前・午後は「前」「後」で出ます。</figcaption>
     </figure>
 
     <figure class="fig">
@@ -425,16 +461,21 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="title-row"><b>設定</b></div>
           <div class="win">
             <h4>気になる人（2人まで）</h4>
-            <div class="srow p1"><svg><use href="#pp"/></svg><div class="grow"><b>田中</b><div class="sub">色：ピンク</div></div><span class="chip">外す</span></div>
-            <div class="srow p2"><svg><use href="#pp"/></svg><div class="grow"><b>森</b><div class="sub">色：グリーン</div></div><span class="chip">外す</span></div>
+            <div class="srow p1"><svg><use href="#pp"/></svg><div class="grow"><b>田中</b></div><span class="chip">外す</span></div>
+            <div class="srow p2"><svg><use href="#pp"/></svg><div class="grow"><b>森</b></div><span class="chip">外す</span></div>
           </div>
           <div class="btn ghost">＋ 人を追加（いまは2人で上限）</div>
-          <div class="win"><h4>追加のしかた</h4><span class="sub">読み取ったシフト表の名前から選びます。3人目を入れる時は、先に1人外します。</span></div>
-          <div class="win"><h4>プライバシー</h4><span class="sub">登録した人は、この端末の中だけに保存。相手に通知は行かず、ひとみへの共有にも含まれません。</span></div>
+          <div class="win">
+            <h4>人の色（自分も変えられます）</h4>
+            <div class="crow me"><svg><use href="#pp"/></svg><b>自分</b><span class="sw"><i style="--c:var(--pal1)" class="on"></i><i style="--c:var(--pal2)"></i><i style="--c:var(--pal3)"></i><i style="--c:var(--pal4)"></i><i style="--c:var(--pal5)"></i><i style="--c:var(--pal6)"></i><i style="--c:var(--pal7)"></i></span></div>
+            <div class="crow p1"><svg><use href="#pp"/></svg><b>田中</b><span class="sw"><i style="--c:var(--pal1)"></i><i style="--c:var(--pal2)" class="on"></i><i style="--c:var(--pal3)"></i><i style="--c:var(--pal4)"></i><i style="--c:var(--pal5)"></i><i style="--c:var(--pal6)"></i><i style="--c:var(--pal7)"></i></span></div>
+            <div class="crow p2"><svg><use href="#pp"/></svg><b>森</b><span class="sw"><i style="--c:var(--pal1)"></i><i style="--c:var(--pal2)"></i><i style="--c:var(--pal3)" class="on"></i><i style="--c:var(--pal4)"></i><i style="--c:var(--pal5)"></i><i style="--c:var(--pal6)"></i><i style="--c:var(--pal7)"></i></span></div>
+          </div>
+          <div class="win"><h4>プライバシー</h4><span class="sub">端末の中だけに保存。相手への通知も、ひとみへの共有もありません。</span></div>
         </div>
         <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
-      <figcaption><b>⑥ 設定：気になる人</b>2人まで。表の名前から選ぶと、色が自動で付きます。辞めたら外して、別の人を入れます。</figcaption>
+      <figcaption><b>⑥ 設定：気になる人</b>登録は2人まで。人の色は7色から選べて、自分の色も変えられます。辞めたら外して、別の人を入れます。</figcaption>
     </figure>
 
   </div>
@@ -443,7 +484,7 @@ td.rec, th.rec { background: var(--accent-soft); }
 <section>
   <div class="sec-head">
     <h2>仲の良い人の予定を見る：3つの案</h2>
-    <p><span class="tag-sample">サンプル</span><b>更新：カレンダーの下に人物アイコンを置く形（画面①・①-2・⑥）で進めています。以下の3案は比較用に残しています。</b><br>「今日は○○さん出勤かな？」にすぐ答えられるようにしたい。登録は1〜2人、普段は隠しておいて、見たい時だけ見える形で、3通り考えました。登録した人はお母さんの端末にだけ保存して、相手に通知は行きません。ひとみへの共有にも含めません。</p>
+    <p><span class="tag-sample">サンプル</span><b>更新：カレンダーの下に人物アイコンを置く形（画面①〜①-3・⑥）で進めています。以下の3案は比較用に残しています。</b><br>「今日は○○さん出勤かな？」にすぐ答えられるようにしたい。登録は1〜2人、普段は隠しておいて、見たい時だけ見える形で、3通り考えました。登録した人はお母さんの端末にだけ保存して、相手に通知は行きません。ひとみへの共有にも含めません。</p>
   </div>
   <div class="phones">
 
@@ -626,7 +667,7 @@ td.rec, th.rec { background: var(--accent-soft); }
 (function () {
   var shifts = {2:2,4:2,5:3,9:1,11:1,12:1,16:3,18:3,19:3,24:2,26:2,27:2};
   var appts = {6:['父'],13:['自'],20:['父'],24:['父']};
-  var t = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,19:2,22:2,23:2,26:3,30:3};
+  var t = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,18:2,22:2,23:2,26:3,30:3};
   function build(el, sh, ap, am) {
     var h = '';
     ['日','月','火','水','木','金','土'].forEach(function (d, i) {
@@ -642,6 +683,18 @@ td.rec, th.rec { background: var(--accent-soft); }
   }
   build(document.getElementById('cal'), shifts, appts);
   build(document.getElementById('cal2'), t, {}, {15: 1});
+  var s2 = {3:3,5:2,6:2,10:3,13:3,14:3,17:2,20:3,21:3,24:3,25:2,28:3,29:3};
+  (function () {
+    var h = '';
+    ['日','月','火','水','木','金','土'].forEach(function (d, i) {
+      h += '<div class="dow ' + (i === 0 ? 'sun' : i === 6 ? 'sat' : '') + '">' + d + '</div>';
+    });
+    for (var d = 1; d <= 30; d++) {
+      var dots = (shifts[d] ? '<i class="me"></i>' : '') + (t[d] ? '<i class="p1"></i>' : '') + (s2[d] ? '<i class="p2"></i>' : '');
+      h += '<div class="c' + (d === 12 ? ' today' : '') + '"><span class="dn">' + d + '</span>' + (dots ? '<span class="dots">' + dots + '</span>' : '') + '</div>';
+    }
+    document.getElementById('cal3').innerHTML = h;
+  })();
   var cnt = Object.keys(shifts).length;
   document.getElementById('m-sum').textContent = '勤務 ' + cnt + '日';
   var mini = document.getElementById('mini'), m = '';
@@ -650,7 +703,7 @@ td.rec, th.rec { background: var(--accent-soft); }
     m += '<i' + (f2 && day <= 30 ? ' class="' + ['', 'b', 'a', 'c'][f2] + '"' : '') + '></i>';
   }
   mini.innerHTML = m;
-  var t = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,19:2,22:2,23:2,26:3,30:3};
+  var t = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,18:2,22:2,23:2,26:3,30:3};
   var mini2 = document.getElementById('mini2'), m2 = '';
   for (var j = 0; j < 35; j++) {
     var dd = j + 1, ff = t[dd];
