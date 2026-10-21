@@ -200,6 +200,20 @@ section { display: grid; gap: 20px; min-width: 0; }
 .pp.pm i { font-size: 9px; }
 .pp.pm.me { border: 2px solid var(--p-accent); background: var(--p-card); }
 
+/* 気になる人 */
+.pp.pin .tx b::before { content: "☆ "; color: var(--p-accent); }
+.pp.hl { box-shadow: 0 0 0 2px var(--p-accent); background: var(--p-card); }
+.wk { display: grid; grid-template-columns: 30px repeat(7, 1fr); gap: 3px 2px; align-items: center; text-align: center; }
+.wk .dh { font-size: 10px; line-height: 1.1; color: var(--p-sub); }
+.wk .dh small { display: block; font-size: 8px; }
+.wk .dh.today { color: var(--p-accent); font-weight: 700; }
+.wk .nm { text-align: left; font-size: 10px; font-weight: 700; }
+.wk .nm.me { color: var(--p-accent); }
+.wk .wc { min-height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 5px; }
+.wk .wc.sd { outline: 2px solid var(--p-accent); outline-offset: -1px; }
+.wk .fl { min-width: 0; padding: 0 2px; font-size: 9px; line-height: 15px; font-style: normal; }
+.wk .rest { color: var(--p-sub); font-size: 9px; }
+
 /* 流れ */
 .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; counter-reset: s; padding: 0; margin: 0; list-style: none; }
 .flow li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; counter-increment: s; position: relative; min-width: 0; }
@@ -283,7 +297,7 @@ td.rec, th.rec { background: var(--accent-soft); }
       <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
         <div class="status"><span>9:41</span><span>●●● 5G</span></div>
         <div class="body">
-          <div class="title-row"><b>11月12日（木）</b><span class="chip">1F 午後</span></div>
+          <div class="title-row"><b>‹ 11月12日（木） ›</b><span class="chip">1F 午後</span></div>
           <div>
             <div class="roof"></div>
             <div class="bld">
@@ -303,7 +317,7 @@ td.rec, th.rec { background: var(--accent-soft); }
         </div>
         <div class="tabbar"><span><i>▦</i>月</span><span class="on"><i>☺</i>今日</span><span><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
       </div></div>
-      <figcaption><b>② その日の職場</b>各階に午前1人・午後1人。お母さんは午後固定なので、午後の枠を大きく、午前は参考として小さく表示。自分は色つき、ほかの人は名前つき。違う職種は下の表に。</figcaption>
+      <figcaption><b>② その日の職場</b>各階に午前1人・午後1人。お母さんは午後固定なので、午後の枠を大きく、午前は参考として小さく表示。自分は色つき、ほかの人は名前つき。違う職種は下の表に。日付はカレンダーで選べて、自分が休みの日も図は出ます（自分の枠は空き）。</figcaption>
     </figure>
 
     <figure class="fig">
@@ -365,6 +379,102 @@ td.rec, th.rec { background: var(--accent-soft); }
       <figcaption><b>⑤ 共有</b>通院の詳細はオフが初期設定。病院名や病名は、送りたい時だけ送ります。</figcaption>
     </figure>
 
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2>仲の良い人の予定を見る：3つの案</h2>
+    <p><span class="tag-sample">サンプル</span>「今日は○○さん出勤かな？」にすぐ答えられるようにしたい。登録は1〜2人、普段は隠しておいて、見たい時だけ見える形で、3通り考えました。登録した人はお母さんの端末にだけ保存して、相手に通知は行きません。ひとみへの共有にも含めません。</p>
+  </div>
+  <div class="phones">
+
+    <figure class="fig">
+      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+        <div class="body">
+          <div class="title-row"><b>‹ 11月12日（木） ›</b><span class="chip">1F 午後</span></div>
+          <div class="win">
+            <div class="row"><b class="grow">☆ 気になる人 2人</b><span class="sub">閉じる ▴</span></div>
+            <div class="who"><span class="grow">田中さん</span><span class="fl f2">2F</span><span class="sub">午後 出勤</span></div>
+            <div class="who"><span class="grow">森さん</span><span class="sub">お休み</span></div>
+          </div>
+          <div>
+            <div class="roof"></div>
+            <div class="bld">
+              <div class="fr"><span class="fl f3">3F</span><span class="pp am"><svg><use href="#pp"/></svg><b>山田</b><i>午前</i></span><span class="pp pm"><svg><use href="#pp"/></svg><span class="tx"><b>中村</b><i>午後</i></span></span></div>
+              <div class="fr"><span class="fl f2">2F</span><span class="pp am"><svg><use href="#pp"/></svg><b>小川</b><i>午前</i></span><span class="pp pm pin"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>午後</i></span></span></div>
+              <div class="fr"><span class="fl f1">1F</span><span class="pp am"><svg><use href="#pp"/></svg><b>林</b><i>午前</i></span><span class="pp pm me"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>午後</i></span></span></div>
+            </div>
+          </div>
+          <div class="sub" style="text-align:center">普段は「☆ 気になる人 2人 ▾」の1行に閉じています</div>
+        </div>
+        <div class="tabbar"><span><i>▦</i>月</span><span class="on"><i>☺</i>今日</span><span><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
+      </div></div>
+      <figcaption><b>案A ・ 1行に閉じた「気になる人」</b>今日の画面の上に、閉じた1行。押すと、その日の2人の様子が開きます。</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+        <div class="body">
+          <div class="title-row"><b>‹ 11月12日（木） ›</b><span class="chip">1F 午後</span></div>
+          <div>
+            <div class="roof"></div>
+            <div class="bld">
+              <div class="fr"><span class="fl f3">3F</span><span class="pp am"><svg><use href="#pp"/></svg><b>山田</b><i>午前</i></span><span class="pp pm"><svg><use href="#pp"/></svg><span class="tx"><b>中村</b><i>午後</i></span></span></div>
+              <div class="fr"><span class="fl f2">2F</span><span class="pp am"><svg><use href="#pp"/></svg><b>小川</b><i>午前</i></span><span class="pp pm hl"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>午後</i></span></span></div>
+              <div class="fr"><span class="fl f1">1F</span><span class="pp am"><svg><use href="#pp"/></svg><b>林</b><i>午前</i></span><span class="pp pm me"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>午後</i></span></span></div>
+            </div>
+          </div>
+          <div class="win">
+            <div class="row"><div class="grow"><h4>田中さん</h4><span class="sub">2F 午後 ・ 今月 14日出勤</span></div><span class="chip">☆ 登録</span></div>
+            <div class="mini" id="mini2" style="margin-top:6px"></div>
+          </div>
+          <div class="sub" style="text-align:center">図の名前を押すと、その人の今月が出ます</div>
+        </div>
+        <div class="tabbar"><span><i>▦</i>月</span><span class="on"><i>☺</i>今日</span><span><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
+      </div></div>
+      <figcaption><b>案B ・ 図の名前をタップ</b>登録の画面は要らず、いつもの図が入口です。ただし、その日休みの人は図にいないので押せません。</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+        <div class="body">
+          <div class="title-row"><b>気になる人</b><span class="chip">＋ 追加</span></div>
+          <div class="win">
+            <div class="wk">
+              <span></span>
+              <span class="dh today">12<small>木</small></span><span class="dh">13<small>金</small></span><span class="dh">14<small>土</small></span><span class="dh">15<small>日</small></span><span class="dh">16<small>月</small></span><span class="dh">17<small>火</small></span><span class="dh">18<small>水</small></span>
+              <span class="nm me">自分</span>
+              <span class="wc"><i class="fl f1">1後</i></span><span class="wc"></span><span class="wc"></span><span class="wc"></span><span class="wc"><i class="fl f3">3後</i></span><span class="wc"></span><span class="wc"><i class="fl f3">3後</i></span>
+              <span class="nm">田中</span>
+              <span class="wc sd"><i class="fl f2">2後</i></span><span class="wc sd"><i class="fl f2">2後</i></span><span class="wc"></span><span class="wc"><i class="fl f1">1前</i></span><span class="wc sd"><i class="fl f3">3後</i></span><span class="wc"></span><span class="wc sd"><i class="fl f2">2後</i></span>
+              <span class="nm">森</span>
+              <span class="wc"></span><span class="wc"><i class="fl f3">3前</i></span><span class="wc"><i class="fl f3">3後</i></span><span class="wc"></span><span class="wc"></span><span class="wc"><i class="fl f2">2前</i></span><span class="wc"></span>
+            </div>
+          </div>
+          <div class="sub">前=午前 後=午後 ・ 枠つきは、自分と同じ午後に出る日</div>
+          <div class="win"><div class="row"><span class="grow">田中さんの今月</span><span class="sub">›</span></div></div>
+          <div class="win"><div class="row"><span class="grow">森さんの今月</span><span class="sub">›</span></div></div>
+        </div>
+        <div class="tabbar" style="grid-template-columns:repeat(5,1fr)"><span><i>▦</i>月</span><span><i>☺</i>今日</span><span class="on"><i>☆</i>みんな</span><span><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
+      </div></div>
+      <figcaption><b>案C ・ 「みんな」タブ</b>登録した人と自分を、1週間ぶん並べて見られます。普段は別のタブなので、見えません。</figcaption>
+    </figure>
+
+  </div>
+
+  <div class="tw">
+    <table>
+      <thead><tr><th>案</th><th>普段の見え方</th><th>登録のしかた</th><th>向いている場面</th><th>弱いところ</th></tr></thead>
+      <tbody>
+        <tr><td class="rec"><b>A. 閉じた1行</b><span class="pill">いちばん合いそう</span></td><td>「☆ 気になる人 2人」の1行だけ</td><td>設定で名前を選ぶ。図の名前を長押しでも</td><td>「今日は○○さん出勤かな？」を1タップで</td><td>見えるのは、選んだ1日ぶんだけ</td></tr>
+        <tr><td><b>B. 図の名前をタップ</b></td><td>何も見えない（いつもの図のまま）</td><td>名前を押して「☆ 登録」</td><td>図を見ていて「この人、今月いつ出る？」</td><td>休みの人は図にいないので押せない。今日の確認に使えない日がある</td></tr>
+        <tr><td><b>C. 「みんな」タブ</b></td><td>別タブなので見えない</td><td>＋追加で名前を選ぶ</td><td>1週間のまとめ見、予定合わせ</td><td>タブが1つ増える。作る画面も1枚増える</td></tr>
+      </tbody>
+    </table>
   </div>
 </section>
 
@@ -447,7 +557,7 @@ td.rec, th.rec { background: var(--accent-soft); }
   </div>
   <div class="phases">
     <div class="ph"><h3>第1段階</h3><p>手入力でシフトと通院を入れる。月カレンダー、日の詳細、画像で共有。</p></div>
-    <div class="ph"><h3>第2段階</h3><p>撮影で読み取り。確認画面と、その日の職場の自動表示。</p></div>
+    <div class="ph"><h3>第2段階</h3><p>撮影で読み取り。確認画面と、その日の職場の自動表示、気になる人の登録。</p></div>
     <div class="ph"><h3>第3段階</h3><p>カレンダー用ファイル、必要なら購読。外観はここでドラクエ風か、スタイリッシュに決めて仕上げる。</p></div>
   </div>
 </section>
@@ -478,6 +588,13 @@ td.rec, th.rec { background: var(--accent-soft); }
     m += '<i' + (f2 && day <= 30 ? ' class="' + ['', 'b', 'a', 'c'][f2] + '"' : '') + '></i>';
   }
   mini.innerHTML = m;
+  var t = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,19:2,22:2,23:2,26:3,30:3};
+  var mini2 = document.getElementById('mini2'), m2 = '';
+  for (var j = 0; j < 35; j++) {
+    var dd = j + 1, ff = t[dd];
+    m2 += '<i' + (ff && dd <= 30 ? ' class="' + ['', 'b', 'a', 'c'][ff] + '"' : '') + '></i>';
+  }
+  mini2.innerHTML = m2;
 
   var phones = document.querySelectorAll('.phone');
   var bS = document.getElementById('skin-stylish'), bD = document.getElementById('skin-dq');
