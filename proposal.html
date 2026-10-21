@@ -91,7 +91,8 @@ section { display: grid; gap: 20px; min-width: 0; }
 .body { padding: 4px 12px 10px; display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; }
 .tabbar { flex: none; display: grid; grid-template-columns: repeat(4, 1fr); padding: 7px 8px 14px; border-top: var(--p-hair); font-size: 9.5px; text-align: center; color: var(--p-sub); }
 .tabbar span.on { color: var(--p-accent); font-weight: 700; }
-.tabbar i { display: block; font-style: normal; font-size: 14px; line-height: 1.2; }
+.tabbar i { display: flex; justify-content: center; font-style: normal; line-height: 1; margin-bottom: 2px; }
+.tabbar svg.ic { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
 /* 見た目ごとの色・角・枠 */
 .phone[data-skin="stylish"] {
@@ -99,12 +100,14 @@ section { display: grid; gap: 20px; min-width: 0; }
   --p-border: 1px solid #e3e7ee; --p-hair: 1px solid #e3e7ee; --p-r: 12px; --p-accent: #3257d6;
   --p-f1: #e08a1e; --p-f2: #1a9d8f; --p-f3: #7a5bd1; --p-warn-bg: #fff3dc; --p-warn: #a85a00; --p-ok: #1f8a57;
   --p-head-font: var(--f-head); --p-shadow: 0 1px 2px rgba(20, 30, 60, .06);
+  --p-today-bg: #e6ecfd; --p-me: #3257d6; --p-p1: #d6457a; --p-p2: #5a8f1f;
 }
 .phone[data-skin="dq"] {
   --p-bg: #000; --p-fg: #fff; --p-sub: #b8c0ff; --p-card: #0b1170;
   --p-border: 2px solid #fff; --p-hair: 2px solid #fff; --p-r: 5px; --p-accent: #ffe14d;
   --p-f1: #ff9a3c; --p-f2: #4de0c0; --p-f3: #c9a0ff; --p-warn-bg: #5a1010; --p-warn: #ffe14d; --p-ok: #7dff9a;
   --p-head-font: var(--f-body); --p-shadow: none;
+  --p-today-bg: #1a22a8; --p-me: #ffe14d; --p-p1: #ff7ac8; --p-p2: #9dff7a;
 }
 .win { background: var(--p-card); border: var(--p-border); border-radius: var(--p-r); padding: 8px 10px; box-shadow: var(--p-shadow); min-width: 0; }
 .win h4 { margin: 0 0 4px; font-family: var(--p-head-font); font-size: 12px; font-weight: 700; }
@@ -116,7 +119,7 @@ section { display: grid; gap: 20px; min-width: 0; }
 .title-row b { font-family: var(--p-head-font); font-size: 16px; }
 .chip { display: inline-block; padding: 0 7px; border-radius: 999px; font-size: 10px; font-weight: 700; background: var(--p-accent); color: #fff; }
 .phone[data-skin="dq"] .chip { background: transparent; color: var(--p-accent); border: 1px solid var(--p-accent); border-radius: 3px; }
-.fl { display: inline-block; min-width: 24px; text-align: center; font-weight: 800; font-size: 10px; line-height: 15px; border-radius: 4px; color: #fff; padding: 0 4px; }
+.fl { display: inline-block; font-style: normal; min-width: 24px; text-align: center; font-weight: 800; font-size: 10px; line-height: 15px; border-radius: 4px; color: #fff; padding: 0 4px; }
 .phone[data-skin="dq"] .fl { color: #000; }
 .fl.f1 { background: var(--p-f1); } .fl.f2 { background: var(--p-f2); } .fl.f3 { background: var(--p-f3); }
 
@@ -127,8 +130,25 @@ section { display: grid; gap: 20px; min-width: 0; }
 .cal .c { min-height: 41px; border-radius: 6px; padding: 2px 0 1px; display: flex; flex-direction: column; align-items: center; gap: 1px; font-size: 10.5px; }
 .phone[data-skin="stylish"] .cal .c.work { background: #fff; box-shadow: inset 0 0 0 1px #e3e7ee; }
 .phone[data-skin="dq"] .cal .c.work { box-shadow: inset 0 0 0 1px #5560d8; }
-.cal .c.today { outline: 2px solid var(--p-accent); outline-offset: -2px; }
-.cal .c .fl { min-width: 22px; font-size: 9.5px; line-height: 14px; }
+.cal .c .dn { width: 19px; line-height: 19px; text-align: center; border-radius: 50%; }
+.phone[data-skin] .cal .c.today, .phone[data-skin] .cal .c.work.today { background: var(--p-today-bg); box-shadow: inset 0 0 0 2px var(--p-accent); }
+.cal .c.today .dn { background: var(--p-accent); color: #fff; font-weight: 800; }
+.phone[data-skin="dq"] .cal .c.today .dn { color: #000; }
+
+/* 人物アイコン */
+.people { display: flex; gap: 5px; }
+.pc { flex: 1; min-width: 0; display: flex; align-items: center; gap: 5px; padding: 4px 5px; border-radius: var(--p-r); background: var(--p-card); border: var(--p-border); }
+.pc.me, .srow.me { --pc: var(--p-me); } .pc.p1, .srow.p1 { --pc: var(--p-p1); } .pc.p2, .srow.p2 { --pc: var(--p-p2); }
+.pc.sel { border-color: var(--pc); box-shadow: 0 0 0 1px var(--pc); }
+.pc svg, .srow svg { flex: none; width: 24px; height: 24px; padding: 4px; border-radius: 50%; background: var(--pc); fill: #fff; }
+.phone[data-skin="dq"] .pc svg, .phone[data-skin="dq"] .srow svg { fill: #000; }
+.pc .tx { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
+.pc b { font-size: 11px; white-space: nowrap; }
+.pc i { font-style: normal; font-size: 9px; color: var(--p-sub); white-space: nowrap; }
+.pc.sel b { color: var(--pc); }
+.srow { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-top: 1px dashed var(--p-sub); }
+.srow:first-of-type { border-top: 0; }
+.cal .c .fl { white-space: nowrap; min-width: 22px; font-size: 9.5px; line-height: 14px; }
 .cal .c .ap { font-size: 8.5px; line-height: 12px; padding: 0 4px; border-radius: 3px; background: var(--p-warn-bg); color: var(--p-warn); font-weight: 700; }
 .cal .c .ap.clash { outline: 1px solid var(--p-warn); }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 10px; color: var(--p-sub); }
@@ -246,7 +266,13 @@ td.rec, th.rec { background: var(--accent-soft); }
 @media (prefers-reduced-motion: no-preference) { .seg button { transition: background .15s; } }
 </style>
 
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="pp" viewBox="0 0 20 22"><circle cx="10" cy="5" r="4.2"/><path d="M2 21c0-6 3-9.5 8-9.5s8 3.5 8 9.5z"/></symbol></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="pp" viewBox="0 0 20 22"><circle cx="10" cy="5" r="4.2"/><path d="M2 21c0-6 3-9.5 8-9.5s8 3.5 8 9.5z"/></symbol>
+<symbol id="ic-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+<symbol id="ic-today" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+<symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></symbol>
+<symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="ic-send" viewBox="0 0 24 24"><path d="M20.5 3.5l-17 7 6.5 2.5 2.5 6.5z"/></symbol>
+</svg>
 <div class="wrap">
 
 <header>
@@ -285,12 +311,26 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="title-row"><b>2026年11月</b><span class="sub" id="m-sum"></span></div>
           <div class="cal" id="cal"></div>
           <div class="legend"><span><i class="fl f1">1F</i> 1階</span><span><i class="fl f2">2F</i> 2階</span><span><i class="fl f3">3F</i> 3階</span><span><i class="ap" style="font-style:normal;font-size:9px;padding:0 4px;border-radius:3px;background:var(--p-warn-bg);color:var(--p-warn);font-weight:700">父</i> 通院</span></div>
-          <div class="win"><div class="row"><div class="grow"><h4>次の勤務</h4><span>11/2（月） 午後 <span class="sub">13:00–19:00</span></span></div><span class="fl f2">2F</span></div></div>
-          <div class="win" style="border-color:var(--p-warn)"><div class="row"><div class="grow"><span class="qm">24日は勤務と通院が重なっています</span></div></div></div>
+          <div class="people"><span class="pc me sel"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>午後 1F</i></span></span><span class="pc p1"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>午後 2F</i></span></span><span class="pc p2"><svg><use href="#pp"/></svg><span class="tx"><b>森</b><i>お休み</i></span></span></div>
+          <div class="win"><div class="row"><span class="grow"><b>今日</b> 午後 <span class="sub">13:00–19:00</span></span><span class="fl f1">1F</span></div></div>
         </div>
-        <div class="tabbar"><span class="on"><i>▦</i>月</span><span><i>☺</i>今日</span><span><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
+        <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
-      <figcaption><b>① 月のカレンダー</b>勤務日に担当階のバッジ。通院の日は「父」「自」の札が付き、勤務と重なると教えてくれます。</figcaption>
+      <figcaption><b>① 月のカレンダー</b>勤務日に担当階のバッジ。今日は塗りつぶしの丸と枠で目立たせます。下の人物アイコンは今日の様子が見えて、押すとその人のカレンダーに切り替わります。</figcaption>
+    </figure>
+    <figure class="fig">
+      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+        <div class="body" style="--p-accent: var(--p-p1)">
+          <div class="title-row"><b style="color:var(--p-p1)">田中さんの11月</b><span class="sub">出勤 14日</span></div>
+          <div class="cal" id="cal2"></div>
+          <div class="legend"><span><i class="fl f1">1F</i> 1階</span><span><i class="fl f2">2F</i> 2階</span><span><i class="fl f3">3F</i> 3階</span><span>2後 = 2階・午後</span></div>
+          <div class="people"><span class="pc me"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>午後 1F</i></span></span><span class="pc p1 sel"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>午後 2F</i></span></span><span class="pc p2"><svg><use href="#pp"/></svg><span class="tx"><b>森</b><i>お休み</i></span></span></div>
+          <div class="win"><div class="row"><span class="grow"><b>今日</b> 午後 <span class="sub">13:00–19:00</span></span><span class="fl f2">2F</span></div></div>
+        </div>
+        <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+      </div></div>
+      <figcaption><b>①-2 田中さんを選ぶと</b>カレンダーが田中さんの勤務に切り替わり、色もピンクに。午前・午後は「前」「後」で出ます。</figcaption>
     </figure>
 
     <figure class="fig">
@@ -315,7 +355,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           </div>
           <div class="sub" style="text-align:center">色つきが自分（午後 13:00–19:00）・ 午前は参考</div>
         </div>
-        <div class="tabbar"><span><i>▦</i>月</span><span class="on"><i>☺</i>今日</span><span><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span class="on"><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
       <figcaption><b>② その日の職場</b>各階に午前1人・午後1人。お母さんは午後固定なので、午後の枠を大きく、午前は参考として小さく表示。自分は色つき、ほかの人は名前つき。違う職種は下の表に。日付はカレンダーで選べて、自分が休みの日も図は出ます（自分の枠は空き）。</figcaption>
     </figure>
@@ -337,7 +377,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="btn">この内容で入れる（12件）</div>
           <div class="sub" style="text-align:center">黄色の行だけ直せばOK</div>
         </div>
-        <div class="tabbar"><span><i>▦</i>月</span><span><i>☺</i>今日</span><span class="on"><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span class="on"><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
       <figcaption><b>③ 撮影して読み取り</b>自信のない所だけ黄色で止まります。全部入れる前に必ず確認できます。</figcaption>
     </figure>
@@ -353,7 +393,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="win"><div class="ev"><div class="d">20<small>金</small></div><div><span class="who-tag">父</span><b>リハビリ</b><div class="sub">9:30 ・ 送迎あり</div></div></div></div>
           <div class="win" style="border-color:var(--p-warn)"><div class="ev"><div class="d">24<small>火</small></div><div><span class="who-tag">父</span><b>○○病院 内科</b><div class="sub">14:00</div><div class="warnbox">この日は午後勤務（2F）と重なっています</div></div></div></div>
         </div>
-        <div class="tabbar"><span><i>▦</i>月</span><span><i>☺</i>今日</span><span class="on"><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span class="on"><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
       <figcaption><b>④ 父の通院・自分の通院</b>「誰の予定か」で色分け。時間・持ち物・送迎のメモも書けます。</figcaption>
     </figure>
@@ -365,18 +405,36 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="title-row"><b>ひとみに送る</b></div>
           <div class="mini" id="mini"></div>
           <div class="win">
-            <div class="opt sel"><span></span><div><b>画像で送る</b><div class="sub">今月のシフト表を1枚の画像に。LINEやメッセージですぐ</div></div></div>
-            <div class="opt"><span></span><div><b>カレンダー用ファイル</b><div class="sub">タップで相手のカレンダーに取り込めます</div></div></div>
-            <div class="opt"><span></span><div><b>自動で更新（購読）</b><div class="sub">変更が相手のカレンダーに自動で反映</div></div></div>
+            <div class="opt sel"><div><b>画像で送る</b><div class="sub">今月のシフト表を1枚の画像に。LINEやメッセージですぐ</div></div></div>
+            <div class="opt"><div><b>カレンダー用ファイル</b><div class="sub">タップで相手のカレンダーに取り込めます</div></div></div>
+            <div class="opt"><div><b>自動で更新（購読）</b><div class="sub">変更が相手のカレンダーに自動で反映</div></div></div>
           </div>
           <div class="win">
             <div class="row"><div class="grow"><b>通院の予定も送る</b><div class="sub">オフの時は「予定あり」とだけ表示</div></div><span class="tog"></span></div>
           </div>
           <div class="btn">送る</div>
         </div>
-        <div class="tabbar"><span><i>▦</i>月</span><span><i>☺</i>今日</span><span><i>✚</i>予定</span><span class="on"><i>➤</i>送る</span></div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span class="on"><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
       <figcaption><b>⑤ 共有</b>通院の詳細はオフが初期設定。病院名や病名は、送りたい時だけ送ります。</figcaption>
+    </figure>
+    <figure class="fig">
+      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+        <div class="body">
+          <div class="title-row"><b>設定</b></div>
+          <div class="win">
+            <h4>気になる人（2人まで）</h4>
+            <div class="srow p1"><svg><use href="#pp"/></svg><div class="grow"><b>田中</b><div class="sub">色：ピンク</div></div><span class="chip">外す</span></div>
+            <div class="srow p2"><svg><use href="#pp"/></svg><div class="grow"><b>森</b><div class="sub">色：グリーン</div></div><span class="chip">外す</span></div>
+          </div>
+          <div class="btn ghost">＋ 人を追加（いまは2人で上限）</div>
+          <div class="win"><h4>追加のしかた</h4><span class="sub">読み取ったシフト表の名前から選びます。3人目を入れる時は、先に1人外します。</span></div>
+          <div class="win"><h4>プライバシー</h4><span class="sub">登録した人は、この端末の中だけに保存。相手に通知は行かず、ひとみへの共有にも含まれません。</span></div>
+        </div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+      </div></div>
+      <figcaption><b>⑥ 設定：気になる人</b>2人まで。表の名前から選ぶと、色が自動で付きます。辞めたら外して、別の人を入れます。</figcaption>
     </figure>
 
   </div>
@@ -385,7 +443,7 @@ td.rec, th.rec { background: var(--accent-soft); }
 <section>
   <div class="sec-head">
     <h2>仲の良い人の予定を見る：3つの案</h2>
-    <p><span class="tag-sample">サンプル</span>「今日は○○さん出勤かな？」にすぐ答えられるようにしたい。登録は1〜2人、普段は隠しておいて、見たい時だけ見える形で、3通り考えました。登録した人はお母さんの端末にだけ保存して、相手に通知は行きません。ひとみへの共有にも含めません。</p>
+    <p><span class="tag-sample">サンプル</span><b>更新：カレンダーの下に人物アイコンを置く形（画面①・①-2・⑥）で進めています。以下の3案は比較用に残しています。</b><br>「今日は○○さん出勤かな？」にすぐ答えられるようにしたい。登録は1〜2人、普段は隠しておいて、見たい時だけ見える形で、3通り考えました。登録した人はお母さんの端末にだけ保存して、相手に通知は行きません。ひとみへの共有にも含めません。</p>
   </div>
   <div class="phones">
 
@@ -409,7 +467,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           </div>
           <div class="sub" style="text-align:center">普段は「☆ 気になる人 2人 ▾」の1行に閉じています</div>
         </div>
-        <div class="tabbar"><span><i>▦</i>月</span><span class="on"><i>☺</i>今日</span><span><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span class="on"><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
       <figcaption><b>案A ・ 1行に閉じた「気になる人」</b>今日の画面の上に、閉じた1行。押すと、その日の2人の様子が開きます。</figcaption>
     </figure>
@@ -433,7 +491,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           </div>
           <div class="sub" style="text-align:center">図の名前を押すと、その人の今月が出ます</div>
         </div>
-        <div class="tabbar"><span><i>▦</i>月</span><span class="on"><i>☺</i>今日</span><span><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span class="on"><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
       <figcaption><b>案B ・ 図の名前をタップ</b>登録の画面は要らず、いつもの図が入口です。ただし、その日休みの人は図にいないので押せません。</figcaption>
     </figure>
@@ -459,7 +517,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="win"><div class="row"><span class="grow">田中さんの今月</span><span class="sub">›</span></div></div>
           <div class="win"><div class="row"><span class="grow">森さんの今月</span><span class="sub">›</span></div></div>
         </div>
-        <div class="tabbar" style="grid-template-columns:repeat(5,1fr)"><span><i>▦</i>月</span><span><i>☺</i>今日</span><span class="on"><i>☆</i>みんな</span><span><i>✚</i>予定</span><span><i>➤</i>送る</span></div>
+        <div class="tabbar" style="grid-template-columns:repeat(5,1fr)"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span class="on"><i><svg class="ic"><use href="#ic-star"/></svg></i>みんな</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
       <figcaption><b>案C ・ 「みんな」タブ</b>登録した人と自分を、1週間ぶん並べて見られます。普段は別のタブなので、見えません。</figcaption>
     </figure>
@@ -568,18 +626,22 @@ td.rec, th.rec { background: var(--accent-soft); }
 (function () {
   var shifts = {2:2,4:2,5:3,9:1,11:1,12:1,16:3,18:3,19:3,24:2,26:2,27:2};
   var appts = {6:['父'],13:['自'],20:['父'],24:['父']};
-  var cal = document.getElementById('cal');
-  var h = '';
-  ['日','月','火','水','木','金','土'].forEach(function (d, i) {
-    h += '<div class="dow ' + (i === 0 ? 'sun' : i === 6 ? 'sat' : '') + '">' + d + '</div>';
-  });
-  for (var d = 1; d <= 30; d++) {
-    var f = shifts[d], a = appts[d];
-    h += '<div class="c' + (f ? ' work' : '') + '"><span>' + d + '</span>' +
-      (f ? '<span class="fl f' + f + '">' + f + 'F</span>' : '') +
-      (a ? '<span class="ap' + (f ? ' clash' : '') + '">' + a[0] + '</span>' : '') + '</div>';
+  var t = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,19:2,22:2,23:2,26:3,30:3};
+  function build(el, sh, ap, am) {
+    var h = '';
+    ['日','月','火','水','木','金','土'].forEach(function (d, i) {
+      h += '<div class="dow ' + (i === 0 ? 'sun' : i === 6 ? 'sat' : '') + '">' + d + '</div>';
+    });
+    for (var d = 1; d <= 30; d++) {
+      var f = sh[d], a = ap[d];
+      h += '<div class="c' + (f ? ' work' : '') + (d === 12 ? ' today' : '') + '"><span class="dn">' + d + '</span>' +
+        (f ? '<span class="fl f' + f + '">' + f + (am ? (am[d] ? '前' : '後') : 'F') + '</span>' : '') +
+        (a ? '<span class="ap' + (f ? ' clash' : '') + '">' + a[0] + '</span>' : '') + '</div>';
+    }
+    el.innerHTML = h;
   }
-  cal.innerHTML = h;
+  build(document.getElementById('cal'), shifts, appts);
+  build(document.getElementById('cal2'), t, {}, {15: 1});
   var cnt = Object.keys(shifts).length;
   document.getElementById('m-sum').textContent = '勤務 ' + cnt + '日';
   var mini = document.getElementById('mini'), m = '';
