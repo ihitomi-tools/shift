@@ -14,7 +14,7 @@
   --today-bg: #e6ecfd;
   --font: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", sans-serif;
   --head: "M PLUS Rounded 1c", "BIZ UDPGothic", "Hiragino Maru Gothic ProN", sans-serif;
-  --fs: 16px; --r: 14px; --cloudmix: #000;
+  --fs: 16px; --r: 14px; --cloudmix: #000; --cat: #d9843a;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -102,6 +102,28 @@ h1, h2, h3, h4 { font-family: var(--head); margin: 0; line-height: 1.35; }
 .pc .av svg, .srow .av svg { width: 20px; height: 20px; fill: #fff; }
 .pc .tx { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
 .pc b { font-size: .9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .pc i { font-style: normal; font-size: .75em; color: var(--sub); white-space: nowrap; }
+
+/* 猫(お休みの日) */
+.thk2 .cat { position: absolute; left: calc(50% + 32px); bottom: 0; width: 36px; height: 34px; color: var(--cat); animation: catin .6s cubic-bezier(.3,1.5,.5,1) both; transform-origin: 50% 100%; }
+@keyframes catin { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .thk2 .cat { animation: none; } }
+/* ダーク = ネオン */
+html.dk { --cat: #ff9a3d; --f1: #ffa31a; --f2: #19e6c1; --f3: #b78cff; --todo: #ffe14d; --bg: #0a0d14; --card: #141923; --line: #2b3446; --soft: #1d2433; --today-bg: #14203a; }
+html.dk .btn:not(.ghost):not(.danger), html.dk .chipb[aria-pressed="true"], html.dk .tag.me, html.dk .plate.me, html.dk .cell.today .dn, html.dk .fl, html.dk .cell .ap.me { color: #0a0d14; }
+html.dk .pc .av svg, html.dk .srow .av svg { fill: #0a0d14; }
+html.dk .btn:not(.ghost):not(.danger), html.dk .plate.me, html.dk .chipb[aria-pressed="true"] { box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 70%, transparent); }
+html.dk .plate.ov { background: transparent; color: var(--fg); border: 2px solid var(--fg); box-shadow: 0 0 10px rgba(255,255,255,.3); }
+html.dk .plate.todo { box-shadow: 0 0 12px color-mix(in srgb, var(--todo) 70%, transparent); color: #1a1500; }
+html.dk .cell.today { box-shadow: inset 0 0 0 2px var(--accent), 0 0 14px color-mix(in srgb, var(--accent) 70%, transparent); }
+html.dk .cell.today .dn { box-shadow: 0 0 10px var(--accent); }
+html.dk .cell.work { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fg) 25%, transparent); }
+html.dk .f1 { box-shadow: 0 0 8px var(--f1); } html.dk .f2 { box-shadow: 0 0 8px var(--f2); } html.dk .f3 { box-shadow: 0 0 8px var(--f3); }
+html.dk .pc { box-shadow: 0 0 10px color-mix(in srgb, var(--pc) 55%, transparent); }
+html.dk .thk2 .cl > svg, html.dk .thk-p, html.dk .thk2 .cat { filter: drop-shadow(0 0 5px currentColor); }
+html.dk .thk-p { color: var(--me); }
+html.dk .tab[aria-current="page"] { text-shadow: 0 0 8px var(--accent); }
+html.dk .tab[aria-current="page"] svg { filter: drop-shadow(0 0 4px var(--accent)); }
+html.dk .av3 i { box-shadow: 0 0 6px currentColor; }
 
 /* 考え事の雲 */
 .thkwrap { display: flex; justify-content: center; min-height: 112px; }
@@ -229,7 +251,9 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   var holName = function (s) { return holidays(parse(s).y)[s] || ''; };
 
   /* ============ 色 ============ */
-  var PAL = ['#3257d6', '#d9432f', '#d9a400', '#5a8f1f', '#1ea0d6', '#8a4fd6', '#d6457a', '#8a5a3c'];
+  var PAL_L = ['#3257d6', '#d9432f', '#d9a400', '#5a8f1f', '#1ea0d6', '#8a4fd6', '#d6457a', '#8a5a3c'];
+  var PAL_D = ['#4d8dff', '#ff4d5e', '#ffe14d', '#4dff88', '#3df0ff', '#b36bff', '#ff5cc8', '#ff9a3d'];
+  var PAL = PAL_L.slice();
   var PNAME = ['ブルー', 'レッド', 'イエロー', 'グリーン', 'スカイ', 'パープル', 'ピンク', 'ブラウン'];
   function resolveColors(cfg) {
     var me = (cfg && cfg.meColor != null) ? cfg.meColor : 0;
@@ -373,13 +397,8 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     window.scrollTo(0, 0);
     render();
   }
-  function applyToday() {
-    var work = !!shiftOf('me', S.today);
-    document.body.style.background = work ? 'color-mix(in srgb, var(--accent) 17%, var(--bg))' : '';
-  }
   function render() {
     drawTabs();
-    applyToday();
     var v = $('#view');
     if (S.view === 'month') renderMonth(v);
     else if (S.view === 'day') renderDay(v);
@@ -389,7 +408,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   }
   function onData() {
     if (!S.ready.shifts || !S.ready.events || !S.ready.todos || !S.ready.config) return;
-    if (S.view === 'month' && $('#stage')) { refreshMonth(); applyToday(); } else render();
+    if (S.view === 'month' && $('#stage')) refreshMonth(); else render();
     maybeOnboard();
   }
 
@@ -489,13 +508,15 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
 
   }
   var CLOUD = '<svg><use href="#cloud"/></svg>';
+  var CAT = '<svg class="cat" viewBox="0 0 40 38" aria-hidden="true"><g fill="currentColor"><path d="M9 36c-5 0-6-8-2-12 3-3 5-6 5-10h12c0 5 1 8 4 10 5 4 3 12-3 12z"/><circle cx="20" cy="12" r="8.2"/><path d="M12.6 8.2L11 .8 18 4.4zM27.4 8.2L29 .8 22 4.4z"/><path d="M31 33c6 1 8-3 7-8" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></g><g fill="var(--card)"><ellipse cx="16.8" cy="12.4" rx="1.3" ry="1.8"/><ellipse cx="23.2" cy="12.4" rx="1.3" ry="1.8"/></g></svg>';
+  function catHtml() { return shiftOf('me', S.today) ? '' : CAT; }
   function drawThk() {
     var w = $('#thk'); if (!w) return;
     if (S.page === 0) {
       w.innerHTML = '<div class="thk2"><button type="button" class="cl a" data-go="1" aria-label="あの人は？">' + CLOUD + '<span>あの人は？</span></button>' +
-        '<button type="button" class="cl b" data-go="2" aria-label="やることあったっけ？">' + CLOUD + '<span>やること<br>あったっけ？</span></button>' + momSvg(S.visited ? 'stand' : 'think') + '</div>';
+        '<button type="button" class="cl b" data-go="2" aria-label="やることあったっけ？">' + CLOUD + '<span>やること<br>あったっけ？</span></button>' + momSvg(S.visited ? 'stand' : 'think') + catHtml() + '</div>';
     } else {
-      w.innerHTML = '<div class="thk2 back"><button type="button" class="cl ' + (S.page === 1 ? 'a' : 'b') + '" data-go="0" aria-label="自分の画面にもどる">' + CLOUD + '<span>もどる</span></button>' + momSvg('stand') + '</div>';
+      w.innerHTML = '<div class="thk2 back"><button type="button" class="cl ' + (S.page === 1 ? 'a' : 'b') + '" data-go="0" aria-label="自分の画面にもどる">' + CLOUD + '<span>もどる</span></button>' + momSvg('stand') + catHtml() + '</div>';
     }
   }
   function flipTo(n) {
@@ -670,7 +691,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       '<div class="f"><span class="sub">あの人（2人まで）</span>' + friends().map(function (f, i) { return '<button type="button" class="item" data-friend="' + i + '"><span class="av" style="width:30px;height:30px;border-radius:50%;background:var(--' + (i === 0 ? 'p1' : 'p2') + ');display:grid;place-items:center"><svg viewBox="0 0 20 22" style="width:20px;height:20px;fill:#fff"><circle cx="10" cy="5" r="4.2"/><path d="M2 21c0-6 3-9.5 8-9.5s8 3.5 8 9.5z"/></svg></span><b>' + esc(f.name) + '</b><span class="sub">直す ›</span></button>'; }).join('') + (friends().length < 2 ? '<button type="button" class="btn ghost" data-act="newfriend">＋ あの人を足す</button>' : '') + '</div>' +
       '<div class="f"><span class="sub">文字の大きさ（この端末だけ）</span><div class="seg" role="group" aria-label="文字の大きさ"><button type="button" class="chipb" data-fs="16" aria-pressed="' + (curFs() === 16) + '">ふつう</button><button type="button" class="chipb" data-fs="19" aria-pressed="' + (curFs() === 19) + '">大きめ</button></div></div>' +
       '<div class="f"><span class="sub">明るさ（この端末だけ）</span><div class="seg" role="group" aria-label="明るさ">' + [['auto', 'おまかせ'], ['light', 'ライト'], ['dark', 'ダーク']].map(function (o) { return '<button type="button" class="chipb" data-th="' + o[0] + '" aria-pressed="' + (curTheme() === o[0]) + '">' + o[1] + '</button>'; }).join('') + '</div></div>' +
-      '<div class="sub">今日がお仕事の日は、画面の背景がうすい色になります。</div>' +
+      '<div class="sub">ダークは、ネオンのような色になります。今日がお休みだと、ネコが出てきます。</div>' +
       '<label class="f"><span>お母さんの呼び名（ひとみの画面に出ます）</span><input type="text" id="mname" maxlength="10" value="' + esc((S.cfg && S.cfg.mainName) || 'お母さん') + '"></label>' +
       '<div class="row"><button type="button" class="btn ghost small" data-act="iammain">この端末の人を「メイン」にする</button></div></section>';
     h += '<section class="card"><h3>控え（念のため）</h3><div class="sub">記録はサーバー側にもあるので、ふだんは要りません。念のためのファイルです。</div><button type="button" class="btn" data-act="export">控えを保存</button><label class="btn ghost" for="imp" role="button" tabindex="0">控えから戻す</label><input type="file" id="imp" accept=".json,application/json"></section>';
@@ -678,7 +699,14 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     v.innerHTML = h;
   }
   function curTheme() { return ls.get('theme') || 'auto'; }
-  function applyTheme() { var t = curTheme(), r = document.documentElement; if (t === 'light' || t === 'dark') r.setAttribute('data-theme', t); else r.removeAttribute('data-theme'); }
+  function isDark() { var t = curTheme(); return t === 'dark' || (t !== 'light' && !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)); }
+  function applyTheme() {
+    var t = curTheme(), r = document.documentElement;
+    if (t === 'light' || t === 'dark') r.setAttribute('data-theme', t); else r.removeAttribute('data-theme');
+    var dk = isDark(); r.classList.toggle('dk', dk);
+    var src = dk ? PAL_D : PAL_L; for (var i = 0; i < src.length; i++) PAL[i] = src[i];
+    applyColors();
+  }
   function curFs() { return parseInt(ls.get('fs') || '16', 10); }
   function openFriend(i) {
     var f = i != null ? friends()[i] : { id: 'p' + (friends().length + 1), name: '', color: friends().length === 0 ? 6 : 3 };
@@ -829,6 +857,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   /* ============ はじまり ============ */
   function start(claude) {
     applyTheme();
+    try { var mq = window.matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', function () { applyTheme(); render(); }); } catch (e) { /* ignore */ }
     var fs = curFs(); if (fs !== 16) document.documentElement.style.setProperty('--fs', fs + 'px');
     var t = new Date(); S.y = t.getFullYear(); S.m = t.getMonth() + 1;
     var uses = claude && claude.use ? ['db', 'user', 'downloads'].map(function (n) { return claude.use(n).catch(function () { return null; }); }) : [Promise.resolve(null), Promise.resolve(null), Promise.resolve(null)];
