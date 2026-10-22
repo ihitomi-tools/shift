@@ -251,6 +251,7 @@ section { display: grid; gap: 20px; min-width: 0; }
 .win.ano .people { gap: 4px; }
 .win.ano .pc { gap: 4px; padding: 4px 4px; }
 .win.ano .pc svg { width: 20px; height: 20px; padding: 3px; }
+.win.ano .pc .tx i { font-size: 8.5px; }
 .cm { --pc: var(--p-p1); --pcd: color-mix(in srgb, var(--pc) 70%, #000); width: 30px; height: 18px; flex: none; }
 .phone[data-skin="dq"] .cm { --pcd: var(--pc); }
 .dots { display: flex; justify-content: center; gap: 2px; margin-top: 3px; }
@@ -437,7 +438,7 @@ td.rec, th.rec { background: var(--accent-soft); }
 <header>
   <div class="eyebrow">企画案 ・ たたき台</div>
   <h1>シフト手帳（仮）</h1>
-  <p class="lead">パートの勤務を月ごとに入れて、担当階と一緒に働く人がすぐ分かる。病院・買い物・ご飯などの予定も、自分のも、じいちゃんのも、同じ画面に置いて、できあがったらひとみに送れる。まずは中身を固める用の提案です。お母さんがiPhone Airで使い、ひとみが受け取る、という前提で書いています（違っていたら直します）。</p>
+  <p class="lead">パートの勤務を月ごとに入れて、担当階と一緒に働く人がすぐ分かる。病院・買い物・ご飯などの予定も、自分のも、じいちゃんのも、同じ画面に置いて、ひとみも同じ画面を見られる。まずは中身を固める用の提案です。お母さんがiPhone Airで使い、ひとみも同じアプリを開く（アーティファクトとして作る）、という前提で書いています（違っていたら直します）。</p>
 </header>
 
 <section>
@@ -452,9 +453,10 @@ td.rec, th.rec { background: var(--accent-soft); }
     <div class="sum"><b>日ごとの職場</b><span>3階建ての図で、午後（お母さん）を大きく、午前は参考に。常勤・夜勤・看護は下の表に。</span></div>
     <div class="sum"><b>予定とやること</b><span>予定は、自分とじいちゃん別に、病院・買い物・ご飯・銀行・★のアイコンで。やることは、締め切りつき（なしもOK）。</span></div>
     <div class="sum"><b>呼び方</b><span>じいちゃん（狭い所は「じ」）、あの人は？、やることあったっけ？</span></div>
-    <div class="sum"><b>共有</b><span>最初は画像、次にカレンダー用ファイル、必要なら自動更新。やることも送ります。病院の予定は初期設定では送りません。</span></div>
+    <div class="sum"><b>共有</b><span>全部、共有。ひとみも、お母さんと同じアプリを開いて、同じ画面を見て、書けます。招待はメールだけ。</span></div>
     <div class="sum"><b>撮影の読み取り</b><span>撮影して候補を作り、あやしい所だけ黄色で確認。登録した2人と、自分の行を拾います。</span></div>
-    <div class="sum"><b>バックアップ</b><span>ボタンで保存、新しいスマホでファイルを選んで戻す、シンプルな形。通知は、最初の版ではなしです。</span></div>
+    <div class="sum"><b>控え（念のため）</b><span>記録はサーバー側にあるので、ふだんは要りません。ファイルで控えを保存できます。通知は、最初の版ではなしです。</span></div>
+    <div class="sum"><b>作り方（進める方向）</b><span>アーティファクトとして、claude.aiの中で動かします。写真の読み取りは、Claudeが直接。お母さんのアカウントで、確認ページを試して、最終決定します。</span></div>
   </div>
 </section>
 
@@ -482,7 +484,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="win"><div class="row"><span class="grow"><b>今日</b> 午後 <span class="sub">13:00–19:00</span></span><span class="fl f1">1F</span></div></div>
           <div class="thk2"><span class="cl a"><svg><use href="#cloud"/></svg><span>あの人は？</span></span><span class="cl b"><svg><use href="#cloud"/></svg><span>やること<br>あったっけ？</span></span><svg class="thk-p" data-mom="think"></svg></div>
         </div>
-        <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+        <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>共有</span></div>
       </div></div>
       <figcaption><b>① 月のカレンダー（トップ）</b>自分の勤務だけのシンプルな画面。今日は丸と枠で目立たせます。「わたし」などの文字は出しません。下の人型は考え中で、雲が2つ。「あの人は？」「やることあったっけ？」をタップすると、看板がくるりと回ります。</figcaption>
     </figure>
@@ -495,7 +497,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="people"><span class="pc me"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>午後 1F</i></span></span><span class="pc p1"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>午後 2F</i></span></span><span class="pc p2 off"><svg><use href="#pp"/></svg><span class="tx"><b>森</b><i>お休み</i></span></span></div>
           <div class="thk2 back"><span class="cl a"><svg><use href="#cloud"/></svg><span>もどる</span></span><svg class="thk-p" data-mom="stand"></svg></div>
         </div>
-        <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+        <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>共有</span></div>
       </div></div>
       <figcaption><b>①-2 タップすると：あの人たちの重ね表示（看板の裏面）</b>誰が出る日かを、人の色の丸で表示。凡例も、この画面ではじめて出ます。凡例の行を横にスワイプすると、階の色の凡例に回ります。</figcaption>
     </figure>
@@ -508,7 +510,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="win"><div class="row"><span class="grow"><b>次の締め切り</b> 14日</span><span class="dl soon">あと2日</span></div><div class="sub" style="margin-top:2px">締め切りなし 2件</div></div>
           <div class="thk2 back"><span class="cl b"><svg><use href="#cloud"/></svg><span>もどる</span></span><svg class="thk-p" data-mom="stand"></svg></div>
         </div>
-        <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+        <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>共有</span></div>
       </div></div>
       <figcaption><b>①-3 タップすると：やることカレンダー（看板の3ページ目）</b>締め切りの日に、四角い印。期限をすぎたものは赤、近いものはオレンジ、余裕のあるものは灰色。印の中のアイコンで、何のやることかが分かります。印をタップすると、その日のやることが出ます。締め切りなしは、件数だけ下に出ます。</figcaption>
     </figure>
@@ -536,7 +538,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           </div>
           <div class="sub" style="text-align:center">色つきが自分（午後 13:00–19:00）・ 午前は参考</div>
         </div>
-        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span class="on"><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span class="on"><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>共有</span></div>
       </div></div>
       <figcaption><b>② その日の職場</b>各階に午前1人・午後1人。お母さんは午後固定なので、午後の枠を大きく、午前は参考として小さく表示。自分は色つき、ほかの人は名前つき。違う職種は下の表に。日付はカレンダーで選べて、自分が休みの日も図は出ます（自分の枠は空き）。</figcaption>
     </figure>
@@ -558,7 +560,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="btn">この内容で入れる（12件）</div>
           <div class="sub" style="text-align:center">黄色の行だけ直せばOK</div>
         </div>
-        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span class="on"><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span class="on"><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>共有</span></div>
       </div></div>
       <figcaption><b>③ 撮影して読み取り</b>自信のない所だけ黄色で止まります。全部入れる前に必ず確認できます。</figcaption>
     </figure>
@@ -575,7 +577,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="win"><div class="ev"><div class="d">22<small>日</small></div><div><span class="who-tag">じ</span><b><svg class="ico"><use href="#e-meal"/></svg>家族でご飯</b><div class="sub">12:00 ・ ○○食堂</div></div></div></div>
           <div class="win" style="border-color:var(--p-warn)"><div class="ev"><div class="d">24<small>火</small></div><div><span class="who-tag">じ</span><b><svg class="ico"><use href="#e-hosp"/></svg>○○病院 内科</b><div class="sub">14:00</div><div class="warnbox">この日は午後勤務（2F）と重なっています</div></div></div></div>
         </div>
-        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span class="on"><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span class="on"><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>共有</span></div>
       </div></div>
       <figcaption><b>④ 予定（自分・じいちゃん）</b>「だれの予定か」は札、「なにをするか」はアイコンで分かります。時間・持ち物・送迎のメモも書けます。</figcaption>
     </figure>
@@ -584,24 +586,24 @@ td.rec, th.rec { background: var(--accent-soft); }
       <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
         <div class="status"><span>9:41</span><span>●●● 5G</span></div>
         <div class="body">
-          <div class="title-row"><b>ひとみに送る</b></div>
-          <div class="mini" id="mini"></div>
+          <div class="title-row"><b>共有</b></div>
           <div class="win">
-            <div class="opt sel"><div><b>画像で送る</b><div class="sub">今月のシフト表を1枚の画像に。LINEやメッセージですぐ</div></div></div>
-            <div class="opt"><div><b>カレンダー用ファイル</b><div class="sub">タップで相手のカレンダーに取り込めます</div></div></div>
-            <div class="opt"><div><b>自動で更新（購読）</b><div class="sub">変更が相手のカレンダーに自動で反映</div></div></div>
+            <h4>見られる人・書ける人</h4>
+            <div class="srow" style="--pc:var(--p-accent)"><svg><use href="#pp"/></svg><div class="grow"><b>お母さん</b><div class="sub">編集者（書けます）</div></div></div>
+            <div class="srow" style="--pc:var(--p-p2)"><svg><use href="#pp"/></svg><div class="grow"><b>ひとみ</b><div class="sub">持ち主（書けます）</div></div></div>
           </div>
           <div class="win">
-            <div class="row"><div class="grow"><b>病院の予定も送る</b><div class="sub">オフの時は「予定あり」とだけ表示</div></div><span class="tog"></span></div>
+            <h4>最近の更新</h4>
+            <div class="who"><span class="who-tag">ひとみ</span><span class="grow">「銀行」を足した</span><span class="sub">20:15</span></div>
+            <div class="who"><span class="who-tag me">お母さん</span><span class="grow">12日の職場を確認</span><span class="sub">19:40</span></div>
+            <div class="who"><span class="who-tag me">お母さん</span><span class="grow">やることを完了</span><span class="sub">昨日</span></div>
           </div>
-          <div class="win">
-            <div class="row"><div class="grow"><b>やることも送る</b><div class="sub">締め切りつきのやること</div></div><span class="tog on"></span></div>
-          </div>
-          <div class="btn">送る</div>
+          <div class="win"><h4>招待は、メールだけ</h4><span class="sub">リンクを知っている人は誰でも、にはしません。</span></div>
+          <div class="btn ghost">月のカレンダーを画像で保存</div>
         </div>
-        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span class="on"><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span class="on"><i><svg class="ic"><use href="#ic-send"/></svg></i>共有</span></div>
       </div></div>
-      <figcaption><b>⑤ 共有</b>病院の予定の詳細はオフが初期設定。病院名や病名は、送りたい時だけ送ります。やることは、送る設定にしました（オフにもできます）。</figcaption>
+      <figcaption><b>⑤ 共有</b>ひとみは、お母さんと同じアプリを開くだけで、同じ画面を見られます。ふたりとも書けて、更新はお互いの画面にすぐ出ます。「だれが何をしたか」も、短く見られます。画像で保存は、LINEなどで誰かに見せたい時のおまけです。</figcaption>
     </figure>
     <figure class="fig">
       <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
@@ -620,9 +622,9 @@ td.rec, th.rec { background: var(--accent-soft); }
             <div class="crow p1"><svg><use href="#pp"/></svg><b>田中</b><span class="sw"><i style="--c:var(--pal1)"></i><i style="--c:var(--pal2)"></i><i style="--c:var(--pal3)"></i><i style="--c:var(--pal4)"></i><i style="--c:var(--pal5)"></i><i style="--c:var(--pal6)"></i><i style="--c:var(--pal7)" class="on"></i><i style="--c:var(--pal8)"></i></span></div>
             <div class="crow p2"><svg><use href="#pp"/></svg><b>森</b><span class="sw"><i style="--c:var(--pal1)"></i><i style="--c:var(--pal2)"></i><i style="--c:var(--pal3)"></i><i style="--c:var(--pal4)" class="on"></i><i style="--c:var(--pal5)"></i><i style="--c:var(--pal6)"></i><i style="--c:var(--pal7)"></i><i style="--c:var(--pal8)"></i></span></div>
           </div>
-          <div class="win"><h4>プライバシー</h4><span class="sub">端末の中だけに保存。相手への通知も、ひとみへの共有もありません。</span></div>
+          <div class="win"><h4>共有について</h4><span class="sub">登録した人の名前は、ひとみにも見えます。相手の人には、通知も、共有もされません。</span></div>
         </div>
-        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>共有</span></div>
       </div></div>
       <figcaption><b>⑥ 設定：登録する人と色</b>登録は2人まで。人の色は8色から選べて、自分の色も変えられます。辞めたら外して、別の人を入れます。</figcaption>
     </figure>
@@ -646,7 +648,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           </div>
           <div class="win"><h4>持ち物・メモ</h4><span class="sub">お薬手帳</span></div>
         </div>
-        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span class="on"><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span class="on"><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>共有</span></div>
       </div></div>
       <figcaption><b>⑦ 予定を足す</b>だれの予定か、なにをするかを選びます。「くりかえし」で、毎週・毎月にもできます。持ち物は、予定の下に、そっと小さく出ます。アイコンは、よく使う「病院・買い物・ご飯・銀行・★（ほか）」の5つ。「ほか」は、書く内容を自由に入れられます。あとから増やす予定です。</figcaption>
     </figure>
@@ -665,7 +667,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           </div>
           <div class="sub" style="text-align:center">完了 3件 ▾</div>
         </div>
-        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span class="on"><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span class="on"><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>共有</span></div>
       </div></div>
       <figcaption><b>⑧ やること（締め切りつき）</b>予定とは別のリストです。期限をすぎたものが赤、近いものがオレンジで上に並びます。丸を押すと完了。内容、締め切り（なしでもOK）、だれの、アイコン（なくてもOK）を書けます。締め切りなしは、いちばん下に並びます。</figcaption>
     </figure>
@@ -679,7 +681,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="win"><h4>やること（この日が締め切り）</h4><div class="row"><span class="who-tag me">自分</span><span class="grow"><svg class="ico"><use href="#e-hosp"/></svg><b>お薬をもらう</b></span><span class="dl soon">今日まで</span></div></div>
           <div class="win ano"><h4><svg class="cm"><use href="#cloud"/></svg>あの人は？</h4><div class="people"><span class="pc me off"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>お休み</i></span></span><span class="pc p1 off"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>お休み</i></span></span><span class="pc p2"><svg><use href="#pp"/></svg><span class="tx"><b>森</b><i>午前 2F</i></span></span></div></div>
         </div>
-        <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+        <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>共有</span></div>
       </div></div>
       <figcaption><b>⑨ 日付をタップすると</b>どのカレンダーの日付でも、その日の詳細が開きます。上に「その日の職場」の図、下に、その日の予定と、締め切りのやること。「あの人は？」の欄は、雲の見た目の別の枠にして、いる人は、その人の色で枠を塗ります（休みの人は薄く、点線）。休みの日でも開きます。</figcaption>
     </figure>
@@ -687,15 +689,15 @@ td.rec, th.rec { background: var(--accent-soft); }
       <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
         <div class="status"><span>9:41</span><span>●●● 5G</span></div>
         <div class="body">
-          <div class="title-row"><b>バックアップ</b><span class="sub">設定 ›</span></div>
-          <div class="win"><div class="btn">バックアップを保存</div><div class="sub" style="margin-top:6px;text-align:center">保存先を選べます（ファイル、LINE Keep、メールなど）</div></div>
-          <div class="win"><div class="row"><span class="grow"><b>最後のバックアップ</b></span><span class="sub">11/10 20:15</span></div><div class="sub" style="margin-top:2px">1か月たつと、開いた時に「バックアップをとりましょう」と出ます。</div></div>
-          <div class="win"><div class="btn ghost">バックアップから戻す</div><div class="sub" style="margin-top:6px;text-align:center">新しいスマホで、保存したファイルを選びます。</div></div>
-          <div class="win"><h4>ご注意</h4><span class="sub">ファイルには、職場の人の名前や予定が入っています。自分だけが見られる場所に保存してください。</span></div>
+          <div class="title-row"><b>控え</b><span class="sub">設定 ›</span></div>
+          <div class="win"><span class="sub">記録は、サーバー側にもあるので、ふだんは要りません。念のための控えです。</span></div>
+          <div class="win"><div class="btn">控えを保存</div><div class="sub" style="margin-top:6px;text-align:center">ファイルに保存します</div></div>
+          <div class="win"><div class="row"><span class="grow"><b>最後の控え</b></span><span class="sub">まだありません</span></div></div>
+          <div class="win"><div class="btn ghost">控えから戻す</div></div>
         </div>
-        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>共有</span></div>
       </div></div>
-      <figcaption><b>⑩ バックアップ</b>ボタンを押して、保存先を選ぶだけ。新しいスマホでは、そのファイルを選ぶだけで、全部もどります。キーのことばなどは使わない、いちばんシンプルな形です。（iPhoneで動くかは、試作で確かめます）</figcaption>
+      <figcaption><b>⑩ 控え（念のため）</b>記録はサーバー側にあるので、機種変更の時も、ログインし直すだけで続きから使えるはずです。それでも心配な時のために、ファイルで控えを残せます。</figcaption>
     </figure>
 
   </div>
@@ -745,48 +747,48 @@ td.rec, th.rec { background: var(--accent-soft); }
 
 <section>
   <div class="sec-head">
-    <h2>ひとみに共有する方法</h2>
-    <p>「カレンダーごと」か「シフト表送信」かは、手間と便利さのバランスです。わたしのおすすめは、A→Bの順で始めて、必要になったらCです。</p>
+    <h2>共有のしくみ</h2>
+    <p>アーティファクトとして作る場合の共有です。画像やファイルを送る共有は、いらなくなります。</p>
   </div>
-  <div class="tw">
-    <table>
-      <thead><tr><th>方法</th><th>受け取る側</th><th>自動更新</th><th>ひとことで</th></tr></thead>
-      <tbody>
-        <tr><td class="rec"><b>A. 画像・PDFで送る</b><span class="pill">最初はこれ</span></td><td>LINEなどで見るだけ</td><td>なし</td><td>いちばん簡単で壊れにくい。変更があれば送り直し。</td></tr>
-        <tr><td class="rec"><b>B. カレンダー用ファイル（.ics）</b><span class="pill">次に</span></td><td>タップでカレンダーに取り込み</td><td>なし</td><td>ひとみのカレンダーに予定として入る。iCloudの共有カレンダーに取り込めば、家族で共有も可能。</td></tr>
-        <tr><td><b>C. 購読カレンダー</b></td><td>URLを登録すると自動で反映</td><td>あり</td><td>一番ラク。ただしデータを置くサーバーが必要で、URLを知っている人には見える点に注意。</td></tr>
-        <tr><td><b>D. アプリ内で閲覧共有</b></td><td>同じアプリを入れる</td><td>あり</td><td>ログインや保存先が必要で、手間が一番大きい。</td></tr>
-      </tbody>
-    </table>
+  <div class="summary">
+    <div class="sum"><b>同じ画面を見る</b><span>ひとみは、お母さんと同じアプリを開くだけ。お母さんが書いたことは、すぐ、ひとみの画面に出ます（私の理解では、ほぼ即時）。</span></div>
+    <div class="sum"><b>ふたりとも書ける</b><span>ひとみは持ち主、お母さんは編集者。「書いといて」にも、その場で応えられます。</span></div>
+    <div class="sum"><b>招待はメールだけ</b><span>「リンクを知っている人は誰でも」にはしません。同僚の名前や予定が、他の人に読まれないように。</span></div>
   </div>
 </section>
 
 <section>
   <div class="sec-head">
     <h2>作り方の選択肢</h2>
-    <p>iPhone Airで使うには、大きく2通りあります。</p>
+    <p>お母さんのiPhone Airで使うための、2通りです。</p>
   </div>
   <div class="tw">
     <table>
-      <thead><tr><th>方式</th><th>できること</th><th>気をつける所</th></tr></thead>
+      <thead><tr><th></th><th>アーティファクト</th><th>ホーム画面に置くWebアプリ</th></tr></thead>
       <tbody>
-        <tr><td class="rec"><b>ホーム画面に置くWebアプリ</b><span class="pill">おすすめ</span></td><td>アプリのように起動、カメラで撮影、予定・やること、画像・ファイル共有。App Store審査なしで、ここで作ってすぐ試せる。</td><td>iPhoneの標準カレンダーに直接書き込めない（Bのファイル経由になる）。データは端末内に保存するので、バックアップの仕組みも付けたい。</td></tr>
-        <tr><td><b>ネイティブのiPhoneアプリ</b></td><td>標準カレンダーへ直接書き込み、通知の自由度が高い。</td><td>Macでの開発環境と、Apple Developer Program（有料・年額）が必要。ひとみの環境次第で、作るハードルが一段上がる。</td></tr>
+        <tr><td><b>写真の読み取り</b></td><td class="rec">最初から使える（Claudeに直接）</td><td>AIを呼ぶための鍵やサーバーが、別に要る</td></tr>
+        <tr><td><b>ひとみとの共有</b></td><td class="rec">同じ画面を、そのまま見られる・書ける</td><td>画像やファイルを送る</td></tr>
+        <tr><td><b>機種変更</b></td><td class="rec">ログインし直すだけ（のはず）</td><td>バックアップのファイルが要る</td></tr>
+        <tr><td><b>お母さんのアカウント</b></td><td>claude.aiのログインが必要</td><td class="rec">要らない</td></tr>
+        <tr><td><b>ホーム画面のアイコン</b></td><td>なし（claude.aiの中で開く）</td><td class="rec">あり</td></tr>
+        <tr><td><b>ネットがない時</b></td><td>使えない</td><td class="rec">使える</td></tr>
+        <tr><td><b>記録の置き場所</b></td><td>Anthropicのサービス上</td><td class="rec">iPhoneの中だけ</td></tr>
+        <tr><td><b>カレンダー用ファイル（.ics）</b></td><td>保存できない</td><td class="rec">できる</td></tr>
       </tbody>
     </table>
   </div>
+  <p class="note"><b>進める方向：アーティファクト。</b>決め手は、写真の読み取りと、ひとみとの共有です。お母さんの無料アカウントで、確認ページを試して、書き込みと写真の読み取りが動けば、最終決定にします。</p>
 </section>
 
 <section>
   <div class="callout">
     <h3>正直に言うと、まだ分からないところ</h3>
     <ul>
-      <li><b>読み取りの精度は、実物を見るまで保証できません。</b>手書き、小さい文字、色分けの多い表だと間違いが出ます。だから確認画面を必ず挟む設計にしています。</li>
-      <li><b>Webアプリ方式で細かい動作（通知・保存の安定性など）は、iPhoneのバージョンで差が出ることがあります。</b>最初に小さい試作を入れて実機で確かめるのが安全です。</li>
-      <li><b>病院の予定は、配慮が必要な個人情報です。</b>共有の初期設定は「送らない」にして、送る時に毎回選べる形を考えています。</li>
-      <li><b>同僚の名前を読み取るには、写真を読み取りサービスに送る方式が現実的です。</b>端末内だけで読む方式にもできますが、表の読み取りは精度が落ちると思います（推測）。職場の方針として問題がないか、確認しておくと安心です。</li>
-      <li><b>「お知らせ（通知）」は、最初の版ではなしにします。</b>iPhoneにきちんと届けるには、通知を送る仕組み（サーバー）が別に要ると思います（私の理解です）。最初は、開いた時に「あと◯日」と色で知らせます。</li>
-      <li><b>バックアップのファイルは、お母さんが保管します。</b>職場の人の名前などが入るので、自分だけが見られる場所に保存してください。保存を忘れないよう、1か月たったら、開いた時に知らせます。ゲームのような短い引き継ぎコードは、データを置くサーバーが別に要るので、最初の版ではやりません。まだ試していないので、試作で動きを確かめます。</li>
+      <li><b>写真の読み取りの精度は、実物を見るまで保証できません。</b>写真は、送る前に約120万画素まで小さくされるので、細かい勤務表は、何枚かに分けて撮る形になるかもしれません。確認画面を必ず挟みます。</li>
+      <li><b>お母さんのClaudeの利用枠を使います。</b>無料の枠は小さめです。月に1回、シフト表を読むくらいなら足りそうですが、毎日は向きません（私の推測です）。</li>
+      <li><b>記録は、Anthropicのサービス上に置かれます。</b>同僚の名前や、予定が、スマホの外に出ます。職場の方針として問題がないか、確認しておくと安心です。</li>
+      <li><b>お母さんが書き込めるかは、無料アカウントで確認が必要です。</b>ひとみ側の共有メニューで、編集者の招待は選べることを確認ずみです。</li>
+      <li><b>使えないこと</b>：ネットがない時、ホーム画面のアイコン、カレンダー用ファイル、お知らせ（通知）。</li>
     </ul>
   </div>
 </section>
@@ -797,12 +799,10 @@ td.rec, th.rec { background: var(--accent-soft); }
     <p>まだ決まっていないことです。分かる所からで大丈夫。</p>
   </div>
   <ol class="qs">
-    <li><b>バックアップは、「ボタンで保存・ファイルで戻す」でいい？</b><span>保存先は、ファイルやLINE Keepなどから選びます。これで使えそうですか？</span></li>
-    
-    <li><b>ひとみに見せる範囲</b><span>勤務、予定、やること（送る設定）で決まりました。病院の予定だけ、初期設定ではオフです。</span></li>
-    <li><b>1月からの過去のシフト表を、何枚か見せてもらえますか？</b><span>月ごとにレイアウトが変わるかを確かめて、読み取りのテストに使います。</span></li>
-    <li><b>雲の素材の利用条件</b><span>素材サイトの規約（アプリへの組み込み・加工）を確認してもらえると安心です。</span></li>
-    <li><b>アプリの名前</b><span>「シフト手帳（仮）」のままでいいですか？　予定とやることも入るので、変えたい気持ちがあれば。</span></li>
+    <li><b>お母さんのアカウントと、確認ページ</b><span>無料アカウントを作って、編集者として招待して、確認ページの結果を送ってください。（ひとみのiPhone SEでの結果も）</span></li>
+    <li><b>1月からの過去のシフト表</b><span>何枚か見せてもらえますか？　月ごとにレイアウトが変わるかを確かめて、読み取りのテストに使います。</span></li>
+    <li><b>同僚の名前を、サーバーに置くこと</b><span>気持ちの面と、職場の方針の面で、大丈夫そうですか？</span></li>
+    <li><b>アプリの名前</b><span>「シフト手帳（仮）」のままでいいですか？</span></li>
   </ol>
 </section>
 
@@ -823,10 +823,9 @@ td.rec, th.rec { background: var(--accent-soft); }
     </div>
     <div class="ph"><h3>確かめること</h3>
       <ul class="ul2">
-        <li><b>アプリを置く場所</b>：決める。下の「置く場所の比較」を見てください。</li>
-        <li><b>iPhoneで記録が消えないか</b>：確認ページで、お母さんのiPhoneとは別に、ひとみのiPhone SEで試す。</li>
-        <li><b>ひとみ側（Pixel）</b>：カレンダー用ファイルは、Googleカレンダーに取り込む形。試作で確認。</li>
-        <li><b>読み取りの精度</b>：1月からのシフト表の写真で確かめる。</li>
+        <li><b>お母さんが書き込めるか</b>：無料アカウントで、確認ページを試す（編集者の招待は、選べることを確認ずみ）。</li>
+        <li><b>写真の読み取り</b>：確認ページと、1月からのシフト表で。</li>
+        <li><b>ひとみ側</b>：Pixelで、同じアプリを開いて、見る・書く。</li>
         <li><b>雲の素材</b>：問題なし（確認ずみ）。</li>
       </ul>
     </div>
@@ -835,8 +834,8 @@ td.rec, th.rec { background: var(--accent-soft); }
 
 <section>
   <div class="sec-head">
-    <h2>置く場所の比較</h2>
-    <p>アプリを、お母さんのiPhoneで開けるようにする「置き場所」です。記録は、それぞれの端末の中にだけ保存されます。置き場所に置くのは、アプリの部品（画面の作り）だけです。</p>
+    <h2>置く場所の比較（代わりの案）</h2>
+    <p>アーティファクトで進められなかった時の、代わりの案です。「ホーム画面に置くWebアプリ」にする場合の、置き場所です。</p>
   </div>
   <div class="tw">
     <table>
@@ -865,12 +864,34 @@ td.rec, th.rec { background: var(--accent-soft); }
 
 <section>
   <div class="sec-head">
+    <h2>データの持ち方（アーティファクト版）</h2>
+    <p>記録は、すべて「共有の置き場所」に、1件ずつ別の記録として置きます。ひとみとお母さんが、同時に別の予定を書いても、上書きされないようにするためです。</p>
+  </div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>記録の種類</th><th>1件の中身</th><th>入れる人</th></tr></thead>
+      <tbody>
+        <tr><td><b>シフト</b></td><td>日付、午前／午後、階、勤務記号</td><td>ふたりとも。写真の読み取りでも入る</td></tr>
+        <tr><td><b>予定</b></td><td>日付、時間、だれの、アイコン、題名、持ち物・メモ、くりかえし</td><td>ふたりとも</td></tr>
+        <tr><td><b>やること</b></td><td>内容、締め切り（なしもOK）、だれの、アイコン、完了したか、くりかえし</td><td>ふたりとも</td></tr>
+        <tr><td><b>あの人たち</b></td><td>名前、色（2人まで）</td><td>ふたりとも</td></tr>
+        <tr><td><b>職場の行事</b></td><td>日付、題名（表から自動）</td><td>写真の読み取り</td></tr>
+        <tr><td><b>設定</b></td><td>自分の色、文字の大きさ</td><td>それぞれ（お母さんの設定は、お母さんの画面だけ）</td></tr>
+        <tr><td><b>最近の更新</b></td><td>だれが、何をした、いつ（古いものは、自動で消す）</td><td>自動</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">同じ記録を、ふたりが同時に直した時だけ、後から保存したほうが勝ちます（仕様で、避けられません）。1か月分のシフトなど、数百件の記録なので、容量の心配はなさそうです（上限は、1つのアプリで約2万5千件）。</p>
+</section>
+
+<section>
+  <div class="sec-head">
     <h2>進め方の案</h2>
   </div>
   <div class="phases">
-    <div class="ph"><h3>第1段階</h3><p>手入力で、シフト、予定、やること、3ページの看板、仲間の登録と色。画像で共有。</p></div>
+    <div class="ph"><h3>第1段階</h3><p>手入力で、シフト、予定、やること、3ページの看板、あの人たちの登録と色。ひとみと共有（招待）。</p></div>
     <div class="ph"><h3>第2段階</h3><p>撮影で読み取り（確認画面つき）と、その日の職場の自動表示。</p></div>
-    <div class="ph"><h3>第3段階</h3><p>カレンダー用ファイル、必要なら購読。通知は、使い方を見てから相談します。</p></div>
+    <div class="ph"><h3>第3段階</h3><p>控え（ファイルの書き出し）。通知は、使い方を見てから相談します。</p></div>
   </div>
 </section>
 
@@ -901,12 +922,7 @@ td.rec, th.rec { background: var(--accent-soft); }
   }
   document.getElementById('cal3').innerHTML = h3;
   document.getElementById('m-sum').textContent = '勤務 ' + Object.keys(shifts).length + '日';
-  var mini = document.getElementById('mini'), m = '';
-  for (var i = 0; i < 35; i++) {
-    var day = i + 1, f2 = shifts[day];
-    m += '<i' + (f2 && day <= 30 ? ' class="' + ['', 'b', 'a', 'c'][f2] + '"' : '') + '></i>';
-  }
-  mini.innerHTML = m;
+
 
   var bS = document.getElementById('skin-stylish'), bD = document.getElementById('skin-dq');
   function setSkin(sk) {
