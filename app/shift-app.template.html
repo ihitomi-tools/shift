@@ -109,6 +109,7 @@ h1, h2, h3, h4 { font-family: var(--head); margin: 0; line-height: 1.35; }
 .bld .door { justify-self: center; width: 44px; height: 26px; margin-top: 2px; border-radius: 8px 8px 0 0; background: color-mix(in srgb, var(--me) 55%, var(--card)); }
 .house .sub { margin-top: 8px; }
 .mcard { display: grid; gap: 6px; padding: 10px; border: 1px solid var(--line); border-radius: 12px; } .mcard select { width: 100%; min-height: 44px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--card); color: var(--fg); font: inherit; padding: 0 10px; }
+.fixwk summary { cursor: pointer; color: var(--sub); font-size: .85em; text-align: center; padding: 8px; list-style: none; opacity: .8; } .fixwk summary::-webkit-details-marker { display: none; } .fixin { display: grid; gap: 12px; margin-top: 6px; }
 .nmd summary { cursor: pointer; font-weight: 700; min-height: 28px; display: flex; align-items: center; } .nmd[open] summary { margin-bottom: 6px; } .nmrow { display: flex; align-items: center; gap: 8px; margin-top: 6px; } .nmrow .role { min-width: 34px; } .nmrow input { flex: 1; min-width: 0; min-height: 40px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--card); color: var(--fg); font: inherit; padding: 0 10px; }
 .rdsum { display: flex; flex-wrap: wrap; gap: 6px; } .fix { display: grid; gap: 6px; padding: 8px 0; border-top: 1px solid var(--line); }
 .thumbs { display: flex; gap: 8px; flex-wrap: wrap; } .thumbs img { width: 96px; height: 96px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); background: #fff; } .thph { width: 96px; height: 96px; display: grid; place-items: center; border-radius: 10px; border: 1px dashed var(--line); font-size: .8em; color: var(--sub); }
@@ -565,6 +566,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     if (hol) h += '<div class="sub" style="margin-top:-6px">' + esc(hol) + '</div>';
     if (S.fromMonth) h += '<div class="row"><button type="button" class="btn ghost small" data-act="dprev">‹ 前の日</button><span class="grow"></span></div>';
     h += crewHtml(s);
+    var hTop = h; h = '';
     h += '<section class="card"><h3>勤務（' + esc(mainName()) + '）</h3><div class="seg" role="group" aria-label="勤務の階">' +
       '<button type="button" class="chipb" data-shift="me" data-floor="0" aria-pressed="' + (!sh) + '">なし</button>' +
       [1, 2, 3].map(function (f) { return '<button type="button" class="chipb f' + f + '" data-shift="me" data-floor="' + f + '" aria-pressed="' + (!!sh && sh.floor === f) + '"' + (sh && sh.floor === f ? ' style="background:var(--f' + f + ')"' : '') + '>' + f + 'F</button>'; }).join('') + '</div>' +
@@ -578,10 +580,12 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
         ['am', 'pm'].map(function (sl) { return [1, 2, 3].map(function (fl) { var on = cur && cur.slot === sl && cur.floor === fl; return '<button type="button" class="chipb" data-shift="' + f.id + '" data-slot="' + sl + '" data-floor="' + fl + '" aria-pressed="' + (!!on) + '">' + (sl === 'am' ? '午前' : '午後') + fl + 'F</button>'; }).join(''); }).join('') + '</div></div>';
     });
     h += '</section>';
+    var fixH = h; h = hTop;
     var evs = eventsOn(s);
     h += '<section class="card"><h3>予定</h3>' + (evs.length ? evs.map(eventRow).join('') : '<div class="empty">予定はありません</div>') + '<button type="button" class="btn ghost" data-act="newevent" data-date="' + s + '">＋ 予定を足す</button></section>';
     var tds = todoList().filter(function (t) { return !t.done && t.due === s; });
     h += '<section class="card"><h3>やること（この日が締め切り）</h3>' + (tds.length ? tds.map(todoRow).join('') : '<div class="empty">ありません</div>') + '<button type="button" class="btn ghost" data-act="newtodo" data-date="' + s + '">＋ やることを足す</button></section>';
+    h += '<details class="fixwk"><summary>勤務を手で直す</summary><div class="fixin">' + fixH + '</div></details>';
     v.innerHTML = h;
   }
   var CREW_POOL = { sp: ['山田', '中村', '小川', '木村', '林', '佐藤', '高橋', '伊藤', '渡辺', '加藤'], day: ['高田', '石井', '内田', '三浦'], night: ['岡田', '野口', '吉川'], ns: ['松本', '青木', '井上'] };
