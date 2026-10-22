@@ -419,11 +419,12 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     else if (S.view === 'day') renderDay(v);
     else if (S.view === 'events') renderEvents(v);
     else if (S.view === 'todos') renderTodos(v);
+    else if (S.view === 'reader') renderReader(v);
     else renderShare(v);
   }
   function onData() {
     if (!S.ready.shifts || !S.ready.events || !S.ready.todos || !S.ready.config) return;
-    if (S.view === 'month' && $('#stage')) refreshMonth(); else render();
+    if (S.view === 'month' && $('#stage')) refreshMonth(); else if (S.view !== 'reader') render();
     maybeOnboard();
   }
 
@@ -956,18 +957,19 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     return { year: y, month: m, days: nd, legend: { 日1: '6:30〜15:30', 日2: '11:30〜20:30', 夜勤: '16:00〜翌9:00', 午前: '6:45〜13:30', 午後: '13:00〜19:00' }, events: ev, rows: rows };
   }
   var RD = { files: [], ac: null };
-  function openReader() {
-    RD.files = [];
+  function openReader() { RD.files = []; go('reader'); }
+  function renderReader(v) {
     var lim = S.sampleImg, fr = friends(), sname = (S.cfg && S.cfg.sheetName) || '';
     var can = !!(S.sample && lim);
-    sheet('<h2>写真で勤務表を入れる</h2>' +
+    v.innerHTML = '<div class="top"><button type="button" class="nav" data-act="back" aria-label="月にもどる">‹</button><h1>写真で勤務表を入れる</h1></div><section class="card">' +
       '<div class="sub">紙を平らに置いて、真上から、明るい所で。名前の列まで入れてください。紙が大きい時は、左半分・右半分のように分けて（どちらにも名前の列が入るように）、' + (lim ? lim.maxCount : 4) + '枚まで。</div>' +
       '<label class="f"><span>勤務表に書いてある、' + esc(mainName()) + 'の名前</span><input type="text" id="rd-name" maxlength="20" value="' + esc(sname) + '" placeholder="フルネーム（例：山口 花子）"></label>' +
       '<div class="sub">あの人：' + (fr.length ? fr.map(function (f) { return esc(f.name); }).join('・') : 'まだ登録なし') + '（この名前の行も読みます）</div>' +
       (can ? '<label class="btn ghost" for="rd-file" id="rd-lab" role="button" tabindex="0">写真を足す（撮る・選ぶ）</label><input type="file" id="rd-file" accept="image/*"><div class="row"><div class="sub grow" id="rd-cnt">写真は、まだ選んでいません</div><button type="button" class="btn ghost small" id="rd-clear" hidden>選び直す</button></div>' +
         '<button type="button" class="btn" id="rd-go" disabled>読み取る</button><div class="sub">読み取りには、この画面を開いている人のClaudeの利用分を使います。1〜2分かかることがあります。</div>' :
         '<div class="note">この画面では、写真の読み取りが使えません（ログインしていないか、許可されていません）。下の「例の結果で試す」で、流れだけ見られます。</div>') +
-      '<button type="button" class="btn ghost" id="rd-demo">例の結果で試す（写真なし）</button><button type="button" class="btn ghost" data-close>やめる</button>', function (root) {
+      '<button type="button" class="btn ghost" id="rd-demo">例の結果で試す（写真なし）</button><button type="button" class="btn ghost" data-act="back">やめる</button></section>';
+    (function (root) {
       var nameEl = $('#rd-name', root), go = $('#rd-go', root), file = $('#rd-file', root), cam = null, cnt = $('#rd-cnt', root), clr = $('#rd-clear', root);
       function upd() { if (go) go.disabled = !(RD.files.length && nameEl.value.trim()); }
       nameEl.addEventListener('input', upd);
@@ -982,7 +984,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       if (clr) clr.addEventListener('click', function () { RD.files = []; cnt.textContent = '写真は、まだ選んでいません'; clr.hidden = true; upd(); });
       if (go) go.addEventListener('click', function () { runReader(nameEl.value.trim()); });
       $('#rd-demo', root).addEventListener('click', function () { var nm = nameEl.value.trim() || 'お母さん'; showConfirm(buildPlan(demoResult(nm), nm), nm); });
-    }, true);
+    })(v);
   }
   function runReader(sheetName) {
     RD.ac = new AbortController();
