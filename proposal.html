@@ -303,6 +303,22 @@ section { display: grid; gap: 20px; min-width: 0; }
 .phone[data-skin="dq"] .dseg button.on { color: #000; }
 .dseg button:focus-visible { outline: 2px solid var(--p-accent); outline-offset: 2px; }
 
+/* 切り替えの温度感 */
+.swface { position: relative; height: 142px; border: var(--p-border); border-radius: var(--p-r); background: var(--p-card); padding: 8px; overflow: hidden; display: flex; flex-direction: column; gap: 6px; }
+.swface::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 44px; background: linear-gradient(transparent, var(--p-card)); pointer-events: none; }
+.swA { display: grid; grid-template-columns: 1fr 2.3fr; gap: 6px; margin-top: 10px; }
+.swA .cur { display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--p-sub); border: 1px dashed var(--p-sub); border-radius: 12px; padding: 0 4px; }
+.swA .go, .swB .bubble { font: inherit; font-size: 15px; font-weight: 800; border: 0; background: var(--pc); color: #fff; cursor: pointer; }
+.swA .go { padding: 12px 0; border-radius: 14px; }
+.swB { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+.swB .cur { font-size: 11px; color: var(--p-sub); white-space: nowrap; }
+.swB .bubble { position: relative; margin-left: auto; padding: 11px 20px; border-radius: 22px; }
+.swB .bubble::after { content: ""; position: absolute; top: -7px; right: 26px; border: 7px solid transparent; border-top: 0; border-bottom-color: var(--pc); }
+.phone[data-skin="dq"] .swA .go, .phone[data-skin="dq"] .swB .bubble, .phone[data-skin="dq"] .curl { color: #000; }
+.curl { position: absolute; z-index: 2; right: 0; bottom: 0; min-width: 118px; height: 42px; padding: 0 16px; border: 0; border-top-left-radius: 18px; background: var(--pc); color: #fff; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: -2px -2px 6px rgba(0,0,0,.12); }
+.curl.left { right: auto; left: 0; border-top-left-radius: 0; border-top-right-radius: 18px; box-shadow: 2px -2px 6px rgba(0,0,0,.12); }
+.swA .go:focus-visible, .swB .bubble:focus-visible, .curl:focus-visible { outline: 2px solid var(--p-accent); outline-offset: 2px; }
+
 /* 流れ */
 .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; counter-reset: s; padding: 0; margin: 0; list-style: none; }
 .flow li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; counter-increment: s; position: relative; min-width: 0; }
@@ -530,6 +546,45 @@ td.rec, th.rec { background: var(--accent-soft); }
         </div>
       </div>
       <figcaption><b>吊り看板のターン</b>上のフックに吊られた板が裏返ります。表（自分）はいつもの、シンプルな画面。裏（仲間）では、誰が出る日かを人の色の丸で見られます。「今日、あの人はいるかな？」は、裏面の下に並ぶ人のアイコンで分かります。</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2>切り替えボタンの温度感：3つの案</h2>
+    <p><span class="tag-sample">サンプル</span>「わたし」は帰ってくる場所、「あの人は？」はふと覗きたくなる問いかけ。<b>今いる側は小さく静かに、行き先は大きくあたたかく</b>。この考え方で、3通りの見せ方を作りました。押すと、反対側に切り替わります。色も、わたしは青、あの人はピンクと、温度を変えています。</p>
+  </div>
+  <div class="phones">
+    <figure class="fig">
+      <div class="phone bare" data-skin="stylish">
+        <div class="demo" data-sw="a">
+          <div class="swface"></div>
+          <div class="swctl"></div>
+          <span class="dnote">ボタンを押すと切り替わります</span>
+        </div>
+      </div>
+      <figcaption><b>案A ・ 札の大小</b>今いる側は小さな点線の札、行き先は大きなボタン。押すと、役割が入れ替わります。いちばん分かりやすく、押しやすい形です。</figcaption>
+    </figure>
+    <figure class="fig">
+      <div class="phone bare" data-skin="stylish">
+        <div class="demo" data-sw="b">
+          <div class="swface"></div>
+          <div class="swctl"></div>
+          <span class="dnote">ボタンを押すと切り替わります</span>
+        </div>
+      </div>
+      <figcaption><b>案B ・ 吹き出し</b>「あの人は？」を、カレンダーに向けた吹き出しにします。ことばの感じがそのまま見た目になって、いちばん会話っぽい形です。</figcaption>
+    </figure>
+    <figure class="fig">
+      <div class="phone bare" data-skin="stylish">
+        <div class="demo" data-sw="c">
+          <div class="swface"></div>
+          <div class="swctl"></div>
+          <span class="dnote">ボタンを押すと切り替わります</span>
+        </div>
+      </div>
+      <figcaption><b>案C ・ めくり角</b>大きなボタンは置かず、看板の角に「あの人は？」の札がのぞきます。裏側では、反対の角に「わたし」の札。トップ画面がいちばんシンプルなまま、でも押せる大きさです。</figcaption>
     </figure>
   </div>
 </section>
@@ -846,6 +901,33 @@ td.rec, th.rec { background: var(--accent-soft); }
     });
     stage.addEventListener('pointercancel', function () { x0 = null; });
     if (!reduce) timer = setInterval(function () { if (!document.hidden) step(1); }, 3200);
+  });
+
+  document.querySelectorAll('[data-sw]').forEach(function (el) {
+    var kind = el.getAttribute('data-sw');
+    var face = el.querySelector('.swface'), ctl = el.querySelector('.swctl');
+    var st = 0;
+    var ME = 'var(--p-me)', YOU = 'var(--p-p1)';
+    function render() {
+      var html = faceHtml(st).replace('自分', 'わたし').replace('仲間', 'あの人は？');
+      var curName = st === 0 ? 'わたし' : 'あの人は？';
+      var goName = st === 0 ? 'あの人は？ ▶' : '◀ わたし';
+      var goColor = st === 0 ? YOU : ME;
+      if (kind === 'a') {
+        face.innerHTML = html;
+        ctl.innerHTML = '<div class="swA"><span class="cur">' + curName + '</span><button type="button" class="go" style="--pc:' + goColor + '">' + goName + '</button></div>';
+      } else if (kind === 'b') {
+        face.innerHTML = html;
+        ctl.innerHTML = '<div class="swB"><span class="cur">' + curName + '</span><button type="button" class="bubble" style="--pc:' + goColor + '">' + goName + '</button></div>';
+      } else {
+        face.innerHTML = html + '<button type="button" class="curl' + (st === 0 ? '' : ' left') + '" style="--pc:' + goColor + '">' + (st === 0 ? 'あの人は？ ▶' : '◀ わたし') + '</button>';
+        ctl.innerHTML = '';
+      }
+    }
+    render();
+    el.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('button')) { st = 1 - st; render(); }
+    });
   });
 })();
 </script>
