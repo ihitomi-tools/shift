@@ -350,7 +350,7 @@ td.rec, th.rec { background: var(--accent-soft); }
 <header>
   <div class="eyebrow">企画案 ・ たたき台</div>
   <h1>シフト手帳（仮）</h1>
-  <p class="lead">パートの勤務を月ごとに入れて、担当階と一緒に働く人がすぐ分かる。父の通院も自分の通院も同じ画面に置いて、できあがったらひとみに送れる。まずは中身を固める用の提案です。お母さんがiPhone Airで使い、ひとみが受け取る、という前提で書いています（違っていたら直します）。</p>
+  <p class="lead">パートの勤務を月ごとに入れて、担当階と一緒に働く人がすぐ分かる。じいちゃんの通院も自分の通院も同じ画面に置いて、できあがったらひとみに送れる。まずは中身を固める用の提案です。お母さんがiPhone Airで使い、ひとみが受け取る、という前提で書いています（違っていたら直します）。</p>
 </header>
 
 <section>
@@ -458,15 +458,15 @@ td.rec, th.rec { background: var(--accent-soft); }
         <div class="status"><span>9:41</span><span>●●● 5G</span></div>
         <div class="body">
           <div class="title-row"><b>通院・予定</b><span class="chip">＋ 追加</span></div>
-          <div class="row"><span class="chip">すべて</span><span class="sub">父</span><span class="sub">自分</span></div>
-          <div class="win"><div class="ev"><div class="d">6<small>金</small></div><div><span class="who-tag">父</span><b>○○病院 整形外科</b><div class="sub">10:30 ・ 送迎あり ・ 保険証</div></div></div></div>
+          <div class="row"><span class="chip">すべて</span><span class="sub">じいちゃん</span><span class="sub">自分</span></div>
+          <div class="win"><div class="ev"><div class="d">6<small>金</small></div><div><span class="who-tag">じ</span><b>○○病院 整形外科</b><div class="sub">10:30 ・ 送迎あり ・ 保険証</div></div></div></div>
           <div class="win"><div class="ev"><div class="d">13<small>金</small></div><div><span class="who-tag me">自分</span><b>△△クリニック</b><div class="sub">14:00 ・ お薬手帳</div></div></div></div>
-          <div class="win"><div class="ev"><div class="d">20<small>金</small></div><div><span class="who-tag">父</span><b>リハビリ</b><div class="sub">9:30 ・ 送迎あり</div></div></div></div>
-          <div class="win" style="border-color:var(--p-warn)"><div class="ev"><div class="d">24<small>火</small></div><div><span class="who-tag">父</span><b>○○病院 内科</b><div class="sub">14:00</div><div class="warnbox">この日は午後勤務（2F）と重なっています</div></div></div></div>
+          <div class="win"><div class="ev"><div class="d">20<small>金</small></div><div><span class="who-tag">じいちゃん</span><b>リハビリ</b><div class="sub">9:30 ・ 送迎あり</div></div></div></div>
+          <div class="win" style="border-color:var(--p-warn)"><div class="ev"><div class="d">24<small>火</small></div><div><span class="who-tag">じいちゃん</span><b>○○病院 内科</b><div class="sub">14:00</div><div class="warnbox">この日は午後勤務（2F）と重なっています</div></div></div></div>
         </div>
         <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span class="on"><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
-      <figcaption><b>④ 父の通院・自分の通院</b>「誰の予定か」で色分け。時間・持ち物・送迎のメモも書けます。</figcaption>
+      <figcaption><b>④ じいちゃんの通院・自分の通院</b>「誰の予定か」で色分け。時間・持ち物・送迎のメモも書けます。</figcaption>
     </figure>
 
     <figure class="fig">
@@ -720,7 +720,7 @@ td.rec, th.rec { background: var(--accent-soft); }
 <script>
 (function () {
   var shifts = {2:2,4:2,5:3,9:1,11:1,12:1,16:3,18:3,19:3,24:2,26:2,27:2};
-  var appts = {6:['父'],13:['自'],20:['父'],24:['父']};
+  var appts = {6:['じ'],13:['自'],20:['じ'],24:['じ']};
   var t = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,18:2,22:2,23:2,26:3,30:3};
   function build(el, sh, ap, am) {
     var h = '';
@@ -778,7 +778,7 @@ td.rec, th.rec { background: var(--accent-soft); }
 <script>
 (function () {
   var shifts = {2:2,4:2,5:3,9:1,11:1,12:1,16:3,18:3,19:3,24:2,26:2,27:2};
-  var appts = {6:['父'],13:['自'],20:['父'],24:['父']};
+  var appts = {6:['じ'],13:['自'],20:['じ'],24:['じ']};
   var tt = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,18:2,22:2,23:2,26:3,30:3};
   var s2 = {3:3,5:2,6:2,10:3,13:3,14:3,17:2,20:3,21:3,24:3,25:2,28:3,29:3};
   var OUT = 'var(--p-card)';
