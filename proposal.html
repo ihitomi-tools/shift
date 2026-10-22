@@ -254,6 +254,44 @@ section { display: grid; gap: 20px; min-width: 0; }
 .sw i { width: 14px; height: 14px; border-radius: 50%; background: var(--c); flex: none; }
 .sw i.on { box-shadow: 0 0 0 2px var(--p-card), 0 0 0 3.5px var(--c); }
 
+/* 回る看板のデモ */
+.phone.bare { width: auto; height: auto; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; }
+.demo { width: 262px; padding: 12px; background: var(--p-bg); color: var(--p-fg); border: var(--p-border); border-radius: 22px; font-size: 11.5px; line-height: 1.45; overflow: hidden; }
+.demo .stage { position: relative; width: 238px; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; }
+.demo .stage.prism { height: 322px; perspective: 1000px; }
+.demo .stage.flip { height: 334px; perspective: 1100px; }
+.demo .stage.ring { height: 306px; perspective: 900px; }
+.demo .face { position: absolute; left: 0; top: 0; width: 238px; height: 300px; padding: 8px; background: var(--p-card); border: var(--p-border); border-radius: var(--p-r); display: flex; flex-direction: column; gap: 6px; overflow: hidden; box-shadow: var(--p-shadow); }
+.plate { display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: calc(var(--p-r) - 2px); background: var(--pc); color: #fff; font-weight: 700; font-size: 12px; flex: none; }
+.phone[data-skin="dq"] .plate:not(.ov) { color: #000; }
+.plate svg { width: 16px; height: 16px; fill: currentColor; }
+.plate .sub { margin-left: auto; color: inherit; opacity: .85; font-weight: 400; }
+.plate.ov { background: var(--p-fg); color: var(--p-bg); }
+.av3 { display: inline-flex; gap: 2px; }
+.av3 i { width: 10px; height: 10px; border-radius: 50%; background: var(--pc); box-shadow: 0 0 0 1px var(--p-bg); }
+.av3 i.me { --pc: var(--p-me); } .av3 i.p1 { --pc: var(--p-p1); } .av3 i.p2 { --pc: var(--p-p2); }
+.demo .face .cal { flex: none; }
+.cap { position: absolute; left: -4px; width: 246px; height: 9px; border-radius: 4px; background: linear-gradient(#9aa3b3, #4b5365); z-index: 5; }
+.cap.top { top: 0; } .cap.bot { bottom: 0; }
+.shadow { position: absolute; left: 24px; right: 24px; bottom: -4px; height: 12px; background: radial-gradient(ellipse at center, rgba(0,0,0,.28), transparent 70%); pointer-events: none; }
+.prism-wrap { position: absolute; left: 0; top: 11px; width: 238px; height: 300px; transform-style: preserve-3d; transform: translateZ(-119px); transition: transform .9s cubic-bezier(.45,.05,.2,1); }
+.prism-wrap .face { transform: rotateY(var(--ry)) translateZ(119px); backface-visibility: hidden; }
+.rail { position: absolute; left: -4px; width: 246px; top: 0; height: 7px; border-radius: 4px; background: linear-gradient(#9aa3b3, #4b5365); z-index: 5; }
+.hook { position: absolute; left: 50%; top: 7px; width: 2px; height: 22px; margin-left: -1px; background: #6b7384; z-index: 4; }
+.hook::after { content: ""; position: absolute; left: -4px; bottom: -4px; width: 10px; height: 10px; border: 2px solid #6b7384; border-radius: 50%; background: var(--p-bg); }
+.flip-in { position: absolute; left: 0; top: 30px; width: 238px; height: 300px; transform-style: preserve-3d; transition: transform .95s cubic-bezier(.3,1.25,.4,1); }
+.flip-in .face { backface-visibility: hidden; }
+.flip-in .face.f1 { transform: rotateY(180deg); }
+.ring .face { left: 0; transition: transform .8s cubic-bezier(.3,.8,.3,1), opacity .8s; backface-visibility: hidden; }
+.dtabs { display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 10px; }
+.dtabs span { font-size: 10px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--p-sub); color: var(--p-sub); }
+.dtabs span.on { background: var(--pc); border-color: var(--pc); color: #fff; font-weight: 700; }
+.phone[data-skin="dq"] .dtabs span.on { color: #000; }
+.dbtn { font: inherit; font-size: 11px; width: 26px; height: 22px; border-radius: 6px; border: var(--p-border); background: var(--p-card); color: var(--p-fg); cursor: pointer; padding: 0; }
+.dbtn:focus-visible { outline: 2px solid var(--p-accent); outline-offset: 2px; }
+.dnote { display: block; margin-top: 8px; text-align: center; font-size: 10px; color: var(--p-sub); }
+@media (prefers-reduced-motion: reduce) { .prism-wrap, .flip-in, .ring .face { transition-duration: .01s; } }
+
 /* 流れ */
 .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; counter-reset: s; padding: 0; margin: 0; list-style: none; }
 .flow li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; counter-increment: s; position: relative; min-width: 0; }
@@ -478,6 +516,55 @@ td.rec, th.rec { background: var(--accent-soft); }
       <figcaption><b>⑥ 設定：気になる人</b>登録は2人まで。人の色は7色から選べて、自分の色も変えられます。辞めたら外して、別の人を入れます。</figcaption>
     </figure>
 
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2>カレンダーが「くるっと回る」見せ方：3つの案</h2>
+    <p><span class="tag-sample">サンプル</span>下のデモは、触って回せます。最初は自動でゆっくり回り、触ると止まります。（トップ画面は「自分だけ」のまま、横にスワイプした時の動きの違いです。）</p>
+  </div>
+  <div class="phones">
+    <figure class="fig">
+      <div class="phone bare" data-skin="stylish">
+        <div class="demo" data-demo="prism">
+          <div class="stage prism"></div>
+          <div class="dtabs"></div>
+          <span class="dnote">触って回せます（横にドラッグ／◀ ▶）</span>
+        </div>
+      </div>
+      <figcaption><b>案A ・ 回る四角柱の看板</b>駅前の回転広告のように、カレンダーが横にぐるっと回って次の面が出ます。回っている途中で板の側面が見えて、上下の金具で「看板」らしさが出ます。止まっている時は、ふつうのカレンダーと同じシンプルな見た目です。</figcaption>
+    </figure>
+    <figure class="fig">
+      <div class="phone bare" data-skin="stylish">
+        <div class="demo" data-demo="flip">
+          <div class="stage flip"></div>
+          <div class="dtabs"></div>
+          <span class="dnote">触って回せます（横にドラッグ／◀ ▶）</span>
+        </div>
+      </div>
+      <figcaption><b>案B ・ 吊り看板のターン</b>上のフックに吊られた板が、くるりと裏返って次のページが出ます。宿屋の看板のような雰囲気で、ドラクエ風にもよく合います。1回ずつ、はっきり「めくった」感じになります。</figcaption>
+    </figure>
+    <figure class="fig">
+      <div class="phone bare" data-skin="stylish">
+        <div class="demo" data-demo="ring">
+          <div class="stage ring"></div>
+          <div class="dtabs"></div>
+          <span class="dnote">触って回せます（横にドラッグ／◀ ▶）</span>
+        </div>
+      </div>
+      <figcaption><b>案C ・ 回転木馬</b>両隣のページが斜めに見えていて、「まだ続きがある」ことが止まっている時でも伝わります。ただし、トップ画面で他の人のカレンダーの端が見えてしまうので、「トップは自分だけ」とは合いません。</figcaption>
+    </figure>
+  </div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>案</th><th>回っている感じ</th><th>止まっている時</th><th>弱いところ</th></tr></thead>
+      <tbody>
+        <tr><td class="rec"><b>A. 四角柱</b><span class="pill">おすすめ</span></td><td>いちばん「回転」らしい。側面が見える</td><td>ふつうのカレンダー（トップは自分だけでOK）</td><td>動きが大きいぶん、端末によってはカクつくかも（実機で要確認）</td></tr>
+        <tr><td><b>B. 吊り看板</b></td><td>裏返る。1回ずつ区切りがある</td><td>ふつうのカレンダー</td><td>裏返る一瞬、板が細くなって中身が見えにくい</td></tr>
+        <tr><td><b>C. 回転木馬</b></td><td>横に流れる。続きがあるのが常に見える</td><td>両隣が見える（トップがシンプルでなくなる）</td><td>要望の「トップは自分だけ」とぶつかる</td></tr>
+      </tbody>
+    </table>
   </div>
 </section>
 
@@ -720,5 +807,123 @@ td.rec, th.rec { background: var(--accent-soft); }
   }
   bS.addEventListener('click', function () { setSkin('stylish'); });
   bD.addEventListener('click', function () { setSkin('dq'); });
+})();
+</script>
+<script>
+(function () {
+  var shifts = {2:2,4:2,5:3,9:1,11:1,12:1,16:3,18:3,19:3,24:2,26:2,27:2};
+  var appts = {6:['父'],13:['自'],20:['父'],24:['父']};
+  var tt = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,18:2,22:2,23:2,26:3,30:3};
+  var s2 = {3:3,5:2,6:2,10:3,13:3,14:3,17:2,20:3,21:3,24:3,25:2,28:3,29:3};
+  var DOW = ['日','月','火','水','木','金','土'];
+  function head() {
+    return DOW.map(function (d, i) { return '<div class="dow ' + (i === 0 ? 'sun' : i === 6 ? 'sat' : '') + '">' + d + '</div>'; }).join('');
+  }
+  function cells(sh, ap, am) {
+    var h = head();
+    for (var d = 1; d <= 30; d++) {
+      var f = sh[d], a = ap[d];
+      h += '<div class="c' + (f ? ' work' : '') + (d === 12 ? ' today' : '') + '"><span class="dn">' + d + '</span>' +
+        (f ? '<span class="fl f' + f + '">' + f + (am ? (am[d] ? '前' : '後') : 'F') + '</span>' : '') +
+        (a ? '<span class="ap' + (f ? ' clash' : '') + '">' + a[0] + '</span>' : '') + '</div>';
+    }
+    return h;
+  }
+  function cellsOv() {
+    var h = head();
+    for (var d = 1; d <= 30; d++) {
+      var dots = (shifts[d] ? '<i class="me"></i>' : '') + (tt[d] ? '<i class="p1"></i>' : '') + (s2[d] ? '<i class="p2"></i>' : '');
+      h += '<div class="c' + (d === 12 ? ' today' : '') + '"><span class="dn">' + d + '</span>' + (dots ? '<span class="dots">' + dots + '</span>' : '') + '</div>';
+    }
+    return h;
+  }
+  var P = [
+    {n: '自分', t: 'me', v: '--p-me'},
+    {n: 'みんな', t: 'ov', v: '--p-fg'},
+    {n: '田中', t: 'p1', v: '--p-p1'},
+    {n: '森', t: 'p2', v: '--p-p2'}
+  ];
+  function faceHtml(i) {
+    var pg = P[i], plate;
+    if (pg.t === 'ov') plate = '<div class="plate ov"><span class="av3"><i class="me"></i><i class="p1"></i><i class="p2"></i></span>みんな<span class="sub">11月</span></div>';
+    else plate = '<div class="plate" style="--pc:var(' + pg.v + ')"><svg><use href="#pp"/></svg>' + pg.n + (pg.t === 'me' ? '' : 'さん') + '<span class="sub">11月</span></div>';
+    var cal = pg.t === 'me' ? cells(shifts, appts) : pg.t === 'p1' ? cells(tt, {}, {15: 1}) : pg.t === 'p2' ? cells(s2, {}, {13: 1, 17: 1}) : cellsOv();
+    return plate + '<div class="cal">' + cal + '</div>';
+  }
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll('[data-demo]').forEach(function (el, di) {
+    var kind = el.getAttribute('data-demo');
+    var stage = el.querySelector('.stage');
+    var tabs = el.querySelector('.dtabs');
+    var cur = 0, rot = 0, side = 0, timer = null, items = [], fin = null, pw = null;
+
+    tabs.innerHTML = '<button type="button" class="dbtn" data-d="-1" aria-label="前のカレンダー">◀</button>' +
+      P.map(function (pg) { return '<span style="--pc:var(' + pg.v + ')">' + pg.n + '</span>'; }).join('') +
+      '<button type="button" class="dbtn" data-d="1" aria-label="次のカレンダー">▶</button>';
+    var tabEls = tabs.querySelectorAll('span');
+    function mark() { tabEls.forEach(function (e, i) { e.classList.toggle('on', i === cur); }); }
+
+    if (kind === 'prism') {
+      stage.innerHTML = '<div class="cap top"></div><div class="prism-wrap">' +
+        P.map(function (_, i) { return '<div class="face" style="--ry:' + (i * 90) + 'deg">' + faceHtml(i) + '</div>'; }).join('') +
+        '</div><div class="cap bot"></div><div class="shadow"></div>';
+      pw = stage.querySelector('.prism-wrap');
+    } else if (kind === 'flip') {
+      stage.innerHTML = '<div class="rail"></div><div class="hook"></div><div class="flip-in"><div class="face f0">' + faceHtml(0) + '</div><div class="face f1"></div></div><div class="shadow"></div>';
+      fin = stage.querySelector('.flip-in');
+      items = fin.querySelectorAll('.face');
+    } else {
+      stage.innerHTML = P.map(function (_, i) { return '<div class="face">' + faceHtml(i) + '</div>'; }).join('');
+      items = stage.querySelectorAll('.face');
+    }
+
+    function layout() {
+      items.forEach(function (it, i) {
+        var k = (((i - cur + 1) % 4) + 4) % 4 - 1;
+        var tr, op = 1, z = 1;
+        if (k === 0) { tr = 'translateX(0) scale(.86)'; z = 3; }
+        else if (k === 1) { tr = 'translateX(128px) translateZ(-90px) rotateY(-40deg) scale(.74)'; op = .65; z = 2; }
+        else if (k === -1) { tr = 'translateX(-128px) translateZ(-90px) rotateY(40deg) scale(.74)'; op = .65; z = 2; }
+        else { tr = 'translateX(0) translateZ(-240px) scale(.5)'; op = 0; }
+        it.style.transform = tr; it.style.opacity = op; it.style.zIndex = z;
+      });
+    }
+    if (kind === 'ring') layout();
+    mark();
+
+    function step(dir) {
+      var n = (cur + dir + 4) % 4;
+      if (kind === 'prism') {
+        rot -= dir * 90;
+        pw.style.transform = 'translateZ(-119px) rotateY(' + rot + 'deg)';
+      } else if (kind === 'flip') {
+        var tgt = 1 - side;
+        items[tgt].innerHTML = faceHtml(n);
+        rot += dir * 180;
+        fin.style.transform = 'rotateY(' + rot + 'deg)';
+        side = tgt;
+      }
+      cur = n;
+      if (kind === 'ring') layout();
+      mark();
+    }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+
+    el.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('.dbtn');
+      if (b) { stop(); step(parseInt(b.getAttribute('data-d'), 10)); }
+    });
+    var x0 = null;
+    stage.addEventListener('pointerdown', function (e) { x0 = e.clientX; stop(); });
+    stage.addEventListener('pointerup', function (e) {
+      if (x0 === null) return;
+      var dx = e.clientX - x0; x0 = null;
+      if (Math.abs(dx) > 30) step(dx < 0 ? 1 : -1);
+    });
+    stage.addEventListener('pointercancel', function () { x0 = null; });
+
+    if (!reduce) timer = setInterval(function () { if (!document.hidden) step(1); }, 3200 + di * 600);
+  });
 })();
 </script>
