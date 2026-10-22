@@ -308,14 +308,14 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   var icoSvg = function (k) { return '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#e-' + k + '"/></svg>'; };
 
   /* ============ 保存（db。ログインできない時は、お試し用にメモリー） ============ */
-  var COLLS = ['shifts', 'events', 'todos', 'config', 'log', 'crew'];
+  var COLLS = ['shifts', 'events', 'todos', 'config', 'log', 'crew', 'sheets'];
   var S = {
     view: 'month', today: todayStr(), y: 0, m: 0, sel: '', page: 0, visited: false,
-    shifts: {}, events: {}, todos: {}, crew: {}, cfg: null, log: [],
+    shifts: {}, events: {}, todos: {}, crew: {}, sheets: {}, cfg: null, log: [],
     myId: null, myName: '', canWrite: true, mem: false, evFilter: 'all', tdFilter: 'all', showDone: false, ready: {}
   };
   var db = null, user = null, downloads = null, names = {};
-  var mem = { shifts: {}, events: {}, todos: {}, config: {}, log: {}, crew: {} }, memSubs = {};
+  var mem = { shifts: {}, events: {}, todos: {}, config: {}, log: {}, crew: {}, sheets: {} }, memSubs = {};
   var uid = function () { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); };
   function applyColl(coll, rows) {
     var o = {}; rows.forEach(function (r) { o[r.id] = r.data; });
@@ -772,7 +772,8 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   }
   function curFs() { return parseInt(ls.get('fs') || '16', 10); }
   function openFriend(i) {
-    var f = i != null ? friends()[i] : { id: 'p' + (friends().length + 1), name: '', color: friends().length === 0 ? 6 : 3 };
+    var nid = 'p1'; for (var q = 1; q <= 9; q++) { var inuse = friends().some(function (x) { return x.id === 'p' + q; }); if (!inuse) { nid = 'p' + q; break; } }
+    var f = i != null ? friends()[i] : { id: nid, name: '', color: friends().length === 0 ? 6 : 3 };
     var st = { color: f.color };
     sheet('<h2>' + (i != null ? 'あの人を直す' : 'あの人を足す') + '</h2><label class="f"><span>名前</span><input type="text" id="f-name" maxlength="10" value="' + esc(f.name) + '"></label>' +
       '<div class="f"><span class="sub">色</span><div class="sw" id="fcol">' + PAL.map(function (c, k) { return '<button type="button" style="--c:' + c + '" data-fc="' + k + '" aria-label="' + PNAME[k] + '" aria-pressed="' + (st.color === k) + '"></button>'; }).join('') + '</div></div>' +
@@ -782,10 +783,10 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
         var name = $('#f-name', root).value.trim(); if (!name) { toast('名前を入れてください'); return; }
         var list = friends().slice(); var nf = { id: f.id, name: name, color: st.color };
         if (i != null) list[i] = nf; else list.push(nf);
-        saveCfg({ friends: list }).then(function (ok) { if (ok) { logIt('あの人「' + name + '」を' + (i != null ? '直した' : '足した')); closeSheet(); } });
+        saveCfg({ friends: list }).then(function (ok) { if (ok) { logIt('あの人「' + name + '」を' + (i != null ? '直した' : '足した')); closeSheet(); refreshFriends(list, []); } });
       });
       var dl = $('#f-del', root);
-      if (dl) dl.addEventListener('click', function () { if (!dl.dataset.sure) { dl.dataset.sure = '1'; dl.textContent = '本当に外す（もう一度押す）'; return; } var list = friends().slice(); list.splice(i, 1); saveCfg({ friends: list }).then(function (ok) { if (ok) closeSheet(); }); });
+      if (dl) dl.addEventListener('click', function () { if (!dl.dataset.sure) { dl.dataset.sure = '1'; dl.textContent = '本当に外す（もう一度押す）'; return; } var rid = f.id, list = friends().slice(); list.splice(i, 1); saveCfg({ friends: list }).then(function (ok) { if (ok) { closeSheet(); refreshFriends(list, [rid]); } }); });
     });
   }
   function saveCfg(patch) {
@@ -875,10 +876,10 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     return { k: 'oth', raw: c };
   }
   function cellText(v) { return v ? (v.slot === 'am' ? '午前' : '午後') + v.floor + 'F' : '休み'; }
-  function buildPlan(res, sheetName) {
-    var y = +res.year, m = +res.month, nd = dim(y, m), fr = friends();
+  function buildPlan(res, sheetName, frList) {
+    var y = +res.year, m = +res.month, nd = dim(y, m), fr = frList || friends();
     var rows = (res.rows || []).filter(function (r) { return r && Array.isArray(r.cells); });
-    var plan = { y: y, m: m, nd: nd, rows: rows.length, me: null, fr: [], crew: {}, fixes: [], unread: 0, notes: res.events || {} };
+    var plan = { y: y, m: m, nd: nd, rows: rows.length, me: null, fr: [], crew: {}, fixes: [], unread: 0, notes: res.events || {}, res: res };
     var meRow = null, frRows = [null, null];
     rows.forEach(function (r) {
       if (sheetName && sameName(r.name, sheetName)) meRow = meRow || r;
@@ -913,24 +914,47 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     }
     return plan;
   }
-  function applyPlan(plan, sheetName) {
-    var ps = [], y = plan.y, m = plan.m;
-    toast('入れています…少し待ってね');
-    function one(pp, isMe) {
-      for (var d = 1; d <= plan.nd; d++) {
-        var id = pp.who + '_' + ymd(y, m, d), has = Object.prototype.hasOwnProperty.call(pp.days, d), fix = null;
-        plan.fixes.forEach(function (f) { if (f.who === pp.who && f.d === d && f.sel !== undefined) fix = f; });
-        var v = fix ? fix.sel : (has ? pp.days[d] : undefined);
-        if (v === undefined) continue;
-        if (v) ps.push(put('shifts', id, { person: pp.who, date: ymd(y, m, d), slot: isMe ? 'pm' : v.slot, floor: v.floor, from: 'photo' }));
-        else if (S.shifts[id]) ps.push(del('shifts', id));
-      }
+  function writePerson(plan, pp, isMe, ps) {
+    var y = plan.y, m = plan.m, ym = y + '-' + pad(m), done = {};
+    for (var d = 1; d <= plan.nd; d++) {
+      var id = pp.who + '_' + ymd(y, m, d), has = Object.prototype.hasOwnProperty.call(pp.days, d), fix = null;
+      plan.fixes.forEach(function (f) { if (f.who === pp.who && f.d === d && f.sel !== undefined) fix = f; });
+      var v = fix ? fix.sel : (has ? pp.days[d] : undefined);
+      if (v === undefined) continue;
+      done[id] = 1;
+      if (v) ps.push(put('shifts', id, { person: pp.who, date: ymd(y, m, d), slot: isMe ? 'pm' : v.slot, floor: v.floor, from: 'photo' }));
+      else if (S.shifts[id]) ps.push(del('shifts', id));
     }
-    if (plan.meFound) one(plan.me, true);
-    plan.fr.forEach(function (pp, i) { if (plan.frFound[i]) one(pp, false); });
+    Object.keys(S.shifts).forEach(function (id) {
+      var x = S.shifts[id];
+      if (x.person === pp.who && x.from === 'photo' && String(x.date).slice(0, 7) === ym && !done[id]) ps.push(del('shifts', id));
+    });
+  }
+  function saveSheetRes(plan, ps) {
+    ps.push(put('sheets', plan.y + '-' + pad(plan.m), { month: plan.y + '-' + pad(plan.m), rows: plan.res.rows || [], events: plan.res.events || {}, savedAt: Date.now() }));
+  }
+  function applyPlan(plan, sheetName) {
+    var ps = [];
+    toast('入れています…少し待ってね');
+    if (plan.meFound) writePerson(plan, plan.me, true, ps);
+    plan.fr.forEach(function (pp) { writePerson(plan, pp, false, ps); });
     ps.push(put('crew', plan.y + '-' + pad(plan.m), { month: plan.y + '-' + pad(plan.m), days: plan.crew, from: 'photo' }));
+    saveSheetRes(plan, ps);
     ps.push(saveCfg({ sheetName: sheetName }));
     return safe(Promise.all(ps), '勤務表を入れました').then(function (ok) { if (ok) { logIt(plan.y + '年' + plan.m + '月の勤務表を、写真から入れた'); S.y = plan.y; S.m = plan.m; closeSheet(); go('month'); } return ok; });
+  }
+  /* あの人を足したり直したりしたとき、保存してある読み取り結果から、その人の勤務を入れ直す（写真は撮り直さなくていい） */
+  function refreshFriends(list, removedIds) {
+    var months = Object.keys(S.sheets); if (!months.length && !(removedIds || []).length) return Promise.resolve();
+    var ps = [], sname = (S.cfg && S.cfg.sheetName) || '';
+    months.forEach(function (k) {
+      var d = S.sheets[k], parts = k.split('-'), plan = buildPlan({ year: +parts[0], month: +parts[1], rows: d.rows || [], events: d.events || {} }, sname, list);
+      plan.fr.forEach(function (pp) { writePerson(plan, pp, false, ps); });
+      (removedIds || []).forEach(function (rid) { writePerson(plan, { who: rid, days: {} }, false, ps); });
+    });
+    if (!ps.length) return Promise.resolve();
+    toast('保存した読み取り結果から、あの人の勤務を入れ直しています…');
+    return safe(Promise.all(ps), 'あの人の勤務を入れ直しました');
   }
   function readerPrompt() {
     return '添付は、介護施設の「月間勤務表」を紙で撮影した写真です（同じ表を分けて撮った複数枚のこともあります）。表を読み取って、JSONだけを返してください。説明文やコードブロックの囲みは付けないでください。\n\n' +
