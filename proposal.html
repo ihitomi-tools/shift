@@ -305,6 +305,21 @@ symbol { overflow: visible; }
 .dctl { display: flex; justify-content: center; margin-top: 8px; }
 .mrow { font-family: var(--p-head-font); font-weight: 700; font-size: 15px; padding: 2px 2px 4px; flex: none; }
 
+/* 予定のアイコン */
+.ei, .ico, .ib svg { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.cal .c .ap .ei { width: 9px; height: 9px; vertical-align: -1px; margin-left: 1px; }
+.cal .c .ap.me { background: var(--p-me); color: #fff; }
+.phone[data-skin="dq"] .cal .c .ap.me { color: #000; }
+.ico { width: 14px; height: 14px; vertical-align: -2px; margin-right: 3px; }
+.opts2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.opts2 b { text-align: center; padding: 7px 0; border: var(--p-border); border-radius: var(--p-r); font-size: 12px; color: var(--p-sub); }
+.opts2 b.on { background: var(--p-accent); border-color: var(--p-accent); color: #fff; }
+.phone[data-skin="dq"] .opts2 b.on { color: #000; }
+.icons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.ib { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 7px 2px 5px; border: var(--p-border); border-radius: var(--p-r); font-size: 10px; font-weight: 700; color: var(--p-sub); }
+.ib svg { width: 22px; height: 22px; }
+.ib.on { border-color: var(--p-accent); color: var(--p-accent); box-shadow: 0 0 0 1px var(--p-accent); }
+
 /* 流れ */
 .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; counter-reset: s; padding: 0; margin: 0; list-style: none; }
 .flow li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; counter-increment: s; position: relative; min-width: 0; }
@@ -343,6 +358,10 @@ td.rec, th.rec { background: var(--accent-soft); }
 <symbol id="ic-today" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
 <symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></symbol>
 <symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="e-hosp" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4.500"/><path d="M12 8v8M8 12h8"/></symbol>
+<symbol id="e-shop" viewBox="0 0 24 24"><path d="M3 9.500h18l-2 9.500H5z"/><path d="M8 9.500l3-5.500M16 9.500l-3-5.500"/></symbol>
+<symbol id="e-meal" viewBox="0 0 24 24"><path d="M4 12.500h16a8 8 0 0 1-16 0z"/><path d="M9 21h6M9 9c0-1.500 1-1.500 1-3.500M14 9c0-1.500 1-1.500 1-3.500"/></symbol>
+<symbol id="e-etc" viewBox="0 0 24 24"><path d="M12 21s6.500-5.500 6.500-10.500a6.500 6.500 0 0 0-13 0C5.500 15.500 12 21 12 21z"/><circle cx="12" cy="10.500" r="2.300"/></symbol>
 <symbol id="ic-send" viewBox="0 0 24 24"><path d="M20.5 3.5l-17 7 6.5 2.5 2.5 6.5z"/></symbol>
 </svg>
 <div class="wrap">
@@ -350,14 +369,14 @@ td.rec, th.rec { background: var(--accent-soft); }
 <header>
   <div class="eyebrow">企画案 ・ たたき台</div>
   <h1>シフト手帳（仮）</h1>
-  <p class="lead">パートの勤務を月ごとに入れて、担当階と一緒に働く人がすぐ分かる。じいちゃんの通院も自分の通院も同じ画面に置いて、できあがったらひとみに送れる。まずは中身を固める用の提案です。お母さんがiPhone Airで使い、ひとみが受け取る、という前提で書いています（違っていたら直します）。</p>
+  <p class="lead">パートの勤務を月ごとに入れて、担当階と一緒に働く人がすぐ分かる。病院・買い物・ご飯などの予定も、自分のも、じいちゃんのも、同じ画面に置いて、できあがったらひとみに送れる。まずは中身を固める用の提案です。お母さんがiPhone Airで使い、ひとみが受け取る、という前提で書いています（違っていたら直します）。</p>
 </header>
 
 <section>
   <div class="summary">
     <div class="sum"><b>入力は「1タップ」</b><span>お母さんは午後固定なので、日付を押して担当階（1〜3階）を選ぶだけ。階は色分けで見分けます。</span></div>
     <div class="sum"><b>撮影で自動入力</b><span>配付シフト表を撮ると候補を作り、あやしい所だけ黄色で確認。最後は人の目で「OK」を押す形にします。</span></div>
-    <div class="sum"><b>共有は段階的に</b><span>最初は画像で送る、次にカレンダーに取り込めるファイル、最後に自動更新。通院の詳細は初期設定では送りません。</span></div>
+    <div class="sum"><b>共有は段階的に</b><span>最初は画像で送る、次にカレンダーに取り込めるファイル、最後に自動更新。病院の予定の詳細は初期設定では送りません。</span></div>
   </div>
 </section>
 
@@ -457,16 +476,17 @@ td.rec, th.rec { background: var(--accent-soft); }
       <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
         <div class="status"><span>9:41</span><span>●●● 5G</span></div>
         <div class="body">
-          <div class="title-row"><b>通院・予定</b><span class="chip">＋ 追加</span></div>
-          <div class="row"><span class="chip">すべて</span><span class="sub">じ</span><span class="sub">自分</span></div>
-          <div class="win"><div class="ev"><div class="d">6<small>金</small></div><div><span class="who-tag">じ</span><b>○○病院 整形外科</b><div class="sub">10:30 ・ 送迎あり ・ 保険証</div></div></div></div>
-          <div class="win"><div class="ev"><div class="d">13<small>金</small></div><div><span class="who-tag me">自分</span><b>△△クリニック</b><div class="sub">14:00 ・ お薬手帳</div></div></div></div>
-          <div class="win"><div class="ev"><div class="d">20<small>金</small></div><div><span class="who-tag">じ</span><b>リハビリ</b><div class="sub">9:30 ・ 送迎あり</div></div></div></div>
-          <div class="win" style="border-color:var(--p-warn)"><div class="ev"><div class="d">24<small>火</small></div><div><span class="who-tag">じ</span><b>○○病院 内科</b><div class="sub">14:00</div><div class="warnbox">この日は午後勤務（2F）と重なっています</div></div></div></div>
+          <div class="title-row"><b>予定</b><span class="chip">＋ 追加</span></div>
+          <div class="row"><span class="chip">すべて</span><span class="sub">自分</span><span class="sub">じ</span></div>
+          <div class="win"><div class="ev"><div class="d">6<small>金</small></div><div><span class="who-tag">じ</span><b><svg class="ico"><use href="#e-hosp"/></svg>○○病院 整形外科</b><div class="sub">10:30 ・ 送迎あり ・ 保険証</div></div></div></div>
+          <div class="win"><div class="ev"><div class="d">8<small>日</small></div><div><span class="who-tag me">自分</span><b><svg class="ico"><use href="#e-shop"/></svg>スーパー</b><div class="sub">10:00 ・ エコバッグ</div></div></div></div>
+          <div class="win"><div class="ev"><div class="d">13<small>金</small></div><div><span class="who-tag me">自分</span><b><svg class="ico"><use href="#e-hosp"/></svg>△△クリニック</b><div class="sub">14:00 ・ お薬手帳</div></div></div></div>
+          <div class="win"><div class="ev"><div class="d">22<small>日</small></div><div><span class="who-tag">じ</span><b><svg class="ico"><use href="#e-meal"/></svg>家族でご飯</b><div class="sub">12:00 ・ ○○食堂</div></div></div></div>
+          <div class="win" style="border-color:var(--p-warn)"><div class="ev"><div class="d">24<small>火</small></div><div><span class="who-tag">じ</span><b><svg class="ico"><use href="#e-hosp"/></svg>○○病院 内科</b><div class="sub">14:00</div><div class="warnbox">この日は午後勤務（2F）と重なっています</div></div></div></div>
         </div>
         <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span class="on"><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
-      <figcaption><b>④ じいちゃんの通院・自分の通院</b>「誰の予定か」で色分け。時間・持ち物・送迎のメモも書けます。</figcaption>
+      <figcaption><b>④ 予定（自分・じいちゃん）</b>「だれの予定か」は札、「なにをするか」はアイコンで分かります。時間・持ち物・送迎のメモも書けます。</figcaption>
     </figure>
 
     <figure class="fig">
@@ -481,13 +501,13 @@ td.rec, th.rec { background: var(--accent-soft); }
             <div class="opt"><div><b>自動で更新（購読）</b><div class="sub">変更が相手のカレンダーに自動で反映</div></div></div>
           </div>
           <div class="win">
-            <div class="row"><div class="grow"><b>通院の予定も送る</b><div class="sub">オフの時は「予定あり」とだけ表示</div></div><span class="tog"></span></div>
+            <div class="row"><div class="grow"><b>病院の予定も送る</b><div class="sub">オフの時は「予定あり」とだけ表示</div></div><span class="tog"></span></div>
           </div>
           <div class="btn">送る</div>
         </div>
         <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span class="on"><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
-      <figcaption><b>⑤ 共有</b>通院の詳細はオフが初期設定。病院名や病名は、送りたい時だけ送ります。</figcaption>
+      <figcaption><b>⑤ 共有</b>病院の予定の詳細はオフが初期設定。病院名や病名は、送りたい時だけ送ります。</figcaption>
     </figure>
     <figure class="fig">
       <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
@@ -511,6 +531,28 @@ td.rec, th.rec { background: var(--accent-soft); }
         <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
       <figcaption><b>⑥ 設定：気になる人</b>登録は2人まで。人の色は7色から選べて、自分の色も変えられます。辞めたら外して、別の人を入れます。</figcaption>
+    </figure>
+    <figure class="fig">
+      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+        <div class="body">
+          <div class="title-row"><b>予定を足す</b><span class="chip">保存</span></div>
+          <div class="win"><h4>だれの？</h4><div class="opts2"><b class="on">自分</b><b>じ</b></div></div>
+          <div class="win"><h4>なにをする？</h4><div class="icons">
+            <span class="ib on"><svg><use href="#e-hosp"/></svg>病院</span>
+            <span class="ib"><svg><use href="#e-shop"/></svg>買い物</span>
+            <span class="ib"><svg><use href="#e-meal"/></svg>ご飯</span>
+            <span class="ib"><svg><use href="#e-etc"/></svg>ほか</span>
+          </div></div>
+          <div class="win">
+            <div class="row"><span class="grow sub">日にち</span><b>11月13日（金）</b></div>
+            <div class="row" style="margin-top:6px"><span class="grow sub">時間</span><b>14:00</b></div>
+          </div>
+          <div class="win"><h4>メモ</h4><span class="sub">お薬手帳</span></div>
+        </div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span class="on"><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+      </div></div>
+      <figcaption><b>⑦ 予定を足す</b>だれの予定か、なにをするかを選びます。アイコンは、よく使う「病院・買い物・ご飯・ほか」の4つ。あとから増やす予定です。</figcaption>
     </figure>
 
   </div>
@@ -709,7 +751,7 @@ td.rec, th.rec { background: var(--accent-soft); }
     <h2>進め方の案</h2>
   </div>
   <div class="phases">
-    <div class="ph"><h3>第1段階</h3><p>手入力でシフトと通院を入れる。月カレンダー、日の詳細、画像で共有。</p></div>
+    <div class="ph"><h3>第1段階</h3><p>手入力でシフトと予定（病院・買い物・ご飯など）を入れる。月カレンダー、日の詳細、画像で共有。</p></div>
     <div class="ph"><h3>第2段階</h3><p>撮影で読み取り。確認画面と、その日の職場の自動表示、気になる人の登録。</p></div>
     <div class="ph"><h3>第3段階</h3><p>カレンダー用ファイル、必要なら購読。外観はここでドラクエ風か、スタイリッシュに決めて仕上げる。</p></div>
   </div>
@@ -720,7 +762,8 @@ td.rec, th.rec { background: var(--accent-soft); }
 <script>
 (function () {
   var shifts = {2:2,4:2,5:3,9:1,11:1,12:1,16:3,18:3,19:3,24:2,26:2,27:2};
-  var appts = {6:['じ'],13:['自'],20:['じ'],24:['じ']};
+  var appts = {6:['じ','hosp'],8:['自','shop'],13:['自','hosp'],22:['じ','meal'],24:['じ','hosp']};
+  function ico(k) { return '<svg class="ei"><use href="#e-' + k + '"/></svg>'; }
   var t = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,18:2,22:2,23:2,26:3,30:3};
   function build(el, sh, ap, am) {
     var h = '';
@@ -731,7 +774,7 @@ td.rec, th.rec { background: var(--accent-soft); }
       var f = sh[d], a = ap[d];
       h += '<div class="c' + (f ? ' work' : '') + (d === 12 ? ' today' : '') + '"><span class="dn">' + d + '</span>' +
         (f ? '<span class="fl f' + f + '">' + f + (am ? (am[d] ? '前' : '後') : 'F') + '</span>' : '') +
-        (a ? '<span class="ap' + (f ? ' clash' : '') + '">' + a[0] + '</span>' : '') + '</div>';
+        (a ? '<span class="ap' + (a[0] === '自' ? ' me' : '') + (f ? ' clash' : '') + '">' + a[0] + ico(a[1]) + '</span>' : '') + '</div>';
     }
     el.innerHTML = h;
   }
@@ -778,7 +821,8 @@ td.rec, th.rec { background: var(--accent-soft); }
 <script>
 (function () {
   var shifts = {2:2,4:2,5:3,9:1,11:1,12:1,16:3,18:3,19:3,24:2,26:2,27:2};
-  var appts = {6:['じ'],13:['自'],20:['じ'],24:['じ']};
+  var appts = {6:['じ','hosp'],8:['自','shop'],13:['自','hosp'],22:['じ','meal'],24:['じ','hosp']};
+  function ico(k) { return '<svg class="ei"><use href="#e-' + k + '"/></svg>'; }
   var tt = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,18:2,22:2,23:2,26:3,30:3};
   var s2 = {3:3,5:2,6:2,10:3,13:3,14:3,17:2,20:3,21:3,24:3,25:2,28:3,29:3};
   var OUT = 'var(--p-card)';
@@ -813,7 +857,7 @@ td.rec, th.rec { background: var(--accent-soft); }
       var f = shifts[d], a = appts[d];
       h += '<div class="c' + (f ? ' work' : '') + (d === 12 ? ' today' : '') + '"><span class="dn">' + d + '</span>' +
         (f ? '<span class="fl f' + f + '">' + f + 'F</span>' : '') +
-        (a ? '<span class="ap' + (f ? ' clash' : '') + '">' + a[0] + '</span>' : '') + '</div>';
+        (a ? '<span class="ap' + (a[0] === '自' ? ' me' : '') + (f ? ' clash' : '') + '">' + a[0] + ico(a[1]) + '</span>' : '') + '</div>';
     }
     return h;
   }
