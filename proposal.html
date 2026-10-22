@@ -293,18 +293,19 @@ section { display: grid; gap: 20px; min-width: 0; }
 @media (prefers-reduced-motion: reduce) { .prism-wrap, .flip-in, .ring .face { transition-duration: .01s; } }
 
 /* 考え事の吹き出し（人型＋雲） */
-.thk { --pc: var(--p-p1); display: flex; align-items: flex-end; gap: 2px; padding: 2px 4px 0; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+.thk { --pc: var(--p-p1); --pcd: color-mix(in srgb, var(--pc) 70%, #000); --pcl: color-mix(in srgb, var(--pc) 20%, var(--p-card)); position: relative; display: block; width: 196px; height: 90px; padding: 0; border: 0; background: none; font: inherit; color: inherit; cursor: pointer; flex: none; align-self: center; }
 .thk.back { --pc: var(--p-me); }
-.body > .thk { margin-top: auto; }
-.thk-p { width: 34px; height: 40px; fill: var(--p-me); flex: none; }
-.thk-dots { position: relative; width: 24px; height: 40px; flex: none; }
-.thk-dots i { position: absolute; border-radius: 50%; background: var(--p-card); border: 1.5px solid var(--pc); }
-.thk-dots i:first-child { width: 6px; height: 6px; left: 2px; bottom: 18px; }
-.thk-dots i:last-child { width: 9px; height: 9px; left: 9px; bottom: 26px; }
-.thk-cloud { position: relative; display: block; width: 120px; height: 62px; flex: none; margin-bottom: 8px; color: var(--pc); }
+.phone[data-skin="dq"] .thk { --pcd: var(--pc); --pcl: color-mix(in srgb, var(--pc) 18%, #000); }
+.thk-p { position: absolute; left: 2px; bottom: 0; width: 34px; height: 63px; overflow: visible; }
+.thk-dots { position: absolute; inset: 0; }
+.thk-dots i { position: absolute; border-radius: 50%; background: var(--pcl); border: 2px solid var(--pcd); box-sizing: border-box; }
+.thk-dots i:first-child { width: 8px; height: 8px; left: 40px; top: 54px; }
+.thk-dots i:last-child { width: 13px; height: 13px; left: 48px; top: 40px; }
+.thk-cloud { position: absolute; right: 0; top: 0; display: block; width: 132px; height: 77px; color: var(--pcd); }
 .thk-cloud svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.thk-cloud span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding-top: 6px; font-size: 13px; font-weight: 800; white-space: nowrap; }
+.thk-cloud span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding-bottom: 4px; font-size: 14px; font-weight: 800; white-space: nowrap; }
 .thk:focus-visible { outline: 2px solid var(--p-accent); outline-offset: 2px; border-radius: 12px; }
+.body > .thk { margin-top: auto; }
 .dctl { display: flex; justify-content: center; margin-top: 8px; }
 .mrow { font-family: var(--p-head-font); font-weight: 700; font-size: 15px; padding: 2px 2px 4px; flex: none; }
 
@@ -341,10 +342,7 @@ td.rec, th.rec { background: var(--accent-soft); }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="pp" viewBox="0 0 20 22"><circle cx="10" cy="5" r="4.2"/><path d="M2 21c0-6 3-9.5 8-9.5s8 3.5 8 9.5z"/></symbol>
-<symbol id="cloud" viewBox="0 0 120 62">
-<g style="fill:currentColor;stroke:currentColor;stroke-width:4;stroke-linejoin:round"><circle cx="30" cy="40" r="16"/><circle cx="52" cy="28" r="19"/><circle cx="80" cy="27" r="19"/><circle cx="98" cy="40" r="16"/><rect x="30" y="38" width="68" height="20" rx="10"/></g>
-<g style="fill:var(--p-card)"><circle cx="30" cy="40" r="16"/><circle cx="52" cy="28" r="19"/><circle cx="80" cy="27" r="19"/><circle cx="98" cy="40" r="16"/><rect x="30" y="38" width="68" height="20" rx="10"/></g>
-</symbol>
+<symbol id="cloud" viewBox="0 0 130 76"><g transform="translate(3 4)" style="fill:color-mix(in srgb, var(--pc) 32%, transparent)"><ellipse cx="65" cy="36" rx="44" ry="22"/><circle cx="109.3" cy="39.6" r="12.5"/><circle cx="93.9" cy="52.1" r="12.5"/><circle cx="65.0" cy="57.0" r="12.5"/><circle cx="36.1" cy="52.1" r="12.5"/><circle cx="20.7" cy="39.6" r="12.5"/><circle cx="26.0" cy="25.5" r="12.5"/><circle cx="49.6" cy="16.3" r="12.5"/><circle cx="80.4" cy="16.3" r="12.5"/><circle cx="104.0" cy="25.5" r="12.5"/></g><g style="fill:var(--pcd);stroke:var(--pcd);stroke-width:6;stroke-linejoin:round"><ellipse cx="65" cy="36" rx="44" ry="22"/><circle cx="109.3" cy="39.6" r="12.5"/><circle cx="93.9" cy="52.1" r="12.5"/><circle cx="65.0" cy="57.0" r="12.5"/><circle cx="36.1" cy="52.1" r="12.5"/><circle cx="20.7" cy="39.6" r="12.5"/><circle cx="26.0" cy="25.5" r="12.5"/><circle cx="49.6" cy="16.3" r="12.5"/><circle cx="80.4" cy="16.3" r="12.5"/><circle cx="104.0" cy="25.5" r="12.5"/></g><g style="fill:var(--pcl)"><ellipse cx="65" cy="36" rx="44" ry="22"/><circle cx="109.3" cy="39.6" r="12.5"/><circle cx="93.9" cy="52.1" r="12.5"/><circle cx="65.0" cy="57.0" r="12.5"/><circle cx="36.1" cy="52.1" r="12.5"/><circle cx="20.7" cy="39.6" r="12.5"/><circle cx="26.0" cy="25.5" r="12.5"/><circle cx="49.6" cy="16.3" r="12.5"/><circle cx="80.4" cy="16.3" r="12.5"/><circle cx="104.0" cy="25.5" r="12.5"/></g></symbol>
 <symbol id="ic-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
 <symbol id="ic-today" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
 <symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></symbol>
@@ -389,7 +387,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="title-row"><b>‹ 2026年11月 ›</b><span class="sub" id="m-sum"></span></div>
           <div class="cal" id="cal"></div>
           <div class="win"><div class="row"><span class="grow"><b>今日</b> 午後 <span class="sub">13:00–19:00</span></span><span class="fl f1">1F</span></div></div>
-          <div class="thk"><svg class="thk-p"><use href="#pp"/></svg><span class="thk-dots"><i></i><i></i></span><span class="thk-cloud"><svg><use href="#cloud"/></svg><span>あの人は？</span></span></div>
+          <div class="thk"><svg class="thk-p" data-mom="think"></svg><span class="thk-dots"><i></i><i></i></span><span class="thk-cloud"><svg><use href="#cloud"/></svg><span>あの人は？</span></span></div>
         </div>
         <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
@@ -402,7 +400,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="title-row"><b>‹ 2026年11月 ›</b><span class="sub">あの人は？</span></div>
           <div class="cal" id="cal3"></div>
           <div class="people"><span class="pc me"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>午後 1F</i></span></span><span class="pc p1"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>午後 2F</i></span></span><span class="pc p2 off"><svg><use href="#pp"/></svg><span class="tx"><b>森</b><i>お休み</i></span></span></div>
-          <div class="thk back"><svg class="thk-p"><use href="#pp"/></svg><span class="thk-dots"><i></i><i></i></span><span class="thk-cloud"><svg><use href="#cloud"/></svg><span>もどる</span></span></div>
+          <div class="thk back"><svg class="thk-p" data-mom="stand"></svg><span class="thk-dots"><i></i><i></i></span><span class="thk-cloud"><svg><use href="#cloud"/></svg><span>もどる</span></span></div>
         </div>
         <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
@@ -525,7 +523,7 @@ td.rec, th.rec { background: var(--accent-soft); }
 <section>
   <div class="sec-head">
     <h2>回る看板：人型と雲で切り替え</h2>
-    <p><span class="tag-sample">サンプル</span>カレンダーは吊り看板の「表と裏」です。表は自分だけで、「わたし」などの文字は出しません。下の人型（お母さん）の考え事の雲「あの人は？」をタップすると、看板がくるりと回って、登録した2人の重ね表示が出ます。裏では雲が「もどる」に変わります。触って回せます（横にドラッグ／下の吹き出し）。最初は自動で回り、触ると止まります。</p>
+    <p><span class="tag-sample">サンプル</span>カレンダーは吊り看板の「表と裏」です。表は自分だけで、「わたし」などの文字は出しません。下の人型（お母さん）が「考える」ポーズで、考え事の雲「あの人は？」を浮かべています。タップすると、看板がくるりと回って、登録した2人の重ね表示が出ます。裏では雲が「もどる」に変わり、人型は「立つ」ポーズに入れ替わります（もどってもそのまま。アプリを開き直すと、また考えるポーズ）。人型の色は、設定の「自分」の色。雲の色は、あの人の色です。触って回せます（横にドラッグ／下の吹き出し）。最初は自動で回り、触ると止まります。</p>
   </div>
   <div class="phones">
     <figure class="fig">
@@ -787,6 +785,28 @@ td.rec, th.rec { background: var(--accent-soft); }
   var appts = {6:['父'],13:['自'],20:['父'],24:['父']};
   var tt = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,18:2,22:2,23:2,26:3,30:3};
   var s2 = {3:3,5:2,6:2,10:3,13:3,14:3,17:2,20:3,21:3,24:3,25:2,28:3,29:3};
+  var OUT = 'var(--p-card)';
+  function tube(d, w) {
+    return '<path d="' + d + '" fill="none" stroke="' + OUT + '" stroke-width="' + (w + 2.2) + '" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<path d="' + d + '" fill="none" stroke="currentColor" stroke-width="' + w + '" stroke-linecap="round" stroke-linejoin="round"/>';
+  }
+  var ARMS = {
+    stand: ['M-5.5 -34 Q-8 -27 -7.5 -21', 'M5.5 -34 Q8 -27 7.5 -21'],
+    think: ['M-5.5 -34 Q0 -29 5 -31', 'M5.5 -34.5 Q10 -35 4 -38.5']
+  };
+  function momInner(pose) {
+    return '<g style="color:var(--p-me);fill:var(--p-me)">' +
+      '<path d="M-2.5 -17 V-1.5 M2.5 -17 V-1.5" fill="none" stroke="currentColor" stroke-width="3.8" stroke-linecap="round"/>' +
+      '<path d="M-5.2 -35.5 Q0 -37 5.2 -35.5 L9.4 -16.5 Q0 -14.5 -9.4 -16.5Z"/>' +
+      '<circle cx="0" cy="-41.2" r="5.3"/><path d="M-5.5 -40.2 A5.5 5.5 0 0 1 5.5 -40.2 L5.5 -39 Q0 -42.5 -5.5 -39Z"/>' +
+      ARMS[pose].map(function (d) { return tube(d, 3.6); }).join('') +
+      '<g transform="scale(-1 1)"><path d="M-4.2 -39.5 C-9.6 -39 -11 -34.5 -10 -29.5 C-8.8 -33 -7.2 -35.5 -4.2 -36.5Z" stroke="var(--p-card)" stroke-width=".7" stroke-linejoin="round"/><circle cx="-5.4" cy="-38.2" r="1.5" fill="#d2d6dd"/></g></g>';
+  }
+  function momSvg(pose) { return '<svg class="thk-p" viewBox="-14 -50 28 52" aria-hidden="true">' + momInner(pose) + '</svg>'; }
+  document.querySelectorAll('svg[data-mom]').forEach(function (sv) {
+    sv.setAttribute('viewBox', '-14 -50 28 52'); sv.setAttribute('aria-hidden', 'true');
+    sv.innerHTML = momInner(sv.getAttribute('data-mom'));
+  });
   var DOW = ['日','月','火','水','木','金','土'];
   function head() {
     return DOW.map(function (d, i) { return '<div class="dow ' + (i === 0 ? 'sun' : i === 6 ? 'sat' : '') + '">' + d + '</div>'; }).join('');
@@ -818,11 +838,12 @@ td.rec, th.rec { background: var(--accent-soft); }
   document.querySelectorAll('[data-demo]').forEach(function (el) {
     var stage = el.querySelector('.stage');
     var ctl = el.querySelector('.dctl');
-    var cur = 0, rot = 0, side = 0, timer = null;
+    var cur = 0, rot = 0, side = 0, timer = null, visited = false;
     function ctlHtml() {
       var back = cur === 1;
+      var pose = (cur === 0 && !visited) ? 'think' : 'stand';
       return '<button type="button" class="thk' + (back ? ' back' : '') + '" aria-label="' + (back ? '自分の画面にもどる' : 'あの人は？ を見る') + '">' +
-        '<svg class="thk-p"><use href="#pp"/></svg><span class="thk-dots"><i></i><i></i></span>' +
+        momSvg(pose) + '<span class="thk-dots"><i></i><i></i></span>' +
         '<span class="thk-cloud"><svg><use href="#cloud"/></svg><span>' + (back ? 'もどる' : 'あの人は？') + '</span></span></button>';
     }
     function mark() { ctl.innerHTML = ctlHtml(); }
@@ -836,7 +857,7 @@ td.rec, th.rec { background: var(--accent-soft); }
       faces[tgt].innerHTML = faceHtml(n);
       rot += dir * 180;
       fin.style.transform = 'rotateY(' + rot + 'deg)';
-      side = tgt; cur = n; mark();
+      side = tgt; cur = n; if (n === 1) visited = true; mark();
     }
     function stop() { if (timer) { clearInterval(timer); timer = null; } }
     el.addEventListener('click', function (e) {
