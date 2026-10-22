@@ -103,7 +103,13 @@ h1, h2, h3, h4 { font-family: var(--head); margin: 0; line-height: 1.35; }
 .pc .tx { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
 .pc b { font-size: .9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .pc i { font-style: normal; font-size: .75em; color: var(--sub); white-space: nowrap; }
 
-.bld { display: grid; gap: 5px; padding: 8px; border: 2px solid var(--line); border-radius: 14px; background: var(--soft); }
+.house { gap: 0; } .house h3 { margin-bottom: 6px; flex-wrap: wrap; }
+.roof { height: 40px; margin: 0 -2px -2px; background: color-mix(in srgb, var(--me) 55%, var(--card)); clip-path: polygon(50% 0, 100% 100%, 0 100%); position: relative; z-index: 1; }
+.bld { display: grid; gap: 6px; padding: 10px 10px 0; border: 2px solid var(--fg); border-radius: 4px 4px 0 0; background: var(--soft); position: relative; }
+.bld .door { justify-self: center; width: 44px; height: 26px; margin-top: 2px; border-radius: 8px 8px 0 0; background: color-mix(in srgb, var(--me) 55%, var(--card)); }
+.house .sub { margin-top: 8px; }
+.rdsum { display: flex; flex-wrap: wrap; gap: 6px; } .fix { display: grid; gap: 6px; padding: 8px 0; border-top: 1px solid var(--line); }
+input[type="file"] { display: none; }
 .bld .fr { display: grid; grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1.35fr); gap: 6px; align-items: center; }
 .pp { display: flex; align-items: baseline; gap: 5px; padding: 6px 8px; border-radius: 10px; background: var(--card); border: 1.5px solid var(--line); min-width: 0; }
 .pp i { font-style: normal; font-size: .7em; color: var(--sub); flex: none; } .pp b { font-size: .88em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -113,10 +119,9 @@ h1, h2, h3, h4 { font-family: var(--head); margin: 0; line-height: 1.35; }
 .crw { display: flex; align-items: center; gap: 8px; padding: 2px 0; min-width: 0; }
 .role { display: inline-block; white-space: nowrap; font-size: .75em; font-weight: 700; padding: 0 8px; border-radius: 5px; line-height: 1.7; min-width: 62px; text-align: center; background: var(--soft); color: var(--fg); border: 1px solid var(--line); }
 .role.n { background: color-mix(in srgb, var(--p1) 16%, var(--card)); border-color: var(--p1); }
+.logc summary { cursor: pointer; font-weight: 700; list-style: none; min-height: 28px; display: flex; align-items: center; color: var(--sub); } .logc summary::-webkit-details-marker { display: none; } .logc[open] summary { margin-bottom: 8px; }
 /* 猫(お休みの日) */
-.thk2 .cat { position: absolute; left: calc(50% + 32px); bottom: 0; width: 36px; height: 34px; color: var(--cat); animation: catin .6s cubic-bezier(.3,1.5,.5,1) both; transform-origin: 50% 100%; }
-@keyframes catin { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .thk2 .cat { animation: none; } }
+.thk2 .cat { position: absolute; left: calc(50% + 32px); bottom: 0; width: 36px; height: 34px; color: var(--cat); }
 /* ダーク = ネオン */
 html.dk { --cat: #ff9a3d; --f1: #ffa31a; --f2: #19e6c1; --f3: #b78cff; --todo: #ffe14d; --bg: #0a0d14; --card: #141923; --line: #2b3446; --soft: #1d2433; --today-bg: #14203a; }
 html.dk .btn:not(.ghost):not(.danger), html.dk .chipb[aria-pressed="true"], html.dk .tag.me, html.dk .plate.me, html.dk .cell.today .dn, html.dk .fl, html.dk .cell .ap.me { color: #0a0d14; }
@@ -490,7 +495,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   }
   function renderMonth(v) {
     var d = new Date(); if (!S.y) { S.y = d.getFullYear(); S.m = d.getMonth() + 1; }
-    v.innerHTML = '<div class="top"><button type="button" class="nav" data-act="prev" aria-label="前の月">‹</button><h1 id="mtitle"></h1><button type="button" class="nav" data-act="next" aria-label="次の月">›</button></div>' +
+    v.innerHTML = '<div class="top"><button type="button" class="nav" data-act="prev" aria-label="前の月">‹</button><h1 id="mtitle"></h1><button type="button" class="nav" data-act="reader" aria-label="写真で勤務表を入れる"><svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round" aria-hidden="true"><path d="M4 8h3l1.6-2.2h6.8L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg></button><button type="button" class="nav" data-act="next" aria-label="次の月">›</button></div>' +
       '<div class="stage" id="stage"><div class="flip-in" id="fin"><div class="face" id="fa"></div><div class="face f1b" id="fb"></div></div><div class="shadow"></div></div>' +
       '<div class="thkwrap" id="thk"></div>';
     S.rot = 0; S.side = 0; S.visited = false; S.page = 0; S.faceH = 0;
@@ -554,11 +559,11 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       '<h1>' + esc(fmtDate(s)) + '</h1><button type="button" class="nav" data-act="dnext" aria-label="次の日">›</button></div>';
     if (hol) h += '<div class="sub" style="margin-top:-6px">' + esc(hol) + '</div>';
     if (S.fromMonth) h += '<div class="row"><button type="button" class="btn ghost small" data-act="dprev">‹ 前の日</button><span class="grow"></span></div>';
+    h += crewHtml(s);
     h += '<section class="card"><h3>勤務（' + esc(mainName()) + '）</h3><div class="seg" role="group" aria-label="勤務の階">' +
       '<button type="button" class="chipb" data-shift="me" data-floor="0" aria-pressed="' + (!sh) + '">なし</button>' +
       [1, 2, 3].map(function (f) { return '<button type="button" class="chipb f' + f + '" data-shift="me" data-floor="' + f + '" aria-pressed="' + (!!sh && sh.floor === f) + '"' + (sh && sh.floor === f ? ' style="background:var(--f' + f + ')"' : '') + '>' + f + 'F</button>'; }).join('') + '</div>' +
       '<div class="sub">' + (sh ? '午後 13:00–19:00' : '午後固定。階を選んでください') + '</div></section>';
-    h += crewHtml(s);
     h += '<section class="card ano"><h3>あの人は？</h3>';
     if (!fr.length) h += '<div class="empty">まだ登録がありません。<br><button type="button" class="btn ghost small" data-act="settings" style="margin-top:8px">あの人を登録する</button></div>';
     fr.forEach(function (f, i) {
@@ -581,7 +586,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     function chip(name, slot, f) {
       if (!name && !(sh && slot === 'pm' && sh.floor === f)) return '<span class="pp ' + slot + ' empty"><i>' + (slot === 'am' ? '午前' : '午後') + '</i><b>—</b></span>';
       var me = sh && slot === 'pm' && sh.floor === f, k = -1;
-      fr.forEach(function (x, i) { if (x.name === name) k = i; });
+      fr.forEach(function (x, i) { if (sameName(x.name, name)) k = i; });
       var cls = 'pp ' + slot + (me ? ' me' : '') + (k >= 0 ? ' fr' + (k + 1) : '');
       return '<span class="' + cls + '"><i>' + (slot === 'am' ? '午前' : '午後') + '</i><b>' + esc(me ? '自分' : name) + '</b></span>';
     }
@@ -592,11 +597,12 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     var oth = (c.others || []).map(function (o) {
       return '<div class="crw"><span class="role ' + (o.role === '看護' ? 'n' : 'h') + '">' + esc(o.role) + '</span><b class="grow">' + esc(o.name) + '</b><span class="sub">' + esc(o.tag || '') + '</span></div>';
     }).join('');
-    return '<section class="card"><h3>その日の職場</h3><div class="bld">' + rows + '</div><div class="sub">非常勤（SP）の午前と午後。色つきが自分です。</div>' +
+    var nts = (c.notes || []).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('');
+    return '<section class="card house"><h3>その日の職場' + (nts ? ' ' + nts : '') + '</h3><div class="roof" aria-hidden="true"></div><div class="bld">' + rows + '<div class="door" aria-hidden="true"></div></div><div class="sub">非常勤（SP）の午前と午後。色つきが自分です。</div>' +
       (oth ? '<h3 style="margin-top:4px">ほかの職種</h3>' + oth : '') + '</section>';
   }
-  function seedCrew(y, m, ps, fr, frShifts) {
-    var P = CREW_POOL;
+  function genCrew(y, m, fr, frShifts) {
+    var P = CREW_POOL, out = {};
     for (var d = 1; d <= dim(y, m); d++) {
       var date = ymd(y, m, d), floors = {};
       [1, 2, 3].forEach(function (f) {
@@ -608,8 +614,14 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
         });
       });
       var others = [{ role: '常勤介護', name: P.day[d % P.day.length], tag: '日1' }, { role: '常勤介護', name: P.day[(d + 2) % P.day.length], tag: '日2' }, { role: '夜勤', name: P.night[d % P.night.length], tag: '夜勤1' }, { role: '看護', name: P.ns[d % P.ns.length], tag: 'NS1' }];
-      ps.push(put('crew', date, { date: date, floors: floors, others: others, example: true }));
+      var notes = d === 10 ? ['カンファレンス'] : d === 21 ? ['消防訓練'] : [];
+      out[date] = { date: date, floors: floors, others: others, notes: notes };
     }
+    return out;
+  }
+  function seedCrew(y, m, ps, fr, frShifts) {
+    var g = genCrew(y, m, fr, frShifts);
+    Object.keys(g).forEach(function (k) { g[k].example = true; ps.push(put('crew', k, g[k])); });
   }
   function eventRow(e) {
     return '<button type="button" class="item" data-event="' + e.id + '"><span class="tag' + (e.owner === 'me' ? ' me' : '') + '">' + esc(ownerName(e.owner)) + '</span><span class="grow"><b>' + ico(e.icon, 'ico') + esc(e.title) + '</b>' + (e.time ? '<span class="sub"> ' + esc(e.time) + '</span>' : '') + (e.repeat && e.repeat !== 'none' ? '<span class="sub"> ・' + (e.repeat === 'weekly' ? '毎週' : '毎月') + '</span>' : '') + (e.bring ? '<div class="bring">持ち物：' + esc(e.bring) + '</div>' : '') + '</span><span class="sub">›</span></button>';
@@ -729,11 +741,11 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     var h = '<div class="top"><h1>共有</h1></div>';
     h += '<section class="card"><h3>ひとみと、お母さんと</h3><div class="sub">同じアプリを開けば、同じ画面が見えます。ふたりとも書けて、更新はお互いの画面にすぐ出ます。招待は、アーティファクトの共有メニューから、<b>メールだけ</b>で。</div>' +
       '<div class="row"><span class="tag me">いまの画面</span><span class="grow">' + esc(S.myName || 'あなた') + (S.cfg && S.cfg.mainId === S.myId ? '（メイン）' : '') + '</span></div></section>';
-    h += '<section class="card"><h3>最近の更新</h3>' + (S.log.length ? S.log.slice(0, 8).map(function (l) {
+    h += '<details class="card logc"><summary>最近の更新（' + S.log.length + '）</summary>' + (S.log.length ? S.log.slice(0, 8).map(function (l) {
       var nm = l.who === S.myId ? (S.myName || 'あなた') : (names[l.who] || 'だれか');
       var dt = new Date(l.t), tm = (dt.getMonth() + 1) + '/' + dt.getDate() + ' ' + pad(dt.getHours()) + ':' + pad(dt.getMinutes());
       return '<div class="row"><span class="tag">' + esc(nm) + '</span><span class="grow">' + esc(l.text) + '</span><span class="sub">' + tm + '</span></div>';
-    }).join('') : '<div class="empty">まだありません</div>') + '</section>';
+    }).join('') : '<div class="empty">まだありません</div>') + '</details>';
     h += '<section class="card" id="sec-set"><h3>設定</h3>' +
       '<div class="f"><span class="sub">自分の色</span><div class="sw" id="mecolors" role="group" aria-label="自分の色">' + PAL.map(function (c, i) { return '<button type="button" style="--c:' + c + '" data-mecolor="' + i + '" aria-label="' + PNAME[i] + '" aria-pressed="' + (resolveColors(S.cfg).me === i) + '"></button>'; }).join('') + '</div></div>' +
       '<div class="f"><span class="sub">あの人（2人まで）</span>' + friends().map(function (f, i) { return '<button type="button" class="item" data-friend="' + i + '"><span class="av" style="width:30px;height:30px;border-radius:50%;background:var(--' + (i === 0 ? 'p1' : 'p2') + ');display:grid;place-items:center"><svg viewBox="0 0 20 22" style="width:20px;height:20px;fill:#fff"><circle cx="10" cy="5" r="4.2"/><path d="M2 21c0-6 3-9.5 8-9.5s8 3.5 8 9.5z"/></svg></span><b>' + esc(f.name) + '</b><span class="sub">直す ›</span></button>'; }).join('') + (friends().length < 2 ? '<button type="button" class="btn ghost" data-act="newfriend">＋ あの人を足す</button>' : '') + '</div>' +
@@ -846,6 +858,167 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   }
   function closeSheet() { var o = $('#ov'); if (o) o.remove(); }
 
+  /* ============ 写真で勤務表を入れる ============ */
+  var DAYSYM = /^日\d$/;
+  function normName(s) { return String(s || '').replace(/[\s　（）()]/g, ''); }
+  function sameName(a, b) { a = normName(a); b = normName(b); return !!a && !!b && (a === b || a.indexOf(b) >= 0 || b.indexOf(a) >= 0); }
+  function parseCell(c) {
+    c = String(c == null ? '' : c).trim();
+    if (c === '?' || c === '？') return { k: 'unk' };
+    var mm = /([123])\s*F?\s*(午前|午後)/.exec(c);
+    if (mm) return { k: 'on', floor: +mm[1], slot: mm[2] === '午前' ? 'am' : 'pm' };
+    if (c === '' || /^(休み?|希休|明け|公休|有休)$/.test(c)) return { k: 'off' };
+    return { k: 'oth', raw: c };
+  }
+  function cellText(v) { return v ? (v.slot === 'am' ? '午前' : '午後') + v.floor + 'F' : '休み'; }
+  function buildPlan(res, sheetName) {
+    var y = +res.year, m = +res.month, nd = dim(y, m), fr = friends();
+    var rows = (res.rows || []).filter(function (r) { return r && Array.isArray(r.cells); });
+    var plan = { y: y, m: m, nd: nd, rows: rows.length, me: null, fr: [], crew: {}, fixes: [], unread: 0, notes: res.events || {} };
+    var meRow = null, frRows = [null, null];
+    rows.forEach(function (r) {
+      if (sheetName && sameName(r.name, sheetName)) meRow = meRow || r;
+      fr.forEach(function (f, i) { if (sameName(r.name, f.name)) frRows[i] = frRows[i] || r; });
+    });
+    plan.meFound = !!meRow; plan.frFound = frRows.map(function (r) { return !!r; });
+    function personPlan(row, who, name, isMe) {
+      var out = { who: who, name: name, days: {}, on: 0 };
+      if (!row) return out;
+      for (var d = 1; d <= nd; d++) {
+        var v = parseCell(row.cells[d - 1]), key = d;
+        if (v.k === 'on') { out.days[key] = { floor: v.floor, slot: isMe ? 'pm' : v.slot }; out.on++; if (isMe && v.slot === 'am') plan.fixes.push({ who: who, name: name, d: d, raw: String(row.cells[d - 1]), sel: undefined, me: true }); }
+        else if (v.k === 'off') out.days[key] = null;
+        else plan.fixes.push({ who: who, name: name, d: d, raw: v.k === 'unk' ? '?' : v.raw, sel: undefined, me: isMe });
+      }
+      return out;
+    }
+    plan.me = personPlan(meRow, 'me', mainName(), true);
+    fr.forEach(function (f, i) { plan.fr.push(personPlan(frRows[i], f.id, f.name, false)); });
+    for (var d = 1; d <= nd; d++) {
+      var floors = { 1: {}, 2: {}, 3: {} }, others = [];
+      rows.forEach(function (r) {
+        var raw = String(r.cells[d - 1] == null ? '' : r.cells[d - 1]).trim(), v = parseCell(raw);
+        if (v.k === 'unk') { plan.unread++; return; }
+        if (v.k === 'on') { floors[v.floor][v.slot] = String(r.name || ''); return; }
+        if (r.block === '看' && /^NS/i.test(raw)) others.push({ role: '看護', name: String(r.name || ''), tag: raw });
+        else if (/夜勤/.test(raw)) others.push({ role: '夜勤', name: String(r.name || ''), tag: raw });
+        else if (DAYSYM.test(raw)) others.push({ role: r.block === '派' ? '派遣介護' : '常勤介護', name: String(r.name || ''), tag: raw });
+      });
+      var notes = (plan.notes && plan.notes[String(d)]) || [];
+      plan.crew[ymd(y, m, d)] = { date: ymd(y, m, d), floors: floors, others: others, notes: notes.map(String), from: 'photo' };
+    }
+    return plan;
+  }
+  function applyPlan(plan, sheetName) {
+    var ps = [], y = plan.y, m = plan.m;
+    function one(pp, isMe) {
+      for (var d = 1; d <= plan.nd; d++) {
+        var id = pp.who + '_' + ymd(y, m, d), has = Object.prototype.hasOwnProperty.call(pp.days, d), fix = null;
+        plan.fixes.forEach(function (f) { if (f.who === pp.who && f.d === d && f.sel !== undefined) fix = f; });
+        var v = fix ? fix.sel : (has ? pp.days[d] : undefined);
+        if (v === undefined) continue;
+        if (v) ps.push(put('shifts', id, { person: pp.who, date: ymd(y, m, d), slot: isMe ? 'pm' : v.slot, floor: v.floor, from: 'photo' }));
+        else if (S.shifts[id]) ps.push(del('shifts', id));
+      }
+    }
+    if (plan.meFound) one(plan.me, true);
+    plan.fr.forEach(function (pp, i) { if (plan.frFound[i]) one(pp, false); });
+    Object.keys(plan.crew).forEach(function (k) { ps.push(put('crew', k, plan.crew[k])); });
+    ps.push(saveCfg({ sheetName: sheetName }));
+    return safe(Promise.all(ps), '勤務表を入れました').then(function (ok) { if (ok) { logIt(plan.y + '年' + plan.m + '月の勤務表を、写真から入れた'); S.y = plan.y; S.m = plan.m; closeSheet(); go('month'); } return ok; });
+  }
+  function readerPrompt() {
+    return '添付は、介護施設の「月間勤務表」を紙で撮影した写真です（同じ表を分けて撮った複数枚のこともあります）。表を読み取って、JSONだけを返してください。説明文やコードブロックの囲みは付けないでください。\n\n' +
+      '形式:\n{"year":西暦の数字,"month":月の数字,"days":その月の日数,"legend":{"記号":"時間"},"events":{"日にち(数字の文字列)":["行事や医師の記載"]},"rows":[{"block":"常|派|看|非","name":"名前","cells":["1日のマス","2日のマス"]}]}\n\n' +
+      '決まり:\n- 令和は西暦に直す（令和8年=2026年）。\n- block は、見出しが「介護職員（常）」なら"常"、「介護職員（派）」なら"派"、「看護職員」なら"看"、「介護職員（非）」なら"非"。\n' +
+      '- cells は、その人の行の1日から月末までの記号を、1マスずつ、書いてある文字のまま入れる。記号の例: 日1〜日8、夜勤、明け、休み、希休、NS1〜NS3、1F午前、1F午後、2F午前、2F午後、3F午前、3F午後。空欄のマスは""。\n' +
+      '- 読み取れないマス、自信のないマスは、推測で埋めずに必ず"?"にする。\n- cells の長さは days と同じにする。\n- 名前は、表に書いてある通り（敬称は付けない）。\n- 行事（カンファレンス、消防訓練など）や医師の記載は、その日付の events に入れる。\n- 凡例（記号と時間の表）があれば legend に入れる。';
+  }
+  function demoResult(sheetName) {
+    var y = S.y || new Date().getFullYear(), m = S.m || (new Date().getMonth() + 1), nd = dim(y, m), P = CREW_POOL, fr = friends().length ? friends() : [{ id: 'p1', name: '田中' }, { id: 'p2', name: '森' }];
+    var meD = { 2: 2, 4: 2, 5: 3, 9: 1, 11: 1, 12: 1, 16: 3, 18: 3, 19: 3, 24: 2, 26: 2, 27: 2 };
+    var frD = [{ 1: [2, 'pm'], 2: [2, 'pm'], 5: [2, 'pm'], 6: [2, 'pm'], 9: [2, 'pm'], 12: [2, 'pm'], 13: [2, 'pm'], 15: [1, 'am'], 16: [3, 'pm'], 18: [2, 'pm'], 22: [2, 'pm'] }, { 3: [3, 'pm'], 5: [2, 'am'], 6: [2, 'pm'], 10: [3, 'pm'], 13: [3, 'am'], 14: [3, 'pm'], 17: [2, 'am'], 20: [3, 'pm'], 24: [3, 'pm'] }];
+    var fm = {}; fr.forEach(function (f, i) { Object.keys(frD[i] || {}).forEach(function (d) { fm[f.id + '_' + ymd(y, m, +d)] = { slot: frD[i][d][1], floor: frD[i][d][0] }; }); });
+    var crew = genCrew(y, m, fr, fm), me = sheetName || 'お母さん';
+    var rows = [], byName = {};
+    function row(block, name) { if (!byName[name]) { byName[name] = { block: block, name: name, cells: [] }; for (var i = 0; i < nd; i++) byName[name].cells.push('休み'); rows.push(byName[name]); } return byName[name]; }
+    P.sp.forEach(function (n) { row('非', n); }); row('非', me); fr.forEach(function (f) { row('非', f.name); });
+    P.day.forEach(function (n) { row('常', n); }); P.night.forEach(function (n) { row('常', n); }); P.ns.forEach(function (n) { row('看', n); });
+    for (var d = 1; d <= nd; d++) {
+      var c = crew[ymd(y, m, d)];
+      [1, 2, 3].forEach(function (f) { ['am', 'pm'].forEach(function (sl) { var n = c.floors[f][sl]; if (sl === 'pm' && meD[d] === f) n = me; if (n) row('非', n).cells[d - 1] = f + 'F' + (sl === 'am' ? '午前' : '午後'); }); });
+      c.others.forEach(function (o) { row(o.role === '看護' ? '看' : '常', o.name).cells[d - 1] = o.tag === '夜勤1' ? '夜勤' : o.tag; });
+    }
+    row('非', me).cells[8] = '?'; row('非', me).cells[19] = '?'; if (fr[0]) row('非', fr[0].name).cells[11] = '?'; row('非', P.sp[0]).cells[3] = '?';
+    var ev = {}; ev[String(Math.min(10, nd))] = ['カンファレンス']; ev[String(Math.min(21, nd))] = ['消防訓練'];
+    return { year: y, month: m, days: nd, legend: { 日1: '6:30〜15:30', 日2: '11:30〜20:30', 夜勤: '16:00〜翌9:00', 午前: '6:45〜13:30', 午後: '13:00〜19:00' }, events: ev, rows: rows };
+  }
+  var RD = { files: [], ac: null };
+  function openReader() {
+    RD.files = [];
+    var lim = S.sampleImg, fr = friends(), sname = (S.cfg && S.cfg.sheetName) || '';
+    var can = !!(S.sample && lim);
+    sheet('<h2>写真で勤務表を入れる</h2>' +
+      '<div class="sub">紙を平らに置いて、真上から、明るい所で。名前の列まで入れてください。表が大きい時は、上半分・下半分のように分けて、' + (lim ? lim.maxCount : 4) + '枚まで。</div>' +
+      '<label class="f"><span>勤務表に書いてある、' + esc(mainName()) + 'の名前</span><input type="text" id="rd-name" maxlength="12" value="' + esc(sname) + '" placeholder="例：山口"></label>' +
+      '<div class="sub">あの人：' + (fr.length ? fr.map(function (f) { return esc(f.name); }).join('・') : 'まだ登録なし') + '（この名前の行も読みます）</div>' +
+      (can ? '<label class="btn ghost" for="rd-file" role="button" tabindex="0">写真を撮る・選ぶ</label><input type="file" id="rd-file" accept="' + esc(lim.mediaTypes.join(',')) + '" multiple><div class="sub" id="rd-cnt">写真は、まだ選んでいません</div>' +
+        '<button type="button" class="btn" id="rd-go" disabled>読み取る</button><div class="sub">読み取りには、この画面を開いている人のClaudeの利用分を使います。1〜2分かかることがあります。</div>' :
+        '<div class="note">この画面では、写真の読み取りが使えません（ログインしていないか、許可されていません）。下の「例の結果で試す」で、流れだけ見られます。</div>') +
+      '<button type="button" class="btn ghost" id="rd-demo">例の結果で試す（写真なし）</button><button type="button" class="btn ghost" data-close>やめる</button>', function (root) {
+      var nameEl = $('#rd-name', root), go = $('#rd-go', root), file = $('#rd-file', root), cnt = $('#rd-cnt', root);
+      function upd() { if (go) go.disabled = !(RD.files.length && nameEl.value.trim()); }
+      nameEl.addEventListener('input', upd);
+      if (file) file.addEventListener('change', function () {
+        RD.files = Array.prototype.slice.call(file.files || [], 0, lim.maxCount);
+        cnt.textContent = RD.files.length ? RD.files.length + '枚 選びました' : '写真は、まだ選んでいません'; upd();
+      });
+      if (go) go.addEventListener('click', function () { runReader(nameEl.value.trim()); });
+      $('#rd-demo', root).addEventListener('click', function () { var nm = nameEl.value.trim() || 'お母さん'; showConfirm(buildPlan(demoResult(nm), nm), nm); });
+    });
+  }
+  function runReader(sheetName) {
+    RD.ac = new AbortController();
+    sheet('<h2>読み取り中…</h2><div class="sub" id="rd-prog">写真を送っています。1〜2分かかることがあります。</div><button type="button" class="btn ghost" id="rd-stop">やめる</button>', function (root) {
+      $('#rd-stop', root).addEventListener('click', function () { if (RD.ac) RD.ac.abort(); closeSheet(); });
+    });
+    S.sample.json(readerPrompt(), { images: RD.files, signal: RD.ac.signal, modelTier: 'complex', cache: false, onText: function (o) { var el = $('#rd-prog'); if (el) el.textContent = '読んでいます…（' + o.text.length + '文字）'; } })
+      .then(function (res) {
+        if (!res || !res.year || !res.month || !Array.isArray(res.rows)) throw { code: 'bad' };
+        showConfirm(buildPlan(res, sheetName), sheetName);
+      }).catch(function (e) {
+        if (e && e.code === 'cancelled') return;
+        var msg = e && e.code === 'rate_limited' ? '利用の上限に達しました。しばらくしてから、もう一度。' : e && e.code === 'image_rejected' ? '写真が読めませんでした。別の写真で。' : e && (e.code === 'invalid_json' || e.code === 'bad') ? '表として読めませんでした。撮り直すか、分けて撮ってみてください。' : '読み取りに失敗しました。もう一度。';
+        sheet('<h2>うまくいきませんでした</h2><div>' + msg + '</div><button type="button" class="btn" id="rd-again">もどる</button>', function (root) { $('#rd-again', root).addEventListener('click', openReader); });
+      });
+  }
+  function showConfirm(plan, sheetName) {
+    var fixes = plan.fixes;
+    function chipsFor(f) {
+      var opts = [['off', '休み']].concat(f.me ? [1, 2, 3].map(function (n) { return ['1:' + n + ':pm', n + 'F']; }) : [1, 2, 3].map(function (n) { return ['a:' + n, '午前' + n + 'F']; }).concat([1, 2, 3].map(function (n) { return ['p:' + n, '午後' + n + 'F']; })));
+      return opts;
+    }
+    var ppl = [plan.meFound ? mainName() + '：' + plan.me.on + '日' : mainName() + '：名前が見つかりません'].concat(plan.fr.map(function (pp, i) { return pp.name + '：' + (plan.frFound[i] ? pp.on + '日' : '見つかりません'); }));
+    var h = '<h2>' + plan.y + '年' + plan.m + '月 を読みました</h2><div class="sub">読んだ行 ' + plan.rows + '人分 ・ 読めなかった他の人のマス ' + plan.unread + 'か所（そこは空きにします）</div>' +
+      '<div class="rdsum">' + ppl.map(function (t) { return '<span class="tag' + (t.indexOf('見つかり') >= 0 ? '' : ' me') + '">' + esc(t) + '</span>'; }).join('') + '</div>';
+    if (!plan.meFound) h += '<div class="note">「' + esc(sheetName) + '」という名前の行が見つかりませんでした。名前の書き方を直して、もう一度読んでみてください。</div>';
+    h += fixes.length ? '<h3>確認してください（' + fixes.length + 'か所）</h3><div class="sub">選ばなかったところは、今のままにします。</div>' : '<div class="sub">確認が必要なところは、ありませんでした。</div>';
+    fixes.forEach(function (f, i) {
+      h += '<div class="fix"><div class="row"><b>' + plan.m + '月' + f.d + '日</b><span class="sub">' + esc(f.name) + ' ・ 読めた字：「' + esc(f.raw) + '」</span></div><div class="seg" data-fixi="' + i + '">' +
+        chipsFor(f).map(function (o) { return '<button type="button" class="chipb" data-v="' + o[0] + '" aria-pressed="false">' + o[1] + '</button>'; }).join('') + '</div></div>';
+    });
+    h += '<button type="button" class="btn" id="rd-ok">この内容で入れる</button><button type="button" class="btn ghost" data-close>やめる</button>';
+    sheet(h, function (root) {
+      root.addEventListener('click', function (ev) {
+        var b = ev.target.closest('.chipb[data-v]'); if (!b) return;
+        var g = b.parentNode, f = fixes[+g.getAttribute('data-fixi')], v = b.getAttribute('data-v');
+        f.sel = v === 'off' ? null : v.charAt(0) === '1' ? { floor: +v.split(':')[1], slot: 'pm' } : { floor: +v.split(':')[1], slot: v.charAt(0) === 'a' ? 'am' : 'pm' };
+        Array.prototype.forEach.call(g.children, function (c) { c.setAttribute('aria-pressed', c === b); });
+      });
+      $('#rd-ok', root).addEventListener('click', function () { applyPlan(plan, sheetName); });
+    });
+  }
+
   /* ============ 操作 ============ */
   document.addEventListener('click', function (e) {
     var t = e.target;
@@ -879,6 +1052,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     else if (act === 'newevent') openEvent(null, a.getAttribute('data-date'));
     else if (act === 'newtodo') openTodo(null, a.getAttribute('data-date'));
     else if (act === 'newfriend') openFriend(null);
+    else if (act === 'reader') openReader();
     else if (act === 'settings') go('share');
     else if (act === 'toggledone') { S.showDone = !S.showDone; render(); }
     else if (act === 'export') exportAll();
@@ -910,9 +1084,10 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     try { var mq = window.matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', function () { applyTheme(); render(); }); } catch (e) { /* ignore */ }
     var fs = curFs(); if (fs !== 16) document.documentElement.style.setProperty('--fs', fs + 'px');
     var t = new Date(); S.y = t.getFullYear(); S.m = t.getMonth() + 1;
-    var uses = claude && claude.use ? ['db', 'user', 'downloads'].map(function (n) { return claude.use(n).catch(function () { return null; }); }) : [Promise.resolve(null), Promise.resolve(null), Promise.resolve(null)];
+    var uses = claude && claude.use ? ['db', 'user', 'downloads', 'sample'].map(function (n) { return claude.use(n).catch(function () { return null; }); }) : [Promise.resolve(null), Promise.resolve(null), Promise.resolve(null), Promise.resolve(null)];
     Promise.all(uses).then(function (r) {
-      db = r[0]; user = r[1]; downloads = r[2];
+      db = r[0]; user = r[1]; downloads = r[2]; S.sample = r[3];
+      if (S.sample && S.sample.limits) S.sample.limits().then(function (l) { S.sampleImg = (l && l.images) || null; }).catch(function () { /* ignore */ });
       var idp = user ? user.me().catch(function () { return null; }) : Promise.resolve(null);
       return idp.then(function (me) {
         if (me) { S.myId = me.id || null; S.myName = me.name || ''; }
