@@ -108,6 +108,7 @@ h1, h2, h3, h4 { font-family: var(--head); margin: 0; line-height: 1.35; }
 .bld { display: grid; gap: 6px; padding: 10px 10px 0; border: 2px solid var(--fg); border-radius: 4px 4px 0 0; background: var(--soft); position: relative; }
 .bld .door { justify-self: center; width: 44px; height: 26px; margin-top: 2px; border-radius: 8px 8px 0 0; background: color-mix(in srgb, var(--me) 55%, var(--card)); }
 .house .sub { margin-top: 8px; }
+.mcard { display: grid; gap: 6px; padding: 10px; border: 1px solid var(--line); border-radius: 12px; } .mcard select { width: 100%; min-height: 44px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--card); color: var(--fg); font: inherit; padding: 0 10px; }
 .rdsum { display: flex; flex-wrap: wrap; gap: 6px; } .fix { display: grid; gap: 6px; padding: 8px 0; border-top: 1px solid var(--line); }
 .thumbs { display: flex; gap: 8px; flex-wrap: wrap; } .thumbs img { width: 96px; height: 96px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); background: #fff; } .thph { width: 96px; height: 96px; display: grid; place-items: center; border-radius: 10px; border: 1px dashed var(--line); font-size: .8em; color: var(--sub); }
 input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; } [hidden] { display: none !important; }
@@ -589,7 +590,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     function chip(name, slot, f) {
       if (!name && !(sh && slot === 'pm' && sh.floor === f)) return '<span class="pp ' + slot + ' empty"><i>' + (slot === 'am' ? '午前' : '午後') + '</i><b>—</b></span>';
       var me = sh && slot === 'pm' && sh.floor === f, k = -1;
-      fr.forEach(function (x, i) { if (sameName(x.name, name)) k = i; });
+      fr.forEach(function (x, i) { if (nameScore(x.sheetName || x.name, name) >= 0.8) k = i; });
       var cls = 'pp ' + slot + (me ? ' me' : '') + (k >= 0 ? ' fr' + (k + 1) : '');
       return '<span class="' + cls + '"><i>' + (slot === 'am' ? '午前' : '午後') + '</i><b>' + esc(me ? '自分' : name) + '</b></span>';
     }
@@ -867,6 +868,18 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   var DAYSYM = /^日\d$/;
   function normName(s) { return String(s || '').replace(/[\s　（）()]/g, ''); }
   function sameName(a, b) { a = normName(a); b = normName(b); return !!a && !!b && (a === b || a.indexOf(b) >= 0 || b.indexOf(a) >= 0); }
+  function lev(a, b) {
+    var m = a.length, n = b.length, d = [], i, j;
+    for (i = 0; i <= m; i++) { d[i] = [i]; } for (j = 1; j <= n; j++) d[0][j] = j;
+    for (i = 1; i <= m; i++) for (j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1));
+    return d[m][n];
+  }
+  function nameScore(a, b) {
+    a = normName(a); b = normName(b); if (!a || !b) return 0; if (a === b) return 1;
+    if (Math.min(a.length, b.length) >= 2 && (a.indexOf(b) >= 0 || b.indexOf(a) >= 0)) return 0.9;
+    var dd = lev(a, b), n = Math.max(a.length, b.length);
+    if (dd <= 1 && n >= 3) return 0.8; if (dd <= 2 && n >= 5) return 0.65; return 0;
+  }
   function parseCell(c) {
     c = String(c == null ? '' : c).trim();
     if (c === '?' || c === '？') return { k: 'unk' };
@@ -876,15 +889,22 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     return { k: 'oth', raw: c };
   }
   function cellText(v) { return v ? (v.slot === 'am' ? '午前' : '午後') + v.floor + 'F' : '休み'; }
-  function buildPlan(res, sheetName, frList) {
+  function buildPlan(res, sheetName, frList, picks) {
     var y = +res.year, m = +res.month, nd = dim(y, m), fr = frList || friends();
     var rows = (res.rows || []).filter(function (r) { return r && Array.isArray(r.cells); });
     var plan = { y: y, m: m, nd: nd, rows: rows.length, me: null, fr: [], crew: {}, fixes: [], unread: 0, notes: res.events || {}, res: res };
-    var meRow = null, frRows = [null, null];
-    rows.forEach(function (r) {
-      if (sheetName && sameName(r.name, sheetName)) meRow = meRow || r;
-      fr.forEach(function (f, i) { if (sameName(r.name, f.name)) frRows[i] = frRows[i] || r; });
-    });
+    picks = picks || {};
+    var used = {}, meRow = null, frRows = [null, null], match = {};
+    function find(key, name) {
+      var idx;
+      if (picks[key] != null) idx = picks[key] < 0 ? null : picks[key];
+      else { var best = null, bs = 0; rows.forEach(function (r, i) { if (used[i]) return; var sc = nameScore(r.name, name); if (sc > bs) { bs = sc; best = i; } }); idx = bs >= 0.65 ? best : null; }
+      if (idx == null) { match[key] = null; return null; }
+      used[idx] = 1; match[key] = { i: idx, exact: normName(rows[idx].name) === normName(name) }; return rows[idx];
+    }
+    meRow = find('me', sheetName);
+    fr.forEach(function (f, i) { frRows[i] = find(f.id, f.sheetName || f.name); });
+    plan.match = match; plan.rowNames = rows.map(function (r) { return String(r.name || ''); }); plan.args = { res: res, sheetName: sheetName, frList: frList, picks: picks };
     plan.meFound = !!meRow; plan.frFound = frRows.map(function (r) { return !!r; });
     function personPlan(row, who, name, isMe) {
       var out = { who: who, name: name, days: {}, on: 0 };
@@ -940,7 +960,9 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     plan.fr.forEach(function (pp) { writePerson(plan, pp, false, ps); });
     ps.push(put('crew', plan.y + '-' + pad(plan.m), { month: plan.y + '-' + pad(plan.m), days: plan.crew, from: 'photo' }));
     saveSheetRes(plan, ps);
-    ps.push(saveCfg({ sheetName: sheetName }));
+    var pk = (plan.args && plan.args.picks) || {};
+    var newFr = (plan.args && plan.args.frList || friends()).map(function (f) { return pk[f.id] != null && pk[f.id] >= 0 ? Object.assign({}, f, { sheetName: plan.rowNames[pk[f.id]] }) : f; });
+    ps.push(saveCfg({ sheetName: pk.me != null && pk.me >= 0 ? plan.rowNames[pk.me] : sheetName, friends: newFr }));
     return safe(Promise.all(ps), '勤務表を入れました').then(function (ok) { if (ok) { logIt(plan.y + '年' + plan.m + '月の勤務表を、写真から入れた'); S.y = plan.y; S.m = plan.m; closeSheet(); go('month'); } return ok; });
   }
   /* あの人を足したり直したりしたとき、保存してある読み取り結果から、その人の勤務を入れ直す（写真は撮り直さなくていい） */
@@ -1108,10 +1130,14 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       var opts = [['off', '休み']].concat(f.me ? [1, 2, 3].map(function (n) { return ['1:' + n + ':pm', n + 'F']; }) : [1, 2, 3].map(function (n) { return ['a:' + n, '午前' + n + 'F']; }).concat([1, 2, 3].map(function (n) { return ['p:' + n, '午後' + n + 'F']; })));
       return opts;
     }
-    var ppl = [plan.meFound ? mainName() + '：' + plan.me.on + '日' : mainName() + '：名前が見つかりません'].concat(plan.fr.map(function (pp, i) { return pp.name + '：' + (plan.frFound[i] ? pp.on + '日' : '見つかりません'); }));
+    function personCard(label, key, pp, found) {
+      var mt = plan.match[key], opts = '<option value="-1"' + (mt ? '' : ' selected') + '>（表に載っていない）</option>' + plan.rowNames.map(function (n, k) { return '<option value="' + k + '"' + (mt && mt.i === k ? ' selected' : '') + '>' + esc(n) + '</option>'; }).join('');
+      return '<div class="mcard"><div class="row"><b>' + esc(label) + '</b><span class="grow"></span><span class="tag' + (found ? ' me' : '') + '">' + (found ? pp.on + '日' : '見つかりません') + '</span></div>' +
+        '<label class="f"><span class="sub">表の中のこの名前の行を読みました' + (mt && !mt.exact ? '（名前が少し違います。合っていますか？）' : '') + '</span><select data-pick="' + esc(key) + '">' + opts + '</select></label></div>';
+    }
     var h = '<h2>' + plan.y + '年' + plan.m + '月 を読みました</h2><div class="sub">読んだ行 ' + plan.rows + '人分 ・ 読めなかった他の人のマス ' + plan.unread + 'か所（そこは空きにします）</div>' +
-      '<div class="rdsum">' + ppl.map(function (t) { return '<span class="tag' + (t.indexOf('見つかり') >= 0 ? '' : ' me') + '">' + esc(t) + '</span>'; }).join('') + '</div>';
-    if (!plan.meFound) h += '<div class="note">「' + esc(sheetName) + '」という名前の行が見つかりませんでした。名前の書き方を直して、もう一度読んでみてください。</div>';
+      personCard(mainName(), 'me', plan.me, plan.meFound) + plan.fr.map(function (pp, i) { return personCard(pp.name, pp.who, pp, plan.frFound[i]); }).join('');
+    if (!plan.meFound) h += '<div class="note">「' + esc(sheetName) + '」という名前の行が見つかりませんでした。上のリストから、正しい行を選んでください。</div>';
     h += fixes.length ? '<h3>確認してください（' + fixes.length + 'か所）</h3><div class="sub">選ばなかったところは、今のままにします。</div>' : '<div class="sub">確認が必要なところは、ありませんでした。</div>';
     fixes.forEach(function (f, i) {
       h += '<div class="fix"><div class="row"><b>' + plan.m + '月' + f.d + '日</b><span class="sub">' + esc(f.name) + ' ・ 読めた字：「' + esc(f.raw) + '」</span></div><div class="seg" data-fixi="' + i + '">' +
@@ -1119,6 +1145,11 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     });
     h += '<button type="button" class="btn" id="rd-ok">この内容で入れる</button><button type="button" class="btn ghost" data-close>やめる</button>';
     sheet(h, function (root) {
+      root.addEventListener('change', function (ev) {
+        var sel = ev.target.closest('select[data-pick]'); if (!sel) return;
+        var a = plan.args, picks = Object.assign({}, a.picks); picks[sel.getAttribute('data-pick')] = +sel.value;
+        showConfirm(buildPlan(a.res, a.sheetName, a.frList, picks), a.sheetName);
+      });
       root.addEventListener('click', function (ev) {
         var b = ev.target.closest('.chipb[data-v]'); if (!b) return;
         var g = b.parentNode, f = fixes[+g.getAttribute('data-fixi')], v = b.getAttribute('data-v');
