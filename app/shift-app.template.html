@@ -106,7 +106,7 @@ h1, h2, h3, h4 { font-family: var(--head); margin: 0; line-height: 1.35; }
 
 .house { gap: 0; } .house h3 { margin-bottom: 6px; flex-wrap: wrap; }
 .roof { height: 40px; margin: 0 -2px -2px; background: color-mix(in srgb, var(--me) 55%, var(--card)); clip-path: polygon(50% 0, 100% 100%, 0 100%); position: relative; z-index: 1; }
-.bld { display: grid; gap: 6px; padding: 10px 10px 0; border: 2px solid var(--fg); border-radius: 4px 4px 0 0; background: var(--soft); position: relative; }
+.bld { display: grid; gap: 6px; padding: 10px; border: 2px solid var(--fg); border-radius: 4px 4px 0 0; background: var(--soft); position: relative; }
 .bld .door { justify-self: center; width: 44px; height: 26px; margin-top: 2px; border-radius: 8px 8px 0 0; background: color-mix(in srgb, var(--me) 55%, var(--card)); }
 .house .sub { margin-top: 8px; }
 .mcard { display: grid; gap: 6px; padding: 10px; border: 1px solid var(--line); border-radius: 12px; } .mcard select { width: 100%; min-height: 44px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--card); color: var(--fg); font: inherit; padding: 0 10px; }
@@ -596,10 +596,11 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     if (t.length < 2) return t[0] || '';
     return t.join('').length <= 6 ? t.join(' ') : t[0] + '(' + t[1].charAt(0) + ')';
   }
-  function notesOn(date) { var c = S.crew[date.slice(0, 7)]; c = c && c.days && c.days[date]; return (c && c.notes) || []; }
+  function spNotes(a) { return (a || []).filter(function (t) { return /[SＳsｓ][PＰpｐ]/.test(String(t)); }); }
+  function notesOn(date) { var c = S.crew[date.slice(0, 7)]; c = c && c.days && c.days[date]; return spNotes(c && c.notes); }
   function notesLine() {
     var c = S.crew[S.y + '-' + pad(S.m)], out = [];
-    if (c && c.days) Object.keys(c.days).sort().forEach(function (k) { (c.days[k].notes || []).forEach(function (t) { out.push('<span class="tag">' + (+k.slice(8)) + '日 ' + esc(t) + '</span>'); }); });
+    if (c && c.days) Object.keys(c.days).sort().forEach(function (k) { spNotes(c.days[k].notes).forEach(function (t) { out.push('<span class="tag">' + (+k.slice(8)) + '日 ' + esc(t) + '</span>'); }); });
     return out.length ? '<div class="notesline"><span class="sub">行事</span>' + out.join('') + '</div>' : '';
   }
   function crewHtml(date) {
@@ -619,8 +620,8 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     var oth = (c.others || []).map(function (o) {
       return '<div class="crw"><span class="role ' + (o.role === '看護' ? 'n' : 'h') + '">' + esc(o.role) + '</span><b class="grow">' + esc(o.name) + '</b><span class="sub">' + esc(o.tag || '') + '</span></div>';
     }).join('');
-    var nts = (c.notes || []).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('');
-    return '<section class="card house"><h3>その日の職場' + (nts ? ' ' + nts : '') + '</h3><div class="roof" aria-hidden="true"></div><div class="bld">' + rows + '<div class="door" aria-hidden="true"></div></div><div class="sub">非常勤（SP）の午前と午後。色つきが自分です。</div>' +
+    var nts = spNotes(c.notes).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('');
+    return '<section class="card house"><h3>その日の職場' + (nts ? ' ' + nts : '') + '</h3><div class="roof" aria-hidden="true"></div><div class="bld">' + rows + '</div><div class="sub">非常勤（SP）の午前と午後。色つきが自分です。</div>' +
       (oth ? '<h3 style="margin-top:4px">ほかの職種</h3>' + oth : '') + '</section>';
   }
   function genCrew(y, m, fr, frShifts) {
@@ -636,7 +637,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
         });
       });
       var others = [{ role: '常勤介護', name: P.day[d % P.day.length], tag: '日1' }, { role: '常勤介護', name: P.day[(d + 2) % P.day.length], tag: '日2' }, { role: '夜勤', name: P.night[d % P.night.length], tag: '夜勤1' }, { role: '看護', name: P.ns[d % P.ns.length], tag: 'NS1' }];
-      var notes = d === 10 ? ['カンファレンス'] : d === 21 ? ['消防訓練'] : [];
+      var notes = d === 10 ? ['SPカンファレンス'] : d === 21 ? ['消防訓練'] : [];
       out[date] = { date: date, floors: floors, others: others, notes: notes };
     }
     return out;
@@ -1005,7 +1006,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       '形式:\n{"year":西暦の数字,"month":月の数字,"days":その月の日数,"legend":{"記号":"時間"},"events":{"日にち(数字の文字列)":["行事や医師の記載"]},"rows":[{"block":"常|派|看|非|他","name":"名前","cells":["1日のマス","2日のマス"]}]}\n\n' +
       '決まり:\n- 写真は90度横向きのことがあります。向きを直して読んでください。\n- 紙には表が2つ（左右、または上下）並んでいます。片方は常勤・派遣・計画作成者・施設長など、もう片方は看護職員と介護職員（非）です。写真に写っている表の、全員の行を読んでください。表を左右・上下に分けて、4枚に撮ってあることもあります。同じ人の行が複数の写真に写っていたら、1人1行にまとめてください。名前の列が写っていない行は、読まないでください。\n- 日付の見出しが写っていない表でも、マスは1日から月末まで順に並んでいます。向きを直したとき、1日は左端です。\n- 令和は西暦に直す（令和8年=2026年）。\n- block は、見出しが「介護職員（常）」なら"常"、「介護職員（派）」なら"派"、「看護職員」なら"看"、「介護職員（非）」なら"非"、それ以外（施設長・計画作成者・生活相談員など）は"他"。\n' +
       '- cells は、その人の行の1日から月末までの記号を、1マスずつ、書いてある文字のまま入れる。記号の例: 日1〜日8、夜勤、明け、休み、希休、NS1〜NS3、1F午前、1F午後、2F午前、2F午後、3F午前、3F午後。空欄のマスは""。「有休」「希休」「休み」「明け」も、そのまま書く。\n' +
-      '- 読み取れないマス、自信のないマスは、推測で埋めずに必ず"?"にする。\n- cells の長さは days と同じにする。\n- 名前は、表に書いてある通り（敬称は付けない）。\n- 行事（カンファレンス、消防訓練など）や医師の記載は、その日付の events に入れる。\n- 凡例（記号と時間の表）があれば legend に入れる。';
+      '- 読み取れないマス、自信のないマスは、推測で埋めずに必ず"?"にする。\n- cells の長さは days と同じにする。\n- 名前は、表に書いてある通り（敬称は付けない）。\n- 行事（SPカンファレンス、カンファレンス、消防訓練など）は、その日付の events に入れる。医師の記載（〇〇Dr）は入れない。\n- 凡例（記号と時間の表）があれば legend に入れる。';
   }
   function demoResult(sheetName) {
     var y = S.y || new Date().getFullYear(), m = S.m || (new Date().getMonth() + 1), nd = dim(y, m), P = CREW_POOL, fr = friends().length ? friends() : [{ id: 'p1', name: '田中' }, { id: 'p2', name: '森' }];
@@ -1023,7 +1024,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       c.others.forEach(function (o) { row(o.role === '看護' ? '看' : '常', o.name).cells[d - 1] = o.tag === '夜勤1' ? '夜勤' : o.tag; });
     }
     row('非', me).cells[8] = '?'; row('非', me).cells[19] = '?'; if (fr[0]) row('非', fr[0].name).cells[11] = '?'; row('非', P.sp[0]).cells[3] = '?';
-    var ev = {}; ev[String(Math.min(10, nd))] = ['カンファレンス']; ev[String(Math.min(21, nd))] = ['消防訓練'];
+    var ev = {}; ev[String(Math.min(10, nd))] = ['SPカンファレンス']; ev[String(Math.min(21, nd))] = ['消防訓練'];
     return { year: y, month: m, days: nd, legend: { 日1: '6:30〜15:30', 日2: '11:30〜20:30', 夜勤: '16:00〜翌9:00', 午前: '6:45〜13:30', 午後: '13:00〜19:00' }, events: ev, rows: rows };
   }
   /* 写真の影をならす（背景の明るさのムラを、紙の白さで割って均す） */
