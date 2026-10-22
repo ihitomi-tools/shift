@@ -109,8 +109,7 @@ h1, h2, h3, h4 { font-family: var(--head); margin: 0; line-height: 1.35; }
 .bld .door { justify-self: center; width: 44px; height: 26px; margin-top: 2px; border-radius: 8px 8px 0 0; background: color-mix(in srgb, var(--me) 55%, var(--card)); }
 .house .sub { margin-top: 8px; }
 .rdsum { display: flex; flex-wrap: wrap; gap: 6px; } .fix { display: grid; gap: 6px; padding: 8px 0; border-top: 1px solid var(--line); }
-.fbtn { position: relative; overflow: hidden; } .fbtn input[type="file"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 0; }
-input#imp { display: none; } [hidden] { display: none !important; }
+input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; } [hidden] { display: none !important; }
 .bld .fr { display: grid; grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1.35fr); gap: 6px; align-items: center; }
 .pp { display: flex; align-items: baseline; gap: 5px; padding: 6px 8px; border-radius: 10px; background: var(--card); border: 1.5px solid var(--line); min-width: 0; }
 .pp i { font-style: normal; font-size: .7em; color: var(--sub); flex: none; } .pp b { font-size: .88em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -965,18 +964,18 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       '<div class="sub">紙を平らに置いて、真上から、明るい所で。名前の列まで入れてください。紙が大きい時は、左半分・右半分のように分けて（どちらにも名前の列が入るように）、' + (lim ? lim.maxCount : 4) + '枚まで。</div>' +
       '<label class="f"><span>勤務表に書いてある、' + esc(mainName()) + 'の名前</span><input type="text" id="rd-name" maxlength="20" value="' + esc(sname) + '" placeholder="フルネーム（例：山口 花子）"></label>' +
       '<div class="sub">あの人：' + (fr.length ? fr.map(function (f) { return esc(f.name); }).join('・') : 'まだ登録なし') + '（この名前の行も読みます）</div>' +
-      (can ? '<div class="row"><div class="btn ghost fbtn">カメラで撮る<input type="file" id="rd-cam" accept="image/*" capture="environment" aria-label="カメラで撮る"></div><div class="btn ghost fbtn">アルバムから選ぶ<input type="file" id="rd-file" accept="image/*" multiple aria-label="アルバムから選ぶ"></div></div><div class="row"><div class="sub grow" id="rd-cnt">写真は、まだ選んでいません</div><button type="button" class="btn ghost small" id="rd-clear" hidden>選び直す</button></div>' +
+      (can ? '<label class="btn ghost" for="rd-file" id="rd-lab" role="button" tabindex="0">写真を足す（撮る・選ぶ）</label><input type="file" id="rd-file" accept="image/*"><div class="row"><div class="sub grow" id="rd-cnt">写真は、まだ選んでいません</div><button type="button" class="btn ghost small" id="rd-clear" hidden>選び直す</button></div>' +
         '<button type="button" class="btn" id="rd-go" disabled>読み取る</button><div class="sub">読み取りには、この画面を開いている人のClaudeの利用分を使います。1〜2分かかることがあります。</div>' :
         '<div class="note">この画面では、写真の読み取りが使えません（ログインしていないか、許可されていません）。下の「例の結果で試す」で、流れだけ見られます。</div>') +
       '<button type="button" class="btn ghost" id="rd-demo">例の結果で試す（写真なし）</button><button type="button" class="btn ghost" data-close>やめる</button>', function (root) {
-      var nameEl = $('#rd-name', root), go = $('#rd-go', root), file = $('#rd-file', root), cam = $('#rd-cam', root), cnt = $('#rd-cnt', root), clr = $('#rd-clear', root);
+      var nameEl = $('#rd-name', root), go = $('#rd-go', root), file = $('#rd-file', root), cam = null, cnt = $('#rd-cnt', root), clr = $('#rd-clear', root);
       function upd() { if (go) go.disabled = !(RD.files.length && nameEl.value.trim()); }
       nameEl.addEventListener('input', upd);
       function add(inp) {
-        inp.addEventListener('click', function () { cnt.textContent = (inp === cam ? 'カメラ' : 'アルバム') + 'を開こうとしています…（何も出ない時は、もう一方を試してね）'; });
+        $('#rd-lab', root).addEventListener('click', function () { cnt.textContent = '写真の選択を開こうとしています…'; });
         inp.addEventListener('change', function () {
           RD.files = RD.files.concat(Array.prototype.slice.call(inp.files || [])).slice(0, lim.maxCount); inp.value = '';
-          cnt.textContent = RD.files.length ? RD.files.length + '枚 選びました（最大' + lim.maxCount + '枚）' : '写真は、まだ選んでいません'; clr.hidden = !RD.files.length; upd();
+          cnt.textContent = RD.files.length ? RD.files.length + '枚 選びました（最大' + lim.maxCount + '枚。もう1枚ならもう一度押す）' : '写真は、まだ選んでいません'; clr.hidden = !RD.files.length; upd();
         });
       }
       if (file) add(file); if (cam) add(cam);
