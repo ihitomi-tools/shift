@@ -83,6 +83,7 @@ h1, h2, h3, h4 { font-family: var(--head); margin: 0; line-height: 1.35; }
 .cell.empty { cursor: default; }
 .cell.work { background: var(--card); box-shadow: inset 0 0 0 1px var(--line); }
 .cell .dn { width: 24px; line-height: 24px; text-align: center; border-radius: 50%; font-size: 1.05em; }
+.cell { position: relative; } .cell.note::after { content: ''; position: absolute; top: 3px; right: 6px; width: 7px; height: 7px; border-radius: 50%; background: var(--todo); } .notesline { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 2px 4px; }
 .cell.today { background: var(--today-bg); box-shadow: inset 0 0 0 2px var(--accent); }
 .cell.today .dn { background: var(--accent); color: #fff; font-weight: 800; }
 .cell .fl { font-size: .78em; min-width: 26px; }
@@ -114,10 +115,10 @@ h1, h2, h3, h4 { font-family: var(--head); margin: 0; line-height: 1.35; }
 .rdsum { display: flex; flex-wrap: wrap; gap: 6px; } .fix { display: grid; gap: 6px; padding: 8px 0; border-top: 1px solid var(--line); }
 .thumbs { display: flex; gap: 8px; flex-wrap: wrap; } .thumbs img { width: 96px; height: 96px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); background: #fff; } .thph { width: 96px; height: 96px; display: grid; place-items: center; border-radius: 10px; border: 1px dashed var(--line); font-size: .8em; color: var(--sub); }
 input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; } [hidden] { display: none !important; }
-.bld .fr { display: grid; grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1.35fr); gap: 6px; align-items: center; }
+.bld .fr { display: grid; grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1fr); gap: 6px; align-items: center; }
 .pp { display: flex; align-items: baseline; gap: 5px; padding: 6px 8px; border-radius: 10px; background: var(--card); border: 1.5px solid var(--line); min-width: 0; }
-.pp i { font-style: normal; font-size: .7em; color: var(--sub); flex: none; } .pp b { font-size: .88em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pp.am { opacity: .8; } .pp.pm b { font-size: 1em; } .pp.empty b { color: var(--sub); font-weight: 400; }
+.pp i { font-style: normal; font-size: .7em; color: var(--sub); flex: none; } .pp b { font-size: .95em; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pp.am { opacity: .85; } .pp.pm b { font-weight: 800; } .pp.empty b { color: var(--sub); font-weight: 400; }
 .pp.me { background: color-mix(in srgb, var(--me) 20%, var(--card)); border-color: var(--me); opacity: 1; }
 .pp.fr1 { border-color: var(--p1); background: color-mix(in srgb, var(--p1) 14%, var(--card)); } .pp.fr2 { border-color: var(--p2); background: color-mix(in srgb, var(--p2) 14%, var(--card)); }
 .crw { display: flex; align-items: center; gap: 8px; padding: 2px 0; min-width: 0; }
@@ -412,7 +413,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   }
   function go(view, opt) {
     S.view = view;
-    if (view === 'day') { S.fromMonth = !!(opt && opt.fromMonth); S.sel = (opt && opt.date) || S.today; }
+    if (view === 'day') { S.fromMonth = !!(opt && opt.fromMonth); S.sel = (opt && opt.date) || S.today; S.dayMode = (opt && opt.mode) || 'full'; }
     if (view === 'month') { S.page = 0; S.visited = false; }
     window.scrollTo(0, 0);
     render();
@@ -442,9 +443,9 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   }
   function calHead() { return DOW.map(function (d, i) { return '<div class="dow ' + (i === 0 ? 'sun' : i === 6 ? 'sat' : '') + '">' + d + '</div>'; }).join(''); }
   function cellCls(s, extra) { var p = parse(s), w = dowOf(p.y, p.m, p.d); return 'cell' + (s === S.today ? ' today' : '') + (w === 0 ? ' sun' : '') + (holName(s) ? ' hol' : '') + (extra || ''); }
-  function cellBtn(s, inner, cls) {
+  function cellBtn(s, inner, cls, nonote) {
     var p = parse(s);
-    return '<button type="button" class="' + cellCls(s, cls) + '" data-date="' + s + '" aria-label="' + esc(fmtDate(s)) + '"><span class="dn">' + p.d + '</span>' + inner + '</button>';
+    return '<button type="button" class="' + cellCls(s, (cls || '') + (!nonote && notesOn(s).length ? ' note' : '')) + '" data-date="' + s + '" aria-label="' + esc(fmtDate(s)) + '"><span class="dn">' + p.d + '</span>' + inner + '</button>';
   }
   function calMe() {
     var h = calHead();
@@ -476,12 +477,12 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       if (!s) { h += '<div></div>'; return; }
       var l = byDate[s], inner = '';
       if (l) { var st = todoStatus(l[0]); inner = '<span class="tk ' + st.cls + '">' + (l[0].icon ? ico(l[0].icon) : '') + '</span>' + (l.length > 1 ? '<span class="mi">+' + (l.length - 1) + '</span>' : ''); }
-      h += cellBtn(s, inner, '');
+      h += cellBtn(s, inner, '', true);
     });
     return h;
   }
   function faceHtml(i) {
-    if (i === 0) return '<div class="plate me">' + esc(mainName()) + 'のお仕事<span class="sub">' + S.m + '月</span></div><div class="cal">' + calMe() + '</div>';
+    if (i === 0) return '<div class="plate me">' + esc(mainName()) + 'のお仕事<span class="sub">' + S.m + '月</span></div><div class="cal">' + calMe() + '</div>' + notesLine();
     if (i === 1) {
       var fr = friends();
       return '<div class="plate ov"><span class="av3">' + '<i style="background:var(--me)"></i>' + fr.map(function (f, k) { return '<i style="background:var(--' + (k === 0 ? 'p1' : 'p2') + ')"></i>'; }).join('') + '</span>あの人は？<span class="sub">' + S.m + '月</span></div><div class="cal">' + calOv() + '</div>' + peopleHtml(S.today);
@@ -565,7 +566,8 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       '<h1>' + esc(fmtDate(s)) + '</h1><button type="button" class="nav" data-act="dnext" aria-label="次の日">›</button></div>';
     if (hol) h += '<div class="sub" style="margin-top:-6px">' + esc(hol) + '</div>';
     if (S.fromMonth) h += '<div class="row"><button type="button" class="btn ghost small" data-act="dprev">‹ 前の日</button><span class="grow"></span></div>';
-    h += crewHtml(s);
+    var crewH = crewHtml(s);
+    if (!crewH && S.dayMode !== 'todo') crewH = '<section class="card"><h3>その日の職場</h3><div class="empty">この日の職場のデータは、まだありません。<br>月の画面のカメラボタンから、勤務表を読み取ってください。</div></section>';
     var hTop = h; h = '';
     h += '<section class="card"><h3>勤務（' + esc(mainName()) + '）</h3><div class="seg" role="group" aria-label="勤務の階">' +
       '<button type="button" class="chipb" data-shift="me" data-floor="0" aria-pressed="' + (!sh) + '">なし</button>' +
@@ -580,15 +582,26 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
         ['am', 'pm'].map(function (sl) { return [1, 2, 3].map(function (fl) { var on = cur && cur.slot === sl && cur.floor === fl; return '<button type="button" class="chipb" data-shift="' + f.id + '" data-slot="' + sl + '" data-floor="' + fl + '" aria-pressed="' + (!!on) + '">' + (sl === 'am' ? '午前' : '午後') + fl + 'F</button>'; }).join(''); }).join('') + '</div></div>';
     });
     h += '</section>';
-    var fixH = h; h = hTop;
+    var fixH = h; h = '';
     var evs = eventsOn(s);
     h += '<section class="card"><h3>予定</h3>' + (evs.length ? evs.map(eventRow).join('') : '<div class="empty">予定はありません</div>') + '<button type="button" class="btn ghost" data-act="newevent" data-date="' + s + '">＋ 予定を足す</button></section>';
     var tds = todoList().filter(function (t) { return !t.done && t.due === s; });
     h += '<section class="card"><h3>やること（この日が締め切り）</h3>' + (tds.length ? tds.map(todoRow).join('') : '<div class="empty">ありません</div>') + '<button type="button" class="btn ghost" data-act="newtodo" data-date="' + s + '">＋ やることを足す</button></section>';
-    h += '<details class="fixwk"><summary>勤務を手で直す</summary><div class="fixin">' + fixH + '</div></details>';
-    v.innerHTML = h;
+    var evtdH = h, fixD = '<details class="fixwk"><summary>勤務を手で直す</summary><div class="fixin">' + fixH + '</div></details>';
+    v.innerHTML = hTop + (S.dayMode === 'crew' ? crewH + fixD : S.dayMode === 'todo' ? evtdH : crewH + evtdH + fixD);
   }
   var CREW_POOL = { sp: ['山田', '中村', '小川', '木村', '林', '佐藤', '高橋', '伊藤', '渡辺', '加藤'], day: ['高田', '石井', '内田', '三浦'], night: ['岡田', '野口', '吉川'], ns: ['松本', '青木', '井上'] };
+  function shortName(n) {
+    var t = String(n || '').trim().split(/[\s　]+/).filter(Boolean);
+    if (t.length < 2) return t[0] || '';
+    return t.join('').length <= 6 ? t.join(' ') : t[0] + '(' + t[1].charAt(0) + ')';
+  }
+  function notesOn(date) { var c = S.crew[date.slice(0, 7)]; c = c && c.days && c.days[date]; return (c && c.notes) || []; }
+  function notesLine() {
+    var c = S.crew[S.y + '-' + pad(S.m)], out = [];
+    if (c && c.days) Object.keys(c.days).sort().forEach(function (k) { (c.days[k].notes || []).forEach(function (t) { out.push('<span class="tag">' + (+k.slice(8)) + '日 ' + esc(t) + '</span>'); }); });
+    return out.length ? '<div class="notesline"><span class="sub">行事</span>' + out.join('') + '</div>' : '';
+  }
   function crewHtml(date) {
     var c = S.crew[date.slice(0, 7)]; c = c && c.days && c.days[date]; if (!c) return '';
     var sh = shiftOf('me', date), fr = friends();
@@ -597,7 +610,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       var me = sh && slot === 'pm' && sh.floor === f, k = -1;
       fr.forEach(function (x, i) { if (nameScore(x.sheetName || x.name, name) >= 0.8) k = i; });
       var cls = 'pp ' + slot + (me ? ' me' : '') + (k >= 0 ? ' fr' + (k + 1) : '');
-      return '<span class="' + cls + '"><i>' + (slot === 'am' ? '午前' : '午後') + '</i><b>' + esc(me ? '自分' : (k >= 0 ? fr[k].name : name)) + '</b></span>';
+      return '<span class="' + cls + '"><i>' + (slot === 'am' ? '午前' : '午後') + '</i><b>' + esc(me ? '自分' : shortName(k >= 0 ? fr[k].name : name)) + '</b></span>';
     }
     var rows = [3, 2, 1].map(function (f) {
       var fl = (c.floors && c.floors[f]) || {};
@@ -1189,7 +1202,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     var tab = t.closest('[data-tab]'); if (tab) { var v = tab.getAttribute('data-tab'); if (v === 'day') go('day', { date: S.today }); else go(v); return; }
     var gt = t.closest('[data-go]'); if (gt) { flipTo(+gt.getAttribute('data-go')); return; }
     var dt = t.closest('[data-date]');
-    if (dt && !t.closest('[data-event]') && (dt.classList.contains('cell') || dt.classList.contains('card'))) { go('day', { date: dt.getAttribute('data-date'), fromMonth: true }); return; }
+    if (dt && !t.closest('[data-event]') && (dt.classList.contains('cell') || dt.classList.contains('card'))) { go('day', { date: dt.getAttribute('data-date'), fromMonth: true, mode: S.page === 2 ? 'todo' : 'crew' }); return; }
     var sf = t.closest('[data-shift]');
     if (sf) {
       var person = sf.getAttribute('data-shift'), floor = +sf.getAttribute('data-floor'), slot = person === 'me' ? 'pm' : sf.getAttribute('data-slot'), id = person + '_' + S.sel;
