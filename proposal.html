@@ -318,10 +318,23 @@ symbol { overflow: visible; }
 .thk2 .cl > span { position: absolute; left: 50%; top: 45.1%; transform: translate(-50%, -50%); font-size: 11.5px; font-weight: 800; line-height: 1.2; text-align: center; white-space: nowrap; }
 .thk2 .cl:focus-visible { outline: 2px solid var(--p-accent); outline-offset: 2px; border-radius: 12px; }
 .tks { display: flex; justify-content: center; gap: 2px; margin-top: 3px; }
-.tks i { width: 9px; height: 9px; border-radius: 3px; border: 2px solid var(--tc); box-sizing: border-box; }
-.tks i.over { --tc: var(--p-bad); background: var(--p-bad); }
-.tks i.soon { --tc: var(--p-warn); }
-.tks i.ok { --tc: var(--p-sub); }
+.tks .tk { display: grid; place-items: center; width: 15px; height: 15px; border-radius: 4.5px; border: 1.5px solid var(--tc); color: var(--tc); box-sizing: border-box; }
+.tks .tk svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.tk.over { --tc: var(--p-bad); background: var(--p-bad); color: #fff; }
+.tk.soon { --tc: var(--p-warn); }
+.tk.ok { --tc: var(--p-sub); }
+.thk2.back .cl.a, .thk2.back .cl.b { --pc: var(--p-me); }
+
+/* 色の見え方 */
+.swrow { display: flex; flex-wrap: wrap; gap: 8px; }
+.swpill { font: inherit; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px 9px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--fg); cursor: pointer; }
+.swpill i { width: 18px; height: 18px; border-radius: 50%; background: var(--c); }
+.swpill[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); font-weight: 700; }
+.swpill:focus-visible, .cmpcell:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cmpgrid { display: flex; flex-wrap: wrap; gap: 20px 14px; justify-content: center; }
+.cmpcell { width: 158px; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0; border: 0; background: none; font: inherit; font-size: 14px; color: var(--fg); cursor: pointer; }
+.cmpbox { position: relative; display: block; width: 158px; height: 330px; }
+.cmpbox .phone { position: absolute; left: 0; top: 0; transform: scale(.6); transform-origin: top left; pointer-events: none; }
 .plate.td { background: var(--p-todo); color: #3a2a00; }
 .phone[data-skin="dq"] .plate.td { color: #000; }
 .dl.none { color: var(--p-sub); border: 1px dotted var(--p-sub); }
@@ -409,17 +422,26 @@ td.rec, th.rec { background: var(--accent-soft); }
 </header>
 
 <section>
+  <div class="sec-head">
+    <h2>決まったこと</h2>
+    <p>ここまでの話し合いで固まった内容です。画面の例は、下の「画面イメージ」に並べています。</p>
+  </div>
   <div class="summary">
-    <div class="sum"><b>入力は「1タップ」</b><span>お母さんは午後固定なので、日付を押して担当階（1〜3階）を選ぶだけ。階は色分けで見分けます。</span></div>
-    <div class="sum"><b>撮影で自動入力</b><span>配付シフト表を撮ると候補を作り、あやしい所だけ黄色で確認。最後は人の目で「OK」を押す形にします。</span></div>
-    <div class="sum"><b>共有は段階的に</b><span>最初は画像で送る、次にカレンダーに取り込めるファイル、最後に自動更新。病院の予定の詳細は初期設定では送りません。</span></div>
+    <div class="sum"><b>見た目と色</b><span>スタイリッシュ。フォントはBIZ UDPゴシックとM PLUS Rounded 1c。自分の色は、設定で7色から選べます。</span></div>
+    <div class="sum"><b>トップ画面</b><span>自分のカレンダーだけ。今日は丸と枠で目立たせます。月の切り替えは「‹ ›」。</span></div>
+    <div class="sum"><b>吊り看板（3ページ）</b><span>下の人型の雲「あの人は？」「やることあったっけ？」をタップすると、看板が回って、登録した2人の重ね表示／締め切りの印つきカレンダーが出ます。</span></div>
+    <div class="sum"><b>日ごとの職場</b><span>3階建ての図で、午後（お母さん）を大きく、午前は参考に。常勤・夜勤・看護は下の表に。</span></div>
+    <div class="sum"><b>予定とやること</b><span>予定は、自分とじいちゃん別に、病院・買い物・ご飯・銀行・★のアイコンで。やることは、締め切りつき（なしもOK）。</span></div>
+    <div class="sum"><b>呼び方</b><span>じいちゃん（狭い所は「じ」）、あの人は？、やることあったっけ？</span></div>
+    <div class="sum"><b>共有</b><span>最初は画像、次にカレンダー用ファイル、必要なら自動更新。病院の予定は初期設定では送りません。</span></div>
+    <div class="sum"><b>撮影の読み取り</b><span>撮影して候補を作り、あやしい所だけ黄色で確認。登録した2人と、自分の行を拾います。</span></div>
   </div>
 </section>
 
 <section>
   <div class="sec-head">
     <h2>画面イメージ</h2>
-    <p><span class="tag-sample">サンプル</span>名前・時間・日付はすべて仮です。下のボタンで見た目の方向性を2つ見比べられます（外観は中身が固まってから決めましょう）。</p>
+    <p><span class="tag-sample">サンプル</span>名前・時間・日付はすべて仮です。外観はスタイリッシュに決まりました。ドラクエ風は、おまけで切り替えて遊べます。</p>
   </div>
   <div class="skinbar">
     <div class="seg" role="group" aria-label="見た目の切り替え">
@@ -451,7 +473,7 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="title-row"><b>‹ 2026年11月 ›</b><span class="sub">あの人は？</span></div>
           <div class="cal" id="cal3"></div>
           <div class="people"><span class="pc me"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>午後 1F</i></span></span><span class="pc p1"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>午後 2F</i></span></span><span class="pc p2 off"><svg><use href="#pp"/></svg><span class="tx"><b>森</b><i>お休み</i></span></span></div>
-          <div class="thk back"><svg class="thk-p" data-mom="stand"></svg><span class="thk-cloud"><svg><use href="#cloud"/></svg><span>もどる</span></span></div>
+          <div class="thk2 back"><span class="cl a"><svg><use href="#cloud"/></svg><span>もどる</span></span><svg class="thk-p" data-mom="stand"></svg></div>
         </div>
         <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
@@ -464,11 +486,11 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="title-row"><b>‹ 2026年11月 ›</b><span class="sub">やること</span></div>
           <div class="cal" id="cal4"></div>
           <div class="win"><div class="row"><span class="grow"><b>次の締め切り</b> 14日</span><span class="dl soon">あと2日</span></div><div class="sub" style="margin-top:2px">締め切りなし 2件</div></div>
-          <div class="thk back"><svg class="thk-p" data-mom="stand"></svg><span class="thk-cloud"><svg><use href="#cloud"/></svg><span>もどる</span></span></div>
+          <div class="thk2 back"><span class="cl b"><svg><use href="#cloud"/></svg><span>もどる</span></span><svg class="thk-p" data-mom="stand"></svg></div>
         </div>
         <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
-      <figcaption><b>①-3 タップすると：やることカレンダー（看板の3ページ目）</b>締め切りの日に、四角い印。期限をすぎたものは赤、近いものはオレンジ、余裕のあるものは灰色です。締め切りなしは、件数だけ下に出ます。</figcaption>
+      <figcaption><b>①-3 タップすると：やることカレンダー（看板の3ページ目）</b>締め切りの日に、四角い印。期限をすぎたものは赤、近いものはオレンジ、余裕のあるものは灰色。印の中のアイコンで、何のやることかが分かります。印をタップすると、その日のやることが出ます。締め切りなしは、件数だけ下に出ます。</figcaption>
     </figure>
 
 
@@ -579,7 +601,7 @@ td.rec, th.rec { background: var(--accent-soft); }
         </div>
         <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
-      <figcaption><b>⑥ 設定：気になる人</b>登録は2人まで。人の色は7色から選べて、自分の色も変えられます。辞めたら外して、別の人を入れます。</figcaption>
+      <figcaption><b>⑥ 設定：登録する人と色</b>登録は2人まで。人の色は7色から選べて、自分の色も変えられます。辞めたら外して、別の人を入れます。</figcaption>
     </figure>
     <figure class="fig">
       <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
@@ -629,6 +651,16 @@ td.rec, th.rec { background: var(--accent-soft); }
 
 <section>
   <div class="sec-head">
+    <h2>自分の色を変えると</h2>
+    <p>設定で、自分の色を7色から選べます。色を押すと、このページの画面すべて（人型、自分の札、今日の丸、タブ、ボタン）がその色に変わります。下の一覧は、トップ画面を7色で並べたものです。押すと、全画面がその色になります。</p>
+  </div>
+  <div class="swrow" id="swrow" role="group" aria-label="自分の色"></div>
+  <div class="cmpgrid" id="cmp"></div>
+  <p class="note">田中さん・森さんの色と重なる時は、その人の色が自動で青に入れ替わります。イエローは「やること」の雲の金色と近いので、気になる時は、雲の色をずらす案があります。</p>
+</section>
+
+<section>
+  <div class="sec-head">
     <h2>回る看板：人型と雲で切り替え</h2>
     <p><span class="tag-sample">サンプル</span>カレンダーは吊り看板です。表は自分だけ。人型（お母さん）が考えていて、雲は2つ。「あの人は？」をタップすると登録した2人の重ね表示、「やることあったっけ？」をタップすると締め切りの印つきカレンダーに、看板がくるりと回ります。裏では雲が「もどる」に変わり、人型は「立つ」ポーズに入れ替わります（もどってもそのまま。アプリを開き直すと、また考えるポーズ）。人型の色は設定の「自分」の色です。触って回せます（横にドラッグ／吹き出し）。最初は自動で回り、触ると止まります。</p>
   </div>
@@ -648,108 +680,12 @@ td.rec, th.rec { background: var(--accent-soft); }
 
 <section>
   <div class="sec-head">
-    <h2>仲の良い人の予定を見る：3つの案</h2>
-    <p><span class="tag-sample">サンプル</span><b>更新：カレンダーの下に人物アイコンを置く形（画面①・①-2・⑥）で進めています。以下の3案は比較用に残しています。</b><br>「今日は○○さん出勤かな？」にすぐ答えられるようにしたい。登録は1〜2人、普段は隠しておいて、見たい時だけ見える形で、3通り考えました。登録した人はお母さんの端末にだけ保存して、相手に通知は行きません。ひとみへの共有にも含めません。</p>
-  </div>
-  <div class="phones">
-
-    <figure class="fig">
-      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
-        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
-        <div class="body">
-          <div class="title-row"><b>‹ 11月12日（木） ›</b><span class="chip">1F 午後</span></div>
-          <div class="win">
-            <div class="row"><b class="grow">☆ 気になる人 2人</b><span class="sub">閉じる ▴</span></div>
-            <div class="who"><span class="grow">田中さん</span><span class="fl f2">2F</span><span class="sub">午後 出勤</span></div>
-            <div class="who"><span class="grow">森さん</span><span class="sub">お休み</span></div>
-          </div>
-          <div>
-            <div class="roof"></div>
-            <div class="bld">
-              <div class="fr"><span class="fl f3">3F</span><span class="pp am"><svg><use href="#pp"/></svg><b>山田</b><i>午前</i></span><span class="pp pm"><svg><use href="#pp"/></svg><span class="tx"><b>中村</b><i>午後</i></span></span></div>
-              <div class="fr"><span class="fl f2">2F</span><span class="pp am"><svg><use href="#pp"/></svg><b>小川</b><i>午前</i></span><span class="pp pm pin"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>午後</i></span></span></div>
-              <div class="fr"><span class="fl f1">1F</span><span class="pp am"><svg><use href="#pp"/></svg><b>林</b><i>午前</i></span><span class="pp pm me"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>午後</i></span></span></div>
-            </div>
-          </div>
-          <div class="sub" style="text-align:center">普段は「☆ 気になる人 2人 ▾」の1行に閉じています</div>
-        </div>
-        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span class="on"><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
-      </div></div>
-      <figcaption><b>案A ・ 1行に閉じた「気になる人」</b>今日の画面の上に、閉じた1行。押すと、その日の2人の様子が開きます。</figcaption>
-    </figure>
-
-    <figure class="fig">
-      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
-        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
-        <div class="body">
-          <div class="title-row"><b>‹ 11月12日（木） ›</b><span class="chip">1F 午後</span></div>
-          <div>
-            <div class="roof"></div>
-            <div class="bld">
-              <div class="fr"><span class="fl f3">3F</span><span class="pp am"><svg><use href="#pp"/></svg><b>山田</b><i>午前</i></span><span class="pp pm"><svg><use href="#pp"/></svg><span class="tx"><b>中村</b><i>午後</i></span></span></div>
-              <div class="fr"><span class="fl f2">2F</span><span class="pp am"><svg><use href="#pp"/></svg><b>小川</b><i>午前</i></span><span class="pp pm hl"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>午後</i></span></span></div>
-              <div class="fr"><span class="fl f1">1F</span><span class="pp am"><svg><use href="#pp"/></svg><b>林</b><i>午前</i></span><span class="pp pm me"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>午後</i></span></span></div>
-            </div>
-          </div>
-          <div class="win">
-            <div class="row"><div class="grow"><h4>田中さん</h4><span class="sub">2F 午後 ・ 今月 14日出勤</span></div><span class="chip">☆ 登録</span></div>
-            <div class="mini" id="mini2" style="margin-top:6px"></div>
-          </div>
-          <div class="sub" style="text-align:center">図の名前を押すと、その人の今月が出ます</div>
-        </div>
-        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span class="on"><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
-      </div></div>
-      <figcaption><b>案B ・ 図の名前をタップ</b>登録の画面は要らず、いつもの図が入口です。ただし、その日休みの人は図にいないので押せません。</figcaption>
-    </figure>
-
-    <figure class="fig">
-      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
-        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
-        <div class="body">
-          <div class="title-row"><b>気になる人</b><span class="chip">＋ 追加</span></div>
-          <div class="win">
-            <div class="wk">
-              <span></span>
-              <span class="dh today">12<small>木</small></span><span class="dh">13<small>金</small></span><span class="dh">14<small>土</small></span><span class="dh">15<small>日</small></span><span class="dh">16<small>月</small></span><span class="dh">17<small>火</small></span><span class="dh">18<small>水</small></span>
-              <span class="nm me">自分</span>
-              <span class="wc"><i class="fl f1">1後</i></span><span class="wc"></span><span class="wc"></span><span class="wc"></span><span class="wc"><i class="fl f3">3後</i></span><span class="wc"></span><span class="wc"><i class="fl f3">3後</i></span>
-              <span class="nm">田中</span>
-              <span class="wc sd"><i class="fl f2">2後</i></span><span class="wc sd"><i class="fl f2">2後</i></span><span class="wc"></span><span class="wc"><i class="fl f1">1前</i></span><span class="wc sd"><i class="fl f3">3後</i></span><span class="wc"></span><span class="wc sd"><i class="fl f2">2後</i></span>
-              <span class="nm">森</span>
-              <span class="wc"></span><span class="wc"><i class="fl f3">3前</i></span><span class="wc"><i class="fl f3">3後</i></span><span class="wc"></span><span class="wc"></span><span class="wc"><i class="fl f2">2前</i></span><span class="wc"></span>
-            </div>
-          </div>
-          <div class="sub">前=午前 後=午後 ・ 枠つきは、自分と同じ午後に出る日</div>
-          <div class="win"><div class="row"><span class="grow">田中さんの今月</span><span class="sub">›</span></div></div>
-          <div class="win"><div class="row"><span class="grow">森さんの今月</span><span class="sub">›</span></div></div>
-        </div>
-        <div class="tabbar" style="grid-template-columns:repeat(5,1fr)"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span class="on"><i><svg class="ic"><use href="#ic-star"/></svg></i>仲間</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
-      </div></div>
-      <figcaption><b>案C ・ 「あの人は？」タブ</b>登録した人と自分を、1週間ぶん並べて見られます。普段は別のタブなので、見えません。</figcaption>
-    </figure>
-
-  </div>
-
-  <div class="tw">
-    <table>
-      <thead><tr><th>案</th><th>普段の見え方</th><th>登録のしかた</th><th>向いている場面</th><th>弱いところ</th></tr></thead>
-      <tbody>
-        <tr><td class="rec"><b>A. 閉じた1行</b><span class="pill">いちばん合いそう</span></td><td>「☆ 気になる人 2人」の1行だけ</td><td>設定で名前を選ぶ。図の名前を長押しでも</td><td>「今日は○○さん出勤かな？」を1タップで</td><td>見えるのは、選んだ1日ぶんだけ</td></tr>
-        <tr><td><b>B. 図の名前をタップ</b></td><td>何も見えない（いつもの図のまま）</td><td>名前を押して「☆ 登録」</td><td>図を見ていて「この人、今月いつ出る？」</td><td>休みの人は図にいないので押せない。今日の確認に使えない日がある</td></tr>
-        <tr><td><b>C. 「あの人は？」タブ</b></td><td>別タブなので見えない</td><td>＋追加で名前を選ぶ</td><td>1週間のまとめ見、予定合わせ</td><td>タブが1つ増える。作る画面も1枚増える</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<section>
-  <div class="sec-head">
     <h2>撮影から入力までの流れ</h2>
     <p>順番に意味があるので番号を振っています。</p>
   </div>
   <ol class="flow">
     <li><b>撮る</b><span>配付のシフト表をカメラで撮影。斜めでも、枠に合わせれば補正します。</span></li>
-    <li><b>読む</b><span>AIが表を読んで、自分の名前の行と、同じ日の他の人を拾います。</span></li>
+    <li><b>読む</b><span>AIが表を読んで、自分の行と、同じ日に働く他の人（非常勤は階ごと）、登録した2人を拾います。</span></li>
     <li><b>確認する</b><span>自信のない日は黄色で止めて、写真と見比べながら直せます。</span></li>
     <li><b>入る</b><span>OKを押すと、1か月分がカレンダーに入ります。</span></li>
   </ol>
@@ -797,6 +733,7 @@ td.rec, th.rec { background: var(--accent-soft); }
       <li><b>Webアプリ方式で細かい動作（通知・保存の安定性など）は、iPhoneのバージョンで差が出ることがあります。</b>最初に小さい試作を入れて実機で確かめるのが安全です。</li>
       <li><b>病院の予定は、配慮が必要な個人情報です。</b>共有の初期設定は「送らない」にして、送る時に毎回選べる形を考えています。</li>
       <li><b>同僚の名前を読み取るには、写真を読み取りサービスに送る方式が現実的です。</b>端末内だけで読む方式にもできますが、表の読み取りは精度が落ちると思います（推測）。職場の方針として問題がないか、確認しておくと安心です。</li>
+      <li><b>締め切りや通院の前の「お知らせ（通知）」は、約束できません。</b>ホーム画面に置くWebアプリで、iPhoneにきちんと届けるには、通知を送る仕組み（サーバー）が別に要ると思います（私の理解です）。最初の版は、開いた時に「あと◯日」と色で知らせます。</li>
     </ul>
   </div>
 </section>
@@ -804,14 +741,15 @@ td.rec, th.rec { background: var(--accent-soft); }
 <section>
   <div class="sec-head">
     <h2>ここから決めたいこと</h2>
-    <p>壁打ちしたいのは、この5つです。分かる所からで大丈夫。</p>
+    <p>まだ決まっていないことです。分かる所からで大丈夫。</p>
   </div>
   <ol class="qs">
-    <li><b>お母さんの行はどれ？</b><span>下段の「介護職員（非）」のブロックで合っていますか？ 自分の行を見つけるために、名前の書き方を知りたいです。</span></li>
-    <li><b>午後に入らない日（休み・希望休・有休）は、どう扱いたい？</b><span>表の「休み」「希休」「有休」を、カレンダーに印として入れるかどうかを決めたいです。</span></li>
-    <li><b>「SP」と「介護職員（非）」は同じ意味ですか？</b><span>アプリ内の呼び方を合わせます。出し分けたい略称が他にもあれば教えてください。</span></li>
-    <li><b>ひとみに見せたい情報は、どこまで？</b><span>勤務だけ？ 通院の日時だけ？ 病院名まで？ ここで共有の初期設定が決まります。</span></li>
-    <li><b>1月からの過去分を何枚か見せてもらえますか？</b><span>月ごとにレイアウトが変わるか、読み取りのテストができます。</span></li>
+    <li><b>保存のしかた（バックアップ）</b><span>基本は、お母さんのiPhone Airの中だけに保存します。機種変更や、アプリを消した時のために、バックアップをどうしますか？</span></li>
+    <li><b>お知らせ（通知）は、必要？</b><span>必要なら、通知を送る仕組みが別に要ります。まずは「開いた時の色の知らせ」だけで足りるか、使いながら決める手もあります。</span></li>
+    <li><b>ひとみに見せる範囲は、どこまで？</b><span>勤務、買い物・ご飯、じいちゃんの予定。病院の予定は、初期設定では送らない案でいいですか？</span></li>
+    <li><b>1月からの過去のシフト表を、何枚か見せてもらえますか？</b><span>月ごとにレイアウトが変わるかを確かめて、読み取りのテストに使います。</span></li>
+    <li><b>雲の素材の利用条件</b><span>素材サイトの規約（アプリへの組み込み・加工）を確認してもらえると安心です。</span></li>
+    <li><b>アプリの名前</b><span>「シフト手帳（仮）」のままでいいですか？　予定とやることも入るので、変えたい気持ちがあれば。</span></li>
   </ol>
 </section>
 
@@ -820,9 +758,9 @@ td.rec, th.rec { background: var(--accent-soft); }
     <h2>進め方の案</h2>
   </div>
   <div class="phases">
-    <div class="ph"><h3>第1段階</h3><p>手入力でシフトと予定（病院・買い物・ご飯など）、やること（締め切りつき）を入れる。月カレンダー、日の詳細、画像で共有。</p></div>
-    <div class="ph"><h3>第2段階</h3><p>撮影で読み取り。確認画面と、その日の職場の自動表示、気になる人の登録。</p></div>
-    <div class="ph"><h3>第3段階</h3><p>カレンダー用ファイル、必要なら購読。外観はここでドラクエ風か、スタイリッシュに決めて仕上げる。</p></div>
+    <div class="ph"><h3>第1段階</h3><p>手入力で、シフト、予定、やること、3ページの看板、仲間の登録と色。画像で共有。</p></div>
+    <div class="ph"><h3>第2段階</h3><p>撮影で読み取り（確認画面つき）と、その日の職場の自動表示。</p></div>
+    <div class="ph"><h3>第3段階</h3><p>カレンダー用ファイル、必要なら購読。通知は、使い方を見てから相談します。</p></div>
   </div>
 </section>
 
@@ -834,54 +772,36 @@ td.rec, th.rec { background: var(--accent-soft); }
   var appts = {6:['じ','hosp'],8:['自','shop'],13:['自','hosp'],17:['自','bank'],22:['じ','meal'],24:['じ','hosp']};
   function ico(k) { return '<svg class="ei"><use href="#e-' + k + '"/></svg>'; }
   var t = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,18:2,22:2,23:2,26:3,30:3};
-  function build(el, sh, ap, am) {
-    var h = '';
-    ['日','月','火','水','木','金','土'].forEach(function (d, i) {
-      h += '<div class="dow ' + (i === 0 ? 'sun' : i === 6 ? 'sat' : '') + '">' + d + '</div>';
-    });
-    for (var d = 1; d <= 30; d++) {
-      var f = sh[d], a = ap[d];
-      h += '<div class="c' + (f ? ' work' : '') + (d === 12 ? ' today' : '') + '"><span class="dn">' + d + '</span>' +
-        (f ? '<span class="fl f' + f + '">' + f + (am ? (am[d] ? '前' : '後') : 'F') + '</span>' : '') +
-        (a ? '<span class="ap' + (a[0] === '自' ? ' me' : '') + (f ? ' clash' : '') + '">' + a[0] + ico(a[1]) + '</span>' : '') + '</div>';
-    }
-    el.innerHTML = h;
-  }
-  build(document.getElementById('cal'), shifts, appts);
   var s2 = {3:3,5:2,6:2,10:3,13:3,14:3,17:2,20:3,21:3,24:3,25:2,28:3,29:3};
-  (function () {
-    var h = '';
-    ['日','月','火','水','木','金','土'].forEach(function (d, i) {
-      h += '<div class="dow ' + (i === 0 ? 'sun' : i === 6 ? 'sat' : '') + '">' + d + '</div>';
-    });
-    for (var d = 1; d <= 30; d++) {
-      var dots = (shifts[d] ? '<i class="me"></i>' : '') + (t[d] ? '<i class="p1"></i>' : '') + (s2[d] ? '<i class="p2"></i>' : '');
-      h += '<div class="c' + (d === 12 ? ' today' : '') + '"><span class="dn">' + d + '</span>' + (dots ? '<span class="dots">' + dots + '</span>' : '') + '</div>';
-    }
-    document.getElementById('cal3').innerHTML = h;
-  })();
-  var cnt = Object.keys(shifts).length;
-  document.getElementById('m-sum').textContent = '勤務 ' + cnt + '日';
+  var DOW = ['日','月','火','水','木','金','土'];
+  function head() { return DOW.map(function (d, i) { return '<div class="dow ' + (i === 0 ? 'sun' : i === 6 ? 'sat' : '') + '">' + d + '</div>'; }).join(''); }
+  var h = head();
+  for (var d = 1; d <= 30; d++) {
+    var f = shifts[d], a = appts[d];
+    h += '<div class="c' + (f ? ' work' : '') + (d === 12 ? ' today' : '') + '"><span class="dn">' + d + '</span>' +
+      (f ? '<span class="fl f' + f + '">' + f + 'F</span>' : '') +
+      (a ? '<span class="ap' + (a[0] === '自' ? ' me' : '') + (f ? ' clash' : '') + '">' + a[0] + ico(a[1]) + '</span>' : '') + '</div>';
+  }
+  document.getElementById('cal').innerHTML = h;
+  var h3 = head();
+  for (var e = 1; e <= 30; e++) {
+    var dots = (shifts[e] ? '<i class="me"></i>' : '') + (t[e] ? '<i class="p1"></i>' : '') + (s2[e] ? '<i class="p2"></i>' : '');
+    h3 += '<div class="c' + (e === 12 ? ' today' : '') + '"><span class="dn">' + e + '</span>' + (dots ? '<span class="dots">' + dots + '</span>' : '') + '</div>';
+  }
+  document.getElementById('cal3').innerHTML = h3;
+  document.getElementById('m-sum').textContent = '勤務 ' + Object.keys(shifts).length + '日';
   var mini = document.getElementById('mini'), m = '';
   for (var i = 0; i < 35; i++) {
-    var day = i - 0 + 1, f2 = shifts[day];
+    var day = i + 1, f2 = shifts[day];
     m += '<i' + (f2 && day <= 30 ? ' class="' + ['', 'b', 'a', 'c'][f2] + '"' : '') + '></i>';
   }
   mini.innerHTML = m;
-  var t = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,18:2,22:2,23:2,26:3,30:3};
-  var mini2 = document.getElementById('mini2'), m2 = '';
-  for (var j = 0; j < 35; j++) {
-    var dd = j + 1, ff = t[dd];
-    m2 += '<i' + (ff && dd <= 30 ? ' class="' + ['', 'b', 'a', 'c'][ff] + '"' : '') + '></i>';
-  }
-  mini2.innerHTML = m2;
 
-  var phones = document.querySelectorAll('.phone');
   var bS = document.getElementById('skin-stylish'), bD = document.getElementById('skin-dq');
-  function setSkin(s) {
-    phones.forEach(function (p) { p.setAttribute('data-skin', s); });
-    bS.setAttribute('aria-pressed', s === 'stylish');
-    bD.setAttribute('aria-pressed', s === 'dq');
+  function setSkin(sk) {
+    document.querySelectorAll('.phone').forEach(function (p) { p.setAttribute('data-skin', sk); });
+    bS.setAttribute('aria-pressed', sk === 'stylish');
+    bD.setAttribute('aria-pressed', sk === 'dq');
   }
   bS.addEventListener('click', function () { setSkin('stylish'); });
   bD.addEventListener('click', function () { setSkin('dq'); });
@@ -893,7 +813,7 @@ td.rec, th.rec { background: var(--accent-soft); }
   var appts = {6:['じ','hosp'],8:['自','shop'],13:['自','hosp'],17:['自','bank'],22:['じ','meal'],24:['じ','hosp']};
   var tt = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,18:2,22:2,23:2,26:3,30:3};
   var s2 = {3:3,5:2,6:2,10:3,13:3,14:3,17:2,20:3,21:3,24:3,25:2,28:3,29:3};
-  var todos = {10: 'over', 14: 'soon', 17: 'ok', 24: 'ok'};
+  var todos = {10: ['over', 'bank'], 14: ['soon', 'etc'], 17: ['ok', 'hosp'], 24: ['ok', 'etc']};
   function ico(k) { return '<svg class="ei"><use href="#e-' + k + '"/></svg>'; }
   var OUT = 'var(--p-card)';
   function tube(d, w) {
@@ -937,7 +857,9 @@ td.rec, th.rec { background: var(--accent-soft); }
   function cellsTodo() {
     var h = head();
     for (var d = 1; d <= 30; d++) {
-      h += '<div class="c' + (d === 12 ? ' today' : '') + '"><span class="dn">' + d + '</span>' + (todos[d] ? '<span class="tks"><i class="' + todos[d] + '"></i></span>' : '') + '</div>';
+      var t = todos[d];
+      h += '<div class="c' + (d === 12 ? ' today' : '') + '"><span class="dn">' + d + '</span>' +
+        (t ? '<span class="tks"><i class="tk ' + t[0] + '"><svg><use href="#e-' + t[1] + '"/></svg></i></span>' : '') + '</div>';
     }
     return h;
   }
@@ -962,14 +884,12 @@ td.rec, th.rec { background: var(--accent-soft); }
     var CLOUD = '<svg><use href="#cloud"/></svg>';
     function ctlHtml() {
       if (cur === 0) {
-        var pose = visited ? 'stand' : 'think';
         return '<div class="thk2">' +
           '<button type="button" class="cl a" data-go="1" aria-label="あの人は？">' + CLOUD + '<span>あの人は？</span></button>' +
           '<button type="button" class="cl b" data-go="2" aria-label="やることあったっけ？">' + CLOUD + '<span>やること<br>あったっけ？</span></button>' +
-          momSvg(pose) + '</div>';
+          momSvg(visited ? 'stand' : 'think') + '</div>';
       }
-      return '<button type="button" class="thk back" data-go="0" aria-label="自分の画面にもどる">' + momSvg('stand') +
-        '<span class="thk-cloud">' + CLOUD + '<span>もどる</span></span></button>';
+      return '<div class="thk2 back"><button type="button" class="cl ' + (cur === 1 ? 'a' : 'b') + '" data-go="0" aria-label="自分の画面にもどる">' + CLOUD + '<span>もどる</span></button>' + momSvg('stand') + '</div>';
     }
     function mark() { ctl.innerHTML = ctlHtml(); }
     stage.innerHTML = '<div class="rail"></div><div class="hook"></div><div class="flip-in"><div class="face f0">' + faceHtml(0) + '</div><div class="face f1"></div></div><div class="shadow"></div>';
@@ -980,7 +900,8 @@ td.rec, th.rec { background: var(--accent-soft); }
       if (n === cur) return;
       var tgt = 1 - side;
       faces[tgt].innerHTML = faceHtml(n);
-      rot += 180;
+      var dir = (n === 1 || (n === 0 && cur === 1)) ? -1 : 1;   // あの人は？ だけ逆回転
+      rot += dir * 180;
       fin.style.transform = 'rotateY(' + rot + 'deg)';
       side = tgt; cur = n;
       if (n !== 0) visited = true;
@@ -1000,6 +921,45 @@ td.rec, th.rec { background: var(--accent-soft); }
     });
     stage.addEventListener('pointercancel', function () { x0 = null; });
     if (!reduce) timer = setInterval(function () { if (!document.hidden) { goTo(seq[si % seq.length]); si++; } }, 3400);
+  });
+
+  /* 自分の色 */
+  var NAMES = ['ブルー', 'ピンク', 'グリーン', 'レッド', 'イエロー', 'スカイ', 'ブラウン'];
+  var HEX = ['#3257d6', '#d6457a', '#5a8f1f', '#d9432f', '#d9a400', '#1ea0d6', '#8a5a3c'];
+  function applyColor(ph, i) {
+    var v = 'var(--pal' + (i + 1) + ')';
+    ph.style.setProperty('--p-me', v);
+    ph.style.setProperty('--p-accent', v);
+    ph.style.setProperty('--p-today-bg', 'color-mix(in srgb, ' + v + ' 14%, var(--p-card))');
+    if (i === 1) ph.style.setProperty('--p-p1', 'var(--pal1)'); else ph.style.removeProperty('--p-p1');
+    if (i === 2) ph.style.setProperty('--p-p2', 'var(--pal1)'); else ph.style.removeProperty('--p-p2');
+    ph.querySelectorAll('.crow.me .sw i').forEach(function (e, k) { e.classList.toggle('on', k === i); });
+  }
+  var swrow = document.getElementById('swrow'), cmp = document.getElementById('cmp');
+  var pills = [];
+  function setAll(i) {
+    document.querySelectorAll('.phone:not(.cmp)').forEach(function (ph) { applyColor(ph, i); });
+    pills.forEach(function (b, k) { b.setAttribute('aria-pressed', k === i); });
+  }
+  if (swrow) NAMES.forEach(function (n, i) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'swpill'; b.setAttribute('aria-pressed', i === 0);
+    b.innerHTML = '<i style="--c:' + HEX[i] + '"></i>' + n + (i === 0 ? '（標準）' : '');
+    b.addEventListener('click', function () { setAll(i); });
+    swrow.appendChild(b); pills.push(b);
+  });
+  var src = document.getElementById('cal') && document.getElementById('cal').closest('.phone');
+  if (src && cmp) NAMES.forEach(function (n, i) {
+    var c = src.cloneNode(true);
+    c.classList.add('cmp');
+    c.querySelectorAll('[id]').forEach(function (e) { e.removeAttribute('id'); });
+    applyColor(c, i);
+    var cell = document.createElement('button');
+    cell.type = 'button'; cell.className = 'cmpcell'; cell.setAttribute('aria-label', n + 'にする');
+    cell.innerHTML = '<span class="cmpbox"></span><span>' + n + (i === 0 ? '（標準）' : '') + '</span>';
+    cell.firstChild.appendChild(c);
+    cell.addEventListener('click', function () { setAll(i); });
+    cmp.appendChild(cell);
   });
 })();
 </script>
