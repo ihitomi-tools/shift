@@ -459,14 +459,27 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     v.innerHTML = '<div class="top"><button type="button" class="nav" data-act="prev" aria-label="前の月">‹</button><h1 id="mtitle"></h1><button type="button" class="nav" data-act="next" aria-label="次の月">›</button></div>' +
       '<div class="stage" id="stage"><div class="rail"></div><div class="hook"></div><div class="flip-in" id="fin"><div class="face" id="fa"></div><div class="face f1b" id="fb"></div></div><div class="shadow"></div></div>' +
       '<div class="thkwrap" id="thk"></div><div id="todaycard"></div>';
-    S.rot = 0; S.side = 0; S.visited = false; S.page = 0;
+    S.rot = 0; S.side = 0; S.visited = false; S.page = 0; S.faceH = 0;
     refreshMonth();
+  }
+  function lockStageHeight(vis) {
+    var fin = $('#fin'); if (!fin) return;
+    var hid = S.side === 0 ? $('#fb') : $('#fa'), h = 0;
+    fin.style.minHeight = '';
+    [0, 1, 2].forEach(function (i) {
+      hid.innerHTML = faceHtml(i);
+      h = Math.max(h, hid.offsetHeight);
+    });
+    hid.innerHTML = '';
+    S.faceH = Math.max(S.faceH || 0, h, vis.offsetHeight);
+    fin.style.minHeight = S.faceH + 'px';
   }
   function refreshMonth() {
     if (!$('#stage')) return;
     $('#mtitle').textContent = S.y + '年' + S.m + '月';
     var vis = S.side === 0 ? $('#fa') : $('#fb');
     vis.innerHTML = faceHtml(S.page);
+    lockStageHeight(vis);
     drawThk();
     var t = S.today, sh = shiftOf('me', t), parts = '';
     parts = '<button type="button" class="card" data-date="' + t + '" style="width:100%;text-align:left;cursor:pointer"><span class="row"><b>今日</b><span class="grow">' + (sh ? slotText(sh) + ' <span class="sub">' + slotTime(sh) + '</span>' : '<span class="sub">勤務なし</span>') + '</span>' + (sh ? '<span class="fl f' + sh.floor + '">' + sh.floor + 'F</span>' : '') + '</span></button>';
