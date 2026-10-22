@@ -903,7 +903,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
         if (v.k === 'on') { floors[v.floor][v.slot] = String(r.name || ''); return; }
         if (r.block === '看' && /^NS/i.test(raw)) others.push({ role: '看護', name: String(r.name || ''), tag: raw });
         else if (/夜勤/.test(raw)) others.push({ role: '夜勤', name: String(r.name || ''), tag: raw });
-        else if (DAYSYM.test(raw)) others.push({ role: r.block === '派' ? '派遣介護' : '常勤介護', name: String(r.name || ''), tag: raw });
+        else if (DAYSYM.test(raw)) others.push({ role: r.block === '派' ? '派遣介護' : r.block === '他' ? '職員' : '常勤介護', name: String(r.name || ''), tag: raw });
       });
       var notes = (plan.notes && plan.notes[String(d)]) || [];
       plan.crew[ymd(y, m, d)] = { date: ymd(y, m, d), floors: floors, others: others, notes: notes.map(String), from: 'photo' };
@@ -931,9 +931,9 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   }
   function readerPrompt() {
     return '添付は、介護施設の「月間勤務表」を紙で撮影した写真です（同じ表を分けて撮った複数枚のこともあります）。表を読み取って、JSONだけを返してください。説明文やコードブロックの囲みは付けないでください。\n\n' +
-      '形式:\n{"year":西暦の数字,"month":月の数字,"days":その月の日数,"legend":{"記号":"時間"},"events":{"日にち(数字の文字列)":["行事や医師の記載"]},"rows":[{"block":"常|派|看|非","name":"名前","cells":["1日のマス","2日のマス"]}]}\n\n' +
-      '決まり:\n- 令和は西暦に直す（令和8年=2026年）。\n- block は、見出しが「介護職員（常）」なら"常"、「介護職員（派）」なら"派"、「看護職員」なら"看"、「介護職員（非）」なら"非"。\n' +
-      '- cells は、その人の行の1日から月末までの記号を、1マスずつ、書いてある文字のまま入れる。記号の例: 日1〜日8、夜勤、明け、休み、希休、NS1〜NS3、1F午前、1F午後、2F午前、2F午後、3F午前、3F午後。空欄のマスは""。\n' +
+      '形式:\n{"year":西暦の数字,"month":月の数字,"days":その月の日数,"legend":{"記号":"時間"},"events":{"日にち(数字の文字列)":["行事や医師の記載"]},"rows":[{"block":"常|派|看|非|他","name":"名前","cells":["1日のマス","2日のマス"]}]}\n\n' +
+      '決まり:\n- 写真は90度横向きのことがあります。向きを直して読んでください。\n- 表は、上の段（常勤・派遣・計画作成者・施設長など）と、下の段（看護職員と介護職員（非））に分かれていることがあります。どちらの段も、全員の行を読んでください。\n- 令和は西暦に直す（令和8年=2026年）。\n- block は、見出しが「介護職員（常）」なら"常"、「介護職員（派）」なら"派"、「看護職員」なら"看"、「介護職員（非）」なら"非"、それ以外（施設長・計画作成者・生活相談員など）は"他"。\n' +
+      '- cells は、その人の行の1日から月末までの記号を、1マスずつ、書いてある文字のまま入れる。記号の例: 日1〜日8、夜勤、明け、休み、希休、NS1〜NS3、1F午前、1F午後、2F午前、2F午後、3F午前、3F午後。空欄のマスは""。「有休」「希休」「休み」「明け」も、そのまま書く。\n' +
       '- 読み取れないマス、自信のないマスは、推測で埋めずに必ず"?"にする。\n- cells の長さは days と同じにする。\n- 名前は、表に書いてある通り（敬称は付けない）。\n- 行事（カンファレンス、消防訓練など）や医師の記載は、その日付の events に入れる。\n- 凡例（記号と時間の表）があれば legend に入れる。';
   }
   function demoResult(sheetName) {
