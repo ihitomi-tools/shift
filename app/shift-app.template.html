@@ -592,7 +592,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       var me = sh && slot === 'pm' && sh.floor === f, k = -1;
       fr.forEach(function (x, i) { if (nameScore(x.sheetName || x.name, name) >= 0.8) k = i; });
       var cls = 'pp ' + slot + (me ? ' me' : '') + (k >= 0 ? ' fr' + (k + 1) : '');
-      return '<span class="' + cls + '"><i>' + (slot === 'am' ? '午前' : '午後') + '</i><b>' + esc(me ? '自分' : name) + '</b></span>';
+      return '<span class="' + cls + '"><i>' + (slot === 'am' ? '午前' : '午後') + '</i><b>' + esc(me ? '自分' : (k >= 0 ? fr[k].name : name)) + '</b></span>';
     }
     var rows = [3, 2, 1].map(function (f) {
       var fl = (c.floors && c.floors[f]) || {};
