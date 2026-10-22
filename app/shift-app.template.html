@@ -847,7 +847,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   }
 
   /* ============ シート ============ */
-  function sheet(html, onMount) {
+  function sheet(html, onMount, nofocus) {
     closeSheet();
     var o = document.createElement('div'); o.className = 'overlay'; o.id = 'ov';
     o.innerHTML = '<div class="sheet" role="dialog" aria-modal="true">' + html + '</div>';
@@ -855,7 +855,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     var root = $('.sheet', o);
     o.addEventListener('click', function (e) { if (e.target === o || e.target.closest('[data-close]')) closeSheet(); });
     if (onMount) onMount(root);
-    var f = root.querySelector('input[type="text"]'); if (f) { try { f.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }
+    var f = nofocus ? null : root.querySelector('input[type="text"]'); if (f) { try { f.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }
   }
   function closeSheet() { var o = $('#ov'); if (o) o.remove(); }
 
@@ -982,7 +982,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       if (clr) clr.addEventListener('click', function () { RD.files = []; cnt.textContent = '写真は、まだ選んでいません'; clr.hidden = true; upd(); });
       if (go) go.addEventListener('click', function () { runReader(nameEl.value.trim()); });
       $('#rd-demo', root).addEventListener('click', function () { var nm = nameEl.value.trim() || 'お母さん'; showConfirm(buildPlan(demoResult(nm), nm), nm); });
-    });
+    }, true);
   }
   function runReader(sheetName) {
     RD.ac = new AbortController();
