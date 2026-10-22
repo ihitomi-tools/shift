@@ -278,7 +278,7 @@ section { display: grid; gap: 20px; min-width: 0; }
 .prism-wrap .face { transform: rotateY(var(--ry)) translateZ(119px); backface-visibility: hidden; }
 .rail { position: absolute; left: -4px; width: 246px; top: 0; height: 7px; border-radius: 4px; background: linear-gradient(#9aa3b3, #4b5365); z-index: 5; }
 .hook { position: absolute; left: 50%; top: 7px; width: 2px; height: 22px; margin-left: -1px; background: #6b7384; z-index: 4; }
-.hook::after { content: ""; position: absolute; left: -4px; bottom: -4px; width: 10px; height: 10px; border: 2px solid #6b7384; border-radius: 50%; background: var(--p-bg); }
+.hook::after { content: ""; position: absolute; box-sizing: border-box; left: -4px; bottom: -4px; width: 10px; height: 10px; border: 2px solid #6b7384; border-radius: 50%; background: var(--p-bg); }
 .flip-in { position: absolute; left: 0; top: 30px; width: 238px; height: 300px; transform-style: preserve-3d; transition: transform .95s cubic-bezier(.3,1.25,.4,1); }
 .flip-in .face { backface-visibility: hidden; }
 .flip-in .face.f1 { transform: rotateY(180deg); }
@@ -368,7 +368,7 @@ td.rec, th.rec { background: var(--accent-soft); }
         <div class="body">
           <div class="title-row"><b>‹ 2026年11月 ›</b><span class="sub" id="m-sum"></span></div>
           <div class="cal" id="cal"></div>
-          <div class="pager"><i class="on"></i><i></i><i></i><i></i></div>
+          <div class="pager"><i class="on"></i><i></i></div>
           <div class="win"><div class="row"><span class="grow"><b>今日</b> 午後 <span class="sub">13:00–19:00</span></span><span class="fl f1">1F</span></div></div>
         </div>
         <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
@@ -381,31 +381,16 @@ td.rec, th.rec { background: var(--accent-soft); }
         <div class="body">
           <div class="title-row"><b>‹ 2026年11月 ›</b><span class="sub">みんな</span></div>
           <div class="cal" id="cal3"></div>
-          <div class="pager"><i></i><i class="on"></i><i></i><i></i></div>
+          <div class="pager"><i></i><i class="on"></i></div>
           <div class="people"><span class="pc me"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>午後 1F</i></span></span><span class="pc p1"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>午後 2F</i></span></span><span class="pc p2 off"><svg><use href="#pp"/></svg><span class="tx"><b>森</b><i>お休み</i></span></span></div>
           <div class="sub" style="text-align:center">凡例は横にスワイプ（人の色 ⇄ 階の色）</div>
           <div class="win"><div class="row"><span class="grow"><b>今日</b> 自分・田中が出勤</span><span class="sub">森はお休み</span></div></div>
         </div>
         <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
-      <figcaption><b>①-2 横にスワイプ：みんなの重ね表示</b>誰が出る日かを、人の色の丸で表示。凡例も、この画面ではじめて出ます。凡例の行を横にスワイプすると、階の色の凡例に回ります。</figcaption>
+      <figcaption><b>①-2 横にスワイプ：みんなの重ね表示（看板の裏面）</b>誰が出る日かを、人の色の丸で表示。凡例も、この画面ではじめて出ます。凡例の行を横にスワイプすると、階の色の凡例に回ります。</figcaption>
     </figure>
 
-    <figure class="fig">
-      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
-        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
-        <div class="body" style="--p-accent: var(--p-p1)">
-          <div class="title-row"><b style="color:var(--p-p1)">‹ 田中さんの11月 ›</b><span class="sub">出勤 14日</span></div>
-          <div class="cal" id="cal2"></div>
-          <div class="pager"><i></i><i></i><i class="on"></i><i></i></div>
-          <div class="legend"><span><i class="fl f1">1F</i> 1階</span><span><i class="fl f2">2F</i> 2階</span><span><i class="fl f3">3F</i> 3階</span><span>2後 = 2階・午後</span></div>
-          <div class="people"><span class="pc me"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>午後 1F</i></span></span><span class="pc p1 sel"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>午後 2F</i></span></span><span class="pc p2 off"><svg><use href="#pp"/></svg><span class="tx"><b>森</b><i>お休み</i></span></span></div>
-          <div class="win"><div class="row"><span class="grow"><b>今日</b> 午後 <span class="sub">13:00–19:00</span></span><span class="fl f2">2F</span></div></div>
-        </div>
-        <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
-      </div></div>
-      <figcaption><b>①-3 さらにスワイプ：田中さん</b>田中さんの勤務に切り替わります。この先は森さん、その次は自分に戻って、くるっと1周します。午前・午後は「前」「後」で出ます。</figcaption>
-    </figure>
 
     <figure class="fig">
       <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
@@ -521,20 +506,10 @@ td.rec, th.rec { background: var(--accent-soft); }
 
 <section>
   <div class="sec-head">
-    <h2>カレンダーが「くるっと回る」見せ方：3つの案</h2>
-    <p><span class="tag-sample">サンプル</span>下のデモは、触って回せます。最初は自動でゆっくり回り、触ると止まります。（トップ画面は「自分だけ」のまま、横にスワイプした時の動きの違いです。）</p>
+    <h2>回る看板：吊り看板に決定</h2>
+    <p><span class="tag-sample">サンプル</span>カレンダーを、吊り看板の「表と裏」にします。表は自分だけ、裏は「みんな」の重ね表示です。横にスワイプすると、くるりと裏返ります。触って回せます（横にドラッグ／◀ ▶）。最初は自動で回り、触ると止まります。</p>
   </div>
   <div class="phones">
-    <figure class="fig">
-      <div class="phone bare" data-skin="stylish">
-        <div class="demo" data-demo="prism">
-          <div class="stage prism"></div>
-          <div class="dtabs"></div>
-          <span class="dnote">触って回せます（横にドラッグ／◀ ▶）</span>
-        </div>
-      </div>
-      <figcaption><b>案A ・ 回る四角柱の看板</b>駅前の回転広告のように、カレンダーが横にぐるっと回って次の面が出ます。回っている途中で板の側面が見えて、上下の金具で「看板」らしさが出ます。止まっている時は、ふつうのカレンダーと同じシンプルな見た目です。</figcaption>
-    </figure>
     <figure class="fig">
       <div class="phone bare" data-skin="stylish">
         <div class="demo" data-demo="flip">
@@ -543,35 +518,15 @@ td.rec, th.rec { background: var(--accent-soft); }
           <span class="dnote">触って回せます（横にドラッグ／◀ ▶）</span>
         </div>
       </div>
-      <figcaption><b>案B ・ 吊り看板のターン</b>上のフックに吊られた板が、くるりと裏返って次のページが出ます。宿屋の看板のような雰囲気で、ドラクエ風にもよく合います。1回ずつ、はっきり「めくった」感じになります。</figcaption>
+      <figcaption><b>吊り看板のターン</b>上のフックに吊られた板が裏返ります。表（自分）はいつもの、シンプルな画面。裏（みんな）では、誰が出る日かを人の色の丸で見られます。「今日、あの人はいるかな？」は、裏面の下に並ぶ人のアイコンで分かります。</figcaption>
     </figure>
-    <figure class="fig">
-      <div class="phone bare" data-skin="stylish">
-        <div class="demo" data-demo="ring">
-          <div class="stage ring"></div>
-          <div class="dtabs"></div>
-          <span class="dnote">触って回せます（横にドラッグ／◀ ▶）</span>
-        </div>
-      </div>
-      <figcaption><b>案C ・ 回転木馬</b>両隣のページが斜めに見えていて、「まだ続きがある」ことが止まっている時でも伝わります。ただし、トップ画面で他の人のカレンダーの端が見えてしまうので、「トップは自分だけ」とは合いません。</figcaption>
-    </figure>
-  </div>
-  <div class="tw">
-    <table>
-      <thead><tr><th>案</th><th>回っている感じ</th><th>止まっている時</th><th>弱いところ</th></tr></thead>
-      <tbody>
-        <tr><td class="rec"><b>A. 四角柱</b><span class="pill">おすすめ</span></td><td>いちばん「回転」らしい。側面が見える</td><td>ふつうのカレンダー（トップは自分だけでOK）</td><td>動きが大きいぶん、端末によってはカクつくかも（実機で要確認）</td></tr>
-        <tr><td><b>B. 吊り看板</b></td><td>裏返る。1回ずつ区切りがある</td><td>ふつうのカレンダー</td><td>裏返る一瞬、板が細くなって中身が見えにくい</td></tr>
-        <tr><td><b>C. 回転木馬</b></td><td>横に流れる。続きがあるのが常に見える</td><td>両隣が見える（トップがシンプルでなくなる）</td><td>要望の「トップは自分だけ」とぶつかる</td></tr>
-      </tbody>
-    </table>
   </div>
 </section>
 
 <section>
   <div class="sec-head">
     <h2>仲の良い人の予定を見る：3つの案</h2>
-    <p><span class="tag-sample">サンプル</span><b>更新：カレンダーの下に人物アイコンを置く形（画面①〜①-3・⑥）で進めています。以下の3案は比較用に残しています。</b><br>「今日は○○さん出勤かな？」にすぐ答えられるようにしたい。登録は1〜2人、普段は隠しておいて、見たい時だけ見える形で、3通り考えました。登録した人はお母さんの端末にだけ保存して、相手に通知は行きません。ひとみへの共有にも含めません。</p>
+    <p><span class="tag-sample">サンプル</span><b>更新：カレンダーの下に人物アイコンを置く形（画面①・①-2・⑥）で進めています。以下の3案は比較用に残しています。</b><br>「今日は○○さん出勤かな？」にすぐ答えられるようにしたい。登録は1〜2人、普段は隠しておいて、見たい時だけ見える形で、3通り考えました。登録した人はお母さんの端末にだけ保存して、相手に通知は行きません。ひとみへの共有にも含めません。</p>
   </div>
   <div class="phones">
 
@@ -769,7 +724,6 @@ td.rec, th.rec { background: var(--accent-soft); }
     el.innerHTML = h;
   }
   build(document.getElementById('cal'), shifts, appts);
-  build(document.getElementById('cal2'), t, {}, {15: 1});
   var s2 = {3:3,5:2,6:2,10:3,13:3,14:3,17:2,20:3,21:3,24:3,25:2,28:3,29:3};
   (function () {
     var h = '';
@@ -819,12 +773,12 @@ td.rec, th.rec { background: var(--accent-soft); }
   function head() {
     return DOW.map(function (d, i) { return '<div class="dow ' + (i === 0 ? 'sun' : i === 6 ? 'sat' : '') + '">' + d + '</div>'; }).join('');
   }
-  function cells(sh, ap, am) {
+  function cellsMe() {
     var h = head();
     for (var d = 1; d <= 30; d++) {
-      var f = sh[d], a = ap[d];
+      var f = shifts[d], a = appts[d];
       h += '<div class="c' + (f ? ' work' : '') + (d === 12 ? ' today' : '') + '"><span class="dn">' + d + '</span>' +
-        (f ? '<span class="fl f' + f + '">' + f + (am ? (am[d] ? '前' : '後') : 'F') + '</span>' : '') +
+        (f ? '<span class="fl f' + f + '">' + f + 'F</span>' : '') +
         (a ? '<span class="ap' + (f ? ' clash' : '') + '">' + a[0] + '</span>' : '') + '</div>';
     }
     return h;
@@ -837,79 +791,37 @@ td.rec, th.rec { background: var(--accent-soft); }
     }
     return h;
   }
-  var P = [
-    {n: '自分', t: 'me', v: '--p-me'},
-    {n: 'みんな', t: 'ov', v: '--p-fg'},
-    {n: '田中', t: 'p1', v: '--p-p1'},
-    {n: '森', t: 'p2', v: '--p-p2'}
-  ];
+  var P = [{n: '自分', t: 'me', v: '--p-me'}, {n: 'みんな', t: 'ov', v: '--p-fg'}];
   function faceHtml(i) {
     var pg = P[i], plate;
     if (pg.t === 'ov') plate = '<div class="plate ov"><span class="av3"><i class="me"></i><i class="p1"></i><i class="p2"></i></span>みんな<span class="sub">11月</span></div>';
-    else plate = '<div class="plate" style="--pc:var(' + pg.v + ')"><svg><use href="#pp"/></svg>' + pg.n + (pg.t === 'me' ? '' : 'さん') + '<span class="sub">11月</span></div>';
-    var cal = pg.t === 'me' ? cells(shifts, appts) : pg.t === 'p1' ? cells(tt, {}, {15: 1}) : pg.t === 'p2' ? cells(s2, {}, {13: 1, 17: 1}) : cellsOv();
-    return plate + '<div class="cal">' + cal + '</div>';
+    else plate = '<div class="plate" style="--pc:var(' + pg.v + ')"><svg><use href="#pp"/></svg>' + pg.n + '<span class="sub">11月</span></div>';
+    return plate + '<div class="cal">' + (pg.t === 'me' ? cellsMe() : cellsOv()) + '</div>';
   }
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  document.querySelectorAll('[data-demo]').forEach(function (el, di) {
-    var kind = el.getAttribute('data-demo');
+  document.querySelectorAll('[data-demo]').forEach(function (el) {
     var stage = el.querySelector('.stage');
     var tabs = el.querySelector('.dtabs');
-    var cur = 0, rot = 0, side = 0, timer = null, items = [], fin = null, pw = null;
-
-    tabs.innerHTML = '<button type="button" class="dbtn" data-d="-1" aria-label="前のカレンダー">◀</button>' +
+    var cur = 0, rot = 0, side = 0, timer = null;
+    tabs.innerHTML = '<button type="button" class="dbtn" data-d="-1" aria-label="前の面">◀</button>' +
       P.map(function (pg) { return '<span style="--pc:var(' + pg.v + ')">' + pg.n + '</span>'; }).join('') +
-      '<button type="button" class="dbtn" data-d="1" aria-label="次のカレンダー">▶</button>';
+      '<button type="button" class="dbtn" data-d="1" aria-label="次の面">▶</button>';
     var tabEls = tabs.querySelectorAll('span');
     function mark() { tabEls.forEach(function (e, i) { e.classList.toggle('on', i === cur); }); }
-
-    if (kind === 'prism') {
-      stage.innerHTML = '<div class="cap top"></div><div class="prism-wrap">' +
-        P.map(function (_, i) { return '<div class="face" style="--ry:' + (i * 90) + 'deg">' + faceHtml(i) + '</div>'; }).join('') +
-        '</div><div class="cap bot"></div><div class="shadow"></div>';
-      pw = stage.querySelector('.prism-wrap');
-    } else if (kind === 'flip') {
-      stage.innerHTML = '<div class="rail"></div><div class="hook"></div><div class="flip-in"><div class="face f0">' + faceHtml(0) + '</div><div class="face f1"></div></div><div class="shadow"></div>';
-      fin = stage.querySelector('.flip-in');
-      items = fin.querySelectorAll('.face');
-    } else {
-      stage.innerHTML = P.map(function (_, i) { return '<div class="face">' + faceHtml(i) + '</div>'; }).join('');
-      items = stage.querySelectorAll('.face');
-    }
-
-    function layout() {
-      items.forEach(function (it, i) {
-        var k = (((i - cur + 1) % 4) + 4) % 4 - 1;
-        var tr, op = 1, z = 1;
-        if (k === 0) { tr = 'translateX(0) scale(.86)'; z = 3; }
-        else if (k === 1) { tr = 'translateX(128px) translateZ(-90px) rotateY(-40deg) scale(.74)'; op = .65; z = 2; }
-        else if (k === -1) { tr = 'translateX(-128px) translateZ(-90px) rotateY(40deg) scale(.74)'; op = .65; z = 2; }
-        else { tr = 'translateX(0) translateZ(-240px) scale(.5)'; op = 0; }
-        it.style.transform = tr; it.style.opacity = op; it.style.zIndex = z;
-      });
-    }
-    if (kind === 'ring') layout();
+    stage.innerHTML = '<div class="rail"></div><div class="hook"></div><div class="flip-in"><div class="face f0">' + faceHtml(0) + '</div><div class="face f1"></div></div><div class="shadow"></div>';
+    var fin = stage.querySelector('.flip-in');
+    var faces = fin.querySelectorAll('.face');
     mark();
-
     function step(dir) {
-      var n = (cur + dir + 4) % 4;
-      if (kind === 'prism') {
-        rot -= dir * 90;
-        pw.style.transform = 'translateZ(-119px) rotateY(' + rot + 'deg)';
-      } else if (kind === 'flip') {
-        var tgt = 1 - side;
-        items[tgt].innerHTML = faceHtml(n);
-        rot += dir * 180;
-        fin.style.transform = 'rotateY(' + rot + 'deg)';
-        side = tgt;
-      }
-      cur = n;
-      if (kind === 'ring') layout();
-      mark();
+      var n = (cur + dir + P.length) % P.length;
+      var tgt = 1 - side;
+      faces[tgt].innerHTML = faceHtml(n);
+      rot += dir * 180;
+      fin.style.transform = 'rotateY(' + rot + 'deg)';
+      side = tgt; cur = n; mark();
     }
     function stop() { if (timer) { clearInterval(timer); timer = null; } }
-
     el.addEventListener('click', function (e) {
       var b = e.target.closest && e.target.closest('.dbtn');
       if (b) { stop(); step(parseInt(b.getAttribute('data-d'), 10)); }
@@ -922,8 +834,7 @@ td.rec, th.rec { background: var(--accent-soft); }
       if (Math.abs(dx) > 30) step(dx < 0 ? 1 : -1);
     });
     stage.addEventListener('pointercancel', function () { x0 = null; });
-
-    if (!reduce) timer = setInterval(function () { if (!document.hidden) step(1); }, 3200 + di * 600);
+    if (!reduce) timer = setInterval(function () { if (!document.hidden) step(1); }, 3200);
   });
 })();
 </script>
