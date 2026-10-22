@@ -32,7 +32,7 @@ h1, h2, h3, h4 { font-family: var(--head); margin: 0; line-height: 1.35; }
 .app { max-width: 440px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; padding-left: max(14px, env(safe-area-inset-left, 0px)); padding-right: max(14px, env(safe-area-inset-right, 0px)); }
 #view { flex: 1; padding: 8px 0 80px; display: grid; gap: 8px; align-content: start; min-width: 0; }
 .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--card); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
-.tabbar-in { max-width: 440px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); }
+.tabbar-in { max-width: 440px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
 .tab { border: 0; background: none; padding: 8px 2px 7px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 11px; color: var(--sub); cursor: pointer; min-height: 56px; }
 .tab svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .tab[aria-current="page"] { color: var(--accent); font-weight: 700; }
@@ -121,6 +121,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
 .role { display: inline-block; white-space: nowrap; font-size: .75em; font-weight: 700; padding: 0 8px; border-radius: 5px; line-height: 1.7; min-width: 62px; text-align: center; background: var(--soft); color: var(--fg); border: 1px solid var(--line); }
 .role.n { background: color-mix(in srgb, var(--p1) 16%, var(--card)); border-color: var(--p1); }
 .logc summary { cursor: pointer; font-weight: 700; list-style: none; min-height: 28px; display: flex; align-items: center; color: var(--sub); } .logc summary::-webkit-details-marker { display: none; } .logc[open] summary { margin-bottom: 8px; }
+.gearrow { display: flex; justify-content: center; } .gear { border: 0; background: none; color: var(--sub); font-size: .78em; padding: 6px 14px; cursor: pointer; opacity: .75; }
 /* 猫(お休みの日) */
 .thk2 .cat { position: absolute; left: calc(50% + 32px); bottom: 0; width: 36px; height: 34px; color: var(--cat); }
 /* ダーク = ネオン */
@@ -398,7 +399,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   }
 
   /* ============ 画面の切り替え ============ */
-  var TABS = [['month', '月', 'ic-cal'], ['day', '今日', 'ic-today'], ['events', '予定', 'ic-plus'], ['todos', 'やること', 'ic-todo'], ['share', '共有', 'ic-people']];
+  var TABS = [['month', '月', 'ic-cal'], ['day', '今日', 'ic-today'], ['events', '予定', 'ic-plus'], ['todos', 'やること', 'ic-todo']];
   function drawTabs() {
     $('#tabs').innerHTML = TABS.map(function (t) {
       var cur = (S.view === t[0]) || (t[0] === 'month' && S.view === 'day' && S.fromMonth);
@@ -499,7 +500,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     var d = new Date(); if (!S.y) { S.y = d.getFullYear(); S.m = d.getMonth() + 1; }
     v.innerHTML = '<div class="top"><button type="button" class="nav" data-act="prev" aria-label="前の月">‹</button><h1 id="mtitle"></h1><button type="button" class="nav" data-act="reader" aria-label="写真で勤務表を入れる"><svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round" aria-hidden="true"><path d="M4 8h3l1.6-2.2h6.8L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg></button><button type="button" class="nav" data-act="next" aria-label="次の月">›</button></div>' +
       '<div class="stage" id="stage"><div class="flip-in" id="fin"><div class="face" id="fa"></div><div class="face f1b" id="fb"></div></div><div class="shadow"></div></div>' +
-      '<div class="thkwrap" id="thk"></div>';
+      '<div class="thkwrap" id="thk"></div><div class="gearrow"><button type="button" class="gear" data-act="settings">設定・共有</button></div>';
     S.rot = 0; S.side = 0; S.visited = false; S.page = 0; S.faceH = 0;
     refreshMonth();
   }
