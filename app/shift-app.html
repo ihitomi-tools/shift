@@ -103,6 +103,16 @@ h1, h2, h3, h4 { font-family: var(--head); margin: 0; line-height: 1.35; }
 .pc .tx { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
 .pc b { font-size: .9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .pc i { font-style: normal; font-size: .75em; color: var(--sub); white-space: nowrap; }
 
+.bld { display: grid; gap: 5px; padding: 8px; border: 2px solid var(--line); border-radius: 14px; background: var(--soft); }
+.bld .fr { display: grid; grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1.35fr); gap: 6px; align-items: center; }
+.pp { display: flex; align-items: baseline; gap: 5px; padding: 6px 8px; border-radius: 10px; background: var(--card); border: 1.5px solid var(--line); min-width: 0; }
+.pp i { font-style: normal; font-size: .7em; color: var(--sub); flex: none; } .pp b { font-size: .88em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pp.am { opacity: .8; } .pp.pm b { font-size: 1em; } .pp.empty b { color: var(--sub); font-weight: 400; }
+.pp.me { background: color-mix(in srgb, var(--me) 20%, var(--card)); border-color: var(--me); opacity: 1; }
+.pp.fr1 { border-color: var(--p1); background: color-mix(in srgb, var(--p1) 14%, var(--card)); } .pp.fr2 { border-color: var(--p2); background: color-mix(in srgb, var(--p2) 14%, var(--card)); }
+.crw { display: flex; align-items: center; gap: 8px; padding: 2px 0; min-width: 0; }
+.role { display: inline-block; white-space: nowrap; font-size: .75em; font-weight: 700; padding: 0 8px; border-radius: 5px; line-height: 1.7; min-width: 62px; text-align: center; background: var(--soft); color: var(--fg); border: 1px solid var(--line); }
+.role.n { background: color-mix(in srgb, var(--p1) 16%, var(--card)); border-color: var(--p1); }
 /* 猫(お休みの日) */
 .thk2 .cat { position: absolute; left: calc(50% + 32px); bottom: 0; width: 36px; height: 34px; color: var(--cat); animation: catin .6s cubic-bezier(.3,1.5,.5,1) both; transform-origin: 50% 100%; }
 @keyframes catin { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -291,14 +301,14 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   var icoSvg = function (k) { return '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#e-' + k + '"/></svg>'; };
 
   /* ============ 保存（db。ログインできない時は、お試し用にメモリー） ============ */
-  var COLLS = ['shifts', 'events', 'todos', 'config', 'log'];
+  var COLLS = ['shifts', 'events', 'todos', 'config', 'log', 'crew'];
   var S = {
     view: 'month', today: todayStr(), y: 0, m: 0, sel: '', page: 0, visited: false,
-    shifts: {}, events: {}, todos: {}, cfg: null, log: [],
+    shifts: {}, events: {}, todos: {}, crew: {}, cfg: null, log: [],
     myId: null, myName: '', canWrite: true, mem: false, evFilter: 'all', tdFilter: 'all', showDone: false, ready: {}
   };
   var db = null, user = null, downloads = null, names = {};
-  var mem = { shifts: {}, events: {}, todos: {}, config: {}, log: {} }, memSubs = {};
+  var mem = { shifts: {}, events: {}, todos: {}, config: {}, log: {}, crew: {} }, memSubs = {};
   var uid = function () { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); };
   function applyColl(coll, rows) {
     var o = {}; rows.forEach(function (r) { o[r.id] = r.data; });
@@ -548,6 +558,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       '<button type="button" class="chipb" data-shift="me" data-floor="0" aria-pressed="' + (!sh) + '">なし</button>' +
       [1, 2, 3].map(function (f) { return '<button type="button" class="chipb f' + f + '" data-shift="me" data-floor="' + f + '" aria-pressed="' + (!!sh && sh.floor === f) + '"' + (sh && sh.floor === f ? ' style="background:var(--f' + f + ')"' : '') + '>' + f + 'F</button>'; }).join('') + '</div>' +
       '<div class="sub">' + (sh ? '午後 13:00–19:00' : '午後固定。階を選んでください') + '</div></section>';
+    h += crewHtml(s);
     h += '<section class="card ano"><h3>あの人は？</h3>';
     if (!fr.length) h += '<div class="empty">まだ登録がありません。<br><button type="button" class="btn ghost small" data-act="settings" style="margin-top:8px">あの人を登録する</button></div>';
     fr.forEach(function (f, i) {
@@ -562,6 +573,43 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     var tds = todoList().filter(function (t) { return !t.done && t.due === s; });
     h += '<section class="card"><h3>やること（この日が締め切り）</h3>' + (tds.length ? tds.map(todoRow).join('') : '<div class="empty">ありません</div>') + '<button type="button" class="btn ghost" data-act="newtodo" data-date="' + s + '">＋ やることを足す</button></section>';
     v.innerHTML = h;
+  }
+  var CREW_POOL = { sp: ['山田', '中村', '小川', '木村', '林', '佐藤', '高橋', '伊藤', '渡辺', '加藤'], day: ['高田', '石井', '内田', '三浦'], night: ['岡田', '野口', '吉川'], ns: ['松本', '青木', '井上'] };
+  function crewHtml(date) {
+    var c = S.crew[date]; if (!c) return '';
+    var sh = shiftOf('me', date), fr = friends();
+    function chip(name, slot, f) {
+      if (!name && !(sh && slot === 'pm' && sh.floor === f)) return '<span class="pp ' + slot + ' empty"><i>' + (slot === 'am' ? '午前' : '午後') + '</i><b>—</b></span>';
+      var me = sh && slot === 'pm' && sh.floor === f, k = -1;
+      fr.forEach(function (x, i) { if (x.name === name) k = i; });
+      var cls = 'pp ' + slot + (me ? ' me' : '') + (k >= 0 ? ' fr' + (k + 1) : '');
+      return '<span class="' + cls + '"><i>' + (slot === 'am' ? '午前' : '午後') + '</i><b>' + esc(me ? '自分' : name) + '</b></span>';
+    }
+    var rows = [3, 2, 1].map(function (f) {
+      var fl = (c.floors && c.floors[f]) || {};
+      return '<div class="fr"><span class="fl f' + f + '">' + f + 'F</span>' + chip(fl.am, 'am', f) + chip(fl.pm, 'pm', f) + '</div>';
+    }).join('');
+    var oth = (c.others || []).map(function (o) {
+      return '<div class="crw"><span class="role ' + (o.role === '看護' ? 'n' : 'h') + '">' + esc(o.role) + '</span><b class="grow">' + esc(o.name) + '</b><span class="sub">' + esc(o.tag || '') + '</span></div>';
+    }).join('');
+    return '<section class="card"><h3>その日の職場</h3><div class="bld">' + rows + '</div><div class="sub">非常勤（SP）の午前と午後。色つきが自分です。</div>' +
+      (oth ? '<h3 style="margin-top:4px">ほかの職種</h3>' + oth : '') + '</section>';
+  }
+  function seedCrew(y, m, ps, fr, frShifts) {
+    var P = CREW_POOL;
+    for (var d = 1; d <= dim(y, m); d++) {
+      var date = ymd(y, m, d), floors = {};
+      [1, 2, 3].forEach(function (f) {
+        floors[f] = {};
+        ['am', 'pm'].forEach(function (sl, si) {
+          var nm = P.sp[(d * 2 + f * 3 + si * 5) % P.sp.length];
+          fr.forEach(function (x) { var sf = frShifts[x.id + '_' + date]; if (sf && sf.slot === sl && sf.floor === f) nm = x.name; });
+          floors[f][sl] = nm;
+        });
+      });
+      var others = [{ role: '常勤介護', name: P.day[d % P.day.length], tag: '日1' }, { role: '常勤介護', name: P.day[(d + 2) % P.day.length], tag: '日2' }, { role: '夜勤', name: P.night[d % P.night.length], tag: '夜勤1' }, { role: '看護', name: P.ns[d % P.ns.length], tag: 'NS1' }];
+      ps.push(put('crew', date, { date: date, floors: floors, others: others, example: true }));
+    }
   }
   function eventRow(e) {
     return '<button type="button" class="item" data-event="' + e.id + '"><span class="tag' + (e.owner === 'me' ? ' me' : '') + '">' + esc(ownerName(e.owner)) + '</span><span class="grow"><b>' + ico(e.icon, 'ico') + esc(e.title) + '</b>' + (e.time ? '<span class="sub"> ' + esc(e.time) + '</span>' : '') + (e.repeat && e.repeat !== 'none' ? '<span class="sub"> ・' + (e.repeat === 'weekly' ? '毎週' : '毎月') + '</span>' : '') + (e.bring ? '<div class="bring">持ち物：' + esc(e.bring) + '</div>' : '') + '</span><span class="sub">›</span></button>';
@@ -749,6 +797,8 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     var f1 = { 1: [2, 'pm'], 2: [2, 'pm'], 5: [2, 'pm'], 6: [2, 'pm'], 9: [2, 'pm'], 12: [2, 'pm'], 13: [2, 'pm'], 15: [1, 'am'], 16: [3, 'pm'], 18: [2, 'pm'], 22: [2, 'pm'] };
     var f2 = { 3: [3, 'pm'], 5: [2, 'am'], 6: [2, 'pm'], 10: [3, 'pm'], 13: [3, 'am'], 14: [3, 'pm'], 17: [2, 'am'], 20: [3, 'pm'], 24: [3, 'pm'] };
     [[fr[0], f1], [fr[1], f2]].forEach(function (pr) { if (!pr[0]) return; Object.keys(pr[1]).forEach(function (d) { if (+d <= dim(y, m)) ps.push(put('shifts', pr[0].id + '_' + ymd(y, m, +d), { person: pr[0].id, date: ymd(y, m, +d), slot: pr[1][d][1], floor: pr[1][d][0], example: true })); }); });
+    var frShifts = {}; [[fr[0], f1], [fr[1], f2]].forEach(function (pr) { if (pr[0]) Object.keys(pr[1]).forEach(function (d) { frShifts[pr[0].id + '_' + ymd(y, m, +d)] = { slot: pr[1][d][1], floor: pr[1][d][0] }; }); });
+    seedCrew(y, m, ps, fr, frShifts);
     [['jii', 'hosp', '○○病院 整形外科', 6, '10:30', '保険証'], ['me', 'shop', 'スーパー', 8, '10:00', 'エコバッグ'], ['me', 'hosp', '△△クリニック', 13, '14:00', 'お薬手帳'], ['me', 'bank', '銀行', 17, '10:00', '通帳・はんこ'], ['jii', 'meal', '家族でご飯', 22, '12:00', ''], ['jii', 'hosp', '○○病院 内科', 24, '14:00', '']].forEach(function (e) {
       ps.push(put('events', uid(), { owner: e[0], icon: e[1], title: e[2], date: ymd(y, m, Math.min(e[3], dim(y, m))), time: e[4], bring: e[5], repeat: 'none', example: true }));
     });
@@ -759,12 +809,12 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   }
   function unseed() {
     var ps = [];
-    ['shifts', 'events', 'todos'].forEach(function (c) { Object.keys(S[c]).forEach(function (id) { if (S[c][id].example) ps.push(del(c, id)); }); });
+    ['shifts', 'events', 'todos', 'crew'].forEach(function (c) { Object.keys(S[c]).forEach(function (id) { if (S[c][id].example) ps.push(del(c, id)); }); });
     if (S.cfg && S.cfg.example) ps.push(saveCfg({ friends: [], example: false }));
     return safe(Promise.all(ps), '例を消しました');
   }
   function exportAll() {
-    var data = { app: 'shift-techo', savedAt: Date.now(), shifts: S.shifts, events: S.events, todos: S.todos, config: S.cfg };
+    var data = { app: 'shift-techo', savedAt: Date.now(), shifts: S.shifts, events: S.events, todos: S.todos, crew: S.crew, config: S.cfg };
     var name = 'おしごと手帳の控え-' + S.today + '.json';
     if (!downloads) { toast('この画面では、保存が使えません'); return; }
     downloads.save({ filename: name, data: JSON.stringify(data, null, 1) }).then(function () { toast('控えを保存しました'); }).catch(function (e) { if (!e || e.code !== 'declined') toast('保存できませんでした'); });
@@ -775,7 +825,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       try {
         var d = JSON.parse(r.result); if (d.app !== 'shift-techo') throw new Error('x');
         var ps = [];
-        ['shifts', 'events', 'todos'].forEach(function (c) { Object.keys(d[c] || {}).forEach(function (id) { ps.push(put(c, id, d[c][id])); }); });
+        ['shifts', 'events', 'todos', 'crew'].forEach(function (c) { Object.keys(d[c] || {}).forEach(function (id) { ps.push(put(c, id, d[c][id])); }); });
         if (d.config) ps.push(put('config', 'app', d.config));
         safe(Promise.all(ps), '控えから戻しました（' + ps.length + '件）');
       } catch (e) { toast('このファイルは、読み込めませんでした'); }
