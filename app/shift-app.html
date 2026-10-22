@@ -109,6 +109,7 @@ h1, h2, h3, h4 { font-family: var(--head); margin: 0; line-height: 1.35; }
 .bld .door { justify-self: center; width: 44px; height: 26px; margin-top: 2px; border-radius: 8px 8px 0 0; background: color-mix(in srgb, var(--me) 55%, var(--card)); }
 .house .sub { margin-top: 8px; }
 .rdsum { display: flex; flex-wrap: wrap; gap: 6px; } .fix { display: grid; gap: 6px; padding: 8px 0; border-top: 1px solid var(--line); }
+.thumbs { display: flex; gap: 8px; flex-wrap: wrap; } .thumbs img { width: 96px; height: 96px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); background: #fff; } .thph { width: 96px; height: 96px; display: grid; place-items: center; border-radius: 10px; border: 1px dashed var(--line); font-size: .8em; color: var(--sub); }
 input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; } [hidden] { display: none !important; }
 .bld .fr { display: grid; grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1.35fr); gap: 6px; align-items: center; }
 .pp { display: flex; align-items: baseline; gap: 5px; padding: 6px 8px; border-radius: 10px; background: var(--card); border: 1.5px solid var(--line); min-width: 0; }
@@ -956,33 +957,108 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     var ev = {}; ev[String(Math.min(10, nd))] = ['カンファレンス']; ev[String(Math.min(21, nd))] = ['消防訓練'];
     return { year: y, month: m, days: nd, legend: { 日1: '6:30〜15:30', 日2: '11:30〜20:30', 夜勤: '16:00〜翌9:00', 午前: '6:45〜13:30', 午後: '13:00〜19:00' }, events: ev, rows: rows };
   }
-  var RD = { files: [], ac: null };
-  function openReader() { RD.files = []; go('reader'); }
+  /* 写真の影をならす（背景の明るさのムラを、紙の白さで割って均す） */
+  function loadImg(file) {
+    return new Promise(function (ok, ng) {
+      var u = URL.createObjectURL(file), im = new Image();
+      im.onload = function () { URL.revokeObjectURL(u); ok(im); };
+      im.onerror = function () { URL.revokeObjectURL(u); ng(new Error('load')); };
+      im.src = u;
+    });
+  }
+  function processImage(file, rot, flat) {
+    return loadImg(file).then(function (im) {
+      var sw = im.naturalWidth, sh = im.naturalHeight, sc = Math.min(1, 2000 / Math.max(sw, sh));
+      var w = Math.round(sw * sc), h = Math.round(sh * sc), turn = rot === 90 || rot === 270;
+      var cv = document.createElement('canvas'); cv.width = turn ? h : w; cv.height = turn ? w : h;
+      var cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height);
+      cx.save(); cx.translate(cv.width / 2, cv.height / 2); cx.rotate(rot * Math.PI / 180); cx.imageSmoothingQuality = 'high'; cx.drawImage(im, -w / 2, -h / 2, w, h); cx.restore();
+      if (flat) {
+        var W = cv.width, H = cv.height, ds = 16, gw = Math.max(2, Math.round(W / ds)), gh = Math.max(2, Math.round(H / ds));
+        var sm = document.createElement('canvas'); sm.width = gw; sm.height = gh;
+        var sx = sm.getContext('2d'); sx.imageSmoothingQuality = 'high'; sx.drawImage(cv, 0, 0, gw, gh);
+        var sd = sx.getImageData(0, 0, gw, gh).data, g = new Float32Array(gw * gh), i, x, y, k;
+        for (i = 0; i < gw * gh; i++) g[i] = 0.299 * sd[i * 4] + 0.587 * sd[i * 4 + 1] + 0.114 * sd[i * 4 + 2];
+        function maxf(src, r) {
+          var t = new Float32Array(gw * gh), o = new Float32Array(gw * gh), m, a;
+          for (y = 0; y < gh; y++) for (x = 0; x < gw; x++) { m = 0; for (a = -r; a <= r; a++) { var xx = Math.min(gw - 1, Math.max(0, x + a)); if (src[y * gw + xx] > m) m = src[y * gw + xx]; } t[y * gw + x] = m; }
+          for (y = 0; y < gh; y++) for (x = 0; x < gw; x++) { m = 0; for (a = -r; a <= r; a++) { var yy = Math.min(gh - 1, Math.max(0, y + a)); if (t[yy * gw + x] > m) m = t[yy * gw + x]; } o[y * gw + x] = m; }
+          return o;
+        }
+        function boxf(src, r) {
+          var t = new Float32Array(gw * gh), o = new Float32Array(gw * gh), sum, a, n = 2 * r + 1;
+          for (y = 0; y < gh; y++) for (x = 0; x < gw; x++) { sum = 0; for (a = -r; a <= r; a++) sum += src[y * gw + Math.min(gw - 1, Math.max(0, x + a))]; t[y * gw + x] = sum / n; }
+          for (y = 0; y < gh; y++) for (x = 0; x < gw; x++) { sum = 0; for (a = -r; a <= r; a++) sum += t[Math.min(gh - 1, Math.max(0, y + a)) * gw + x]; o[y * gw + x] = sum / n; }
+          return o;
+        }
+        var bgS = boxf(boxf(maxf(g, 3), 3), 3), bc = document.createElement('canvas'); bc.width = gw; bc.height = gh;
+        var bx = bc.getContext('2d'), bd = bx.createImageData(gw, gh);
+        for (i = 0; i < gw * gh; i++) { k = Math.max(1, Math.min(255, Math.round(bgS[i]))); bd.data[i * 4] = bd.data[i * 4 + 1] = bd.data[i * 4 + 2] = k; bd.data[i * 4 + 3] = 255; }
+        bx.putImageData(bd, 0, 0);
+        var fc = document.createElement('canvas'); fc.width = W; fc.height = H;
+        var fx = fc.getContext('2d'); fx.imageSmoothingQuality = 'high'; fx.drawImage(bc, 0, 0, W, H);
+        var fd = fx.getImageData(0, 0, W, H).data, od = cx.getImageData(0, 0, W, H), d = od.data, gv, v;
+        for (i = 0; i < W * H; i++) {
+          gv = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2];
+          v = Math.min(1, Math.max(0, gv / Math.max(1, fd[i * 4]) * 0.97));
+          v = Math.round(255 * Math.pow(v, 1.6));
+          d[i * 4] = d[i * 4 + 1] = d[i * 4 + 2] = v;
+        }
+        cx.putImageData(od, 0, 0);
+      }
+      return new Promise(function (ok, ng) { cv.toBlob(function (b) { b ? ok(b) : ng(new Error('blob')); }, 'image/jpeg', 0.9); });
+    });
+  }
+  var RD = { items: [], rot: 0, flat: true, ac: null };
+  function rdBlobs() { return RD.items.map(function (it) { return it.blob; }); }
+  function rdRefresh(root) {
+    var th = $('#rd-th', root), cnt = $('#rd-cnt', root), go = $('#rd-go', root), nameEl = $('#rd-name', root), clr = $('#rd-clear', root);
+    th.innerHTML = RD.items.map(function (it) { return it.url ? '<img src="' + it.url + '" alt="撮った写真">' : '<span class="thph">処理中…</span>'; }).join('');
+    cnt.textContent = RD.items.length ? RD.items.length + '枚（最大' + S.sampleImg.maxCount + '枚。もう1枚ならもう一度押す）' : '写真は、まだ選んでいません';
+    clr.hidden = !RD.items.length;
+    if (go) go.disabled = !(RD.items.length && RD.items.every(function (it) { return it.blob; }) && nameEl.value.trim());
+  }
+  function rdProcess(root, it) {
+    it.blob = null; it.url = '';
+    rdRefresh(root);
+    return processImage(it.file, RD.rot, RD.flat).catch(function () { return it.file; }).then(function (b) {
+      if (it.url) URL.revokeObjectURL(it.url); it.blob = b; it.url = URL.createObjectURL(b); rdRefresh(root);
+    });
+  }
+  function openReader() { RD.items.forEach(function (it) { if (it.url) URL.revokeObjectURL(it.url); }); RD.items = []; go('reader'); }
   function renderReader(v) {
     var lim = S.sampleImg, fr = friends(), sname = (S.cfg && S.cfg.sheetName) || '';
     var can = !!(S.sample && lim);
     v.innerHTML = '<div class="top"><button type="button" class="nav" data-act="back" aria-label="月にもどる">‹</button><h1>写真で勤務表を入れる</h1></div><section class="card">' +
-      '<div class="sub">紙を平らに置いて、真上から、明るい所で。名前の列まで入れてください。紙が大きい時は、左半分・右半分のように分けて（どちらにも名前の列が入るように）、' + (lim ? lim.maxCount : 4) + '枚まで。</div>' +
+      '<div class="sub">紙を平らに置いて、真上から撮ってください。名前の列まで入れること。紙が大きい時は、左半分・右半分のように分けて（どちらにも名前の列が入るように）、' + (lim ? lim.maxCount : 4) + '枚まで。手の影は、あとでアプリがならします。</div>' +
       '<label class="f"><span>勤務表に書いてある、' + esc(mainName()) + 'の名前</span><input type="text" id="rd-name" maxlength="20" value="' + esc(sname) + '" placeholder="フルネーム（例：山口 花子）"></label>' +
       '<div class="sub">あの人：' + (fr.length ? fr.map(function (f) { return esc(f.name); }).join('・') : 'まだ登録なし') + '（この名前の行も読みます）</div>' +
-      (can ? '<label class="btn ghost" for="rd-file" id="rd-lab" role="button" tabindex="0">写真を足す（撮る・選ぶ）</label><input type="file" id="rd-file" accept="image/*"><div class="row"><div class="sub grow" id="rd-cnt">写真は、まだ選んでいません</div><button type="button" class="btn ghost small" id="rd-clear" hidden>選び直す</button></div>' +
+      (can ? '<label class="btn ghost" for="rd-file" id="rd-lab" role="button" tabindex="0">写真を足す（撮る・選ぶ）</label><input type="file" id="rd-file" accept="image/*">' +
+        '<div class="row"><div class="sub grow" id="rd-cnt">写真は、まだ選んでいません</div><button type="button" class="btn ghost small" id="rd-clear" hidden>選び直す</button></div><div class="thumbs" id="rd-th"></div>' +
+        '<div class="f"><span class="sub">写真の向き（文字が横向きなら回す）</span><div class="seg" role="group" aria-label="写真の向き">' + [[0, 'そのまま'], [270, '左に回す'], [90, '右に回す']].map(function (o) { return '<button type="button" class="chipb" data-rot="' + o[0] + '" aria-pressed="' + (RD.rot === o[0]) + '">' + o[1] + '</button>'; }).join('') + '</div></div>' +
+        '<div class="f"><span class="sub">影をならす（おすすめ）</span><div class="seg" role="group" aria-label="影をならす"><button type="button" class="chipb" data-flat="1" aria-pressed="' + RD.flat + '">ならす</button><button type="button" class="chipb" data-flat="0" aria-pressed="' + !RD.flat + '">そのまま</button></div></div>' +
         '<button type="button" class="btn" id="rd-go" disabled>読み取る</button><div class="sub">読み取りには、この画面を開いている人のClaudeの利用分を使います。1〜2分かかることがあります。</div>' :
         '<div class="note">この画面では、写真の読み取りが使えません（ログインしていないか、許可されていません）。下の「例の結果で試す」で、流れだけ見られます。</div>') +
       '<button type="button" class="btn ghost" id="rd-demo">例の結果で試す（写真なし）</button><button type="button" class="btn ghost" data-act="back">やめる</button></section>';
     (function (root) {
-      var nameEl = $('#rd-name', root), go = $('#rd-go', root), file = $('#rd-file', root), cam = null, cnt = $('#rd-cnt', root), clr = $('#rd-clear', root);
-      function upd() { if (go) go.disabled = !(RD.files.length && nameEl.value.trim()); }
-      nameEl.addEventListener('input', upd);
-      function add(inp) {
-        $('#rd-lab', root).addEventListener('click', function () { cnt.textContent = '写真の選択を開こうとしています…'; });
-        inp.addEventListener('change', function () {
-          RD.files = RD.files.concat(Array.prototype.slice.call(inp.files || [])).slice(0, lim.maxCount); inp.value = '';
-          cnt.textContent = RD.files.length ? RD.files.length + '枚 選びました（最大' + lim.maxCount + '枚。もう1枚ならもう一度押す）' : '写真は、まだ選んでいません'; clr.hidden = !RD.files.length; upd();
+      var nameEl = $('#rd-name', root), go = $('#rd-go', root), file = $('#rd-file', root);
+      if (file) {
+        nameEl.addEventListener('input', function () { rdRefresh(root); });
+        $('#rd-lab', root).addEventListener('click', function () { $('#rd-cnt', root).textContent = '写真の選択を開こうとしています…'; });
+        file.addEventListener('change', function () {
+          var add = Array.prototype.slice.call(file.files || []).slice(0, Math.max(0, lim.maxCount - RD.items.length)); file.value = '';
+          add.forEach(function (f) { var it = { file: f, blob: null, url: '' }; RD.items.push(it); rdProcess(root, it); });
+          rdRefresh(root);
         });
+        $('#rd-clear', root).addEventListener('click', function () { RD.items.forEach(function (it) { if (it.url) URL.revokeObjectURL(it.url); }); RD.items = []; rdRefresh(root); });
+        root.addEventListener('click', function (ev) {
+          var r = ev.target.closest('[data-rot]'), fl = ev.target.closest('[data-flat]');
+          if (r) { RD.rot = +r.getAttribute('data-rot'); $$('[data-rot]', root).forEach(function (b) { b.setAttribute('aria-pressed', b === r); }); RD.items.forEach(function (it) { rdProcess(root, it); }); }
+          if (fl) { RD.flat = fl.getAttribute('data-flat') === '1'; $$('[data-flat]', root).forEach(function (b) { b.setAttribute('aria-pressed', b === fl); }); RD.items.forEach(function (it) { rdProcess(root, it); }); }
+        });
+        go.addEventListener('click', function () { runReader(nameEl.value.trim()); });
+        rdRefresh(root);
       }
-      if (file) add(file); if (cam) add(cam);
-      if (clr) clr.addEventListener('click', function () { RD.files = []; cnt.textContent = '写真は、まだ選んでいません'; clr.hidden = true; upd(); });
-      if (go) go.addEventListener('click', function () { runReader(nameEl.value.trim()); });
       $('#rd-demo', root).addEventListener('click', function () { var nm = nameEl.value.trim() || 'お母さん'; showConfirm(buildPlan(demoResult(nm), nm), nm); });
     })(v);
   }
@@ -991,7 +1067,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     sheet('<h2>読み取り中…</h2><div class="sub" id="rd-prog">写真を送っています。1〜2分かかることがあります。</div><button type="button" class="btn ghost" id="rd-stop">やめる</button>', function (root) {
       $('#rd-stop', root).addEventListener('click', function () { if (RD.ac) RD.ac.abort(); closeSheet(); });
     });
-    S.sample.json(readerPrompt(), { images: RD.files, signal: RD.ac.signal, modelTier: 'complex', cache: false, onText: function (o) { var el = $('#rd-prog'); if (el) el.textContent = '読んでいます…（' + o.text.length + '文字）'; } })
+    S.sample.json(readerPrompt(), { images: rdBlobs(), signal: RD.ac.signal, modelTier: 'complex', cache: false, onText: function (o) { var el = $('#rd-prog'); if (el) el.textContent = '読んでいます…（' + o.text.length + '文字）'; } })
       .then(function (res) {
         if (!res || !res.year || !res.month || !Array.isArray(res.rows)) throw { code: 'bad' };
         showConfirm(buildPlan(res, sheetName), sheetName);
