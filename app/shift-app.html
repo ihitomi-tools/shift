@@ -109,6 +109,7 @@ h1, h2, h3, h4 { font-family: var(--head); margin: 0; line-height: 1.35; }
 .bld .door { justify-self: center; width: 44px; height: 26px; margin-top: 2px; border-radius: 8px 8px 0 0; background: color-mix(in srgb, var(--me) 55%, var(--card)); }
 .house .sub { margin-top: 8px; }
 .mcard { display: grid; gap: 6px; padding: 10px; border: 1px solid var(--line); border-radius: 12px; } .mcard select { width: 100%; min-height: 44px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--card); color: var(--fg); font: inherit; padding: 0 10px; }
+.nmd summary { cursor: pointer; font-weight: 700; min-height: 28px; display: flex; align-items: center; } .nmd[open] summary { margin-bottom: 6px; } .nmrow { display: flex; align-items: center; gap: 8px; margin-top: 6px; } .nmrow .role { min-width: 34px; } .nmrow input { flex: 1; min-width: 0; min-height: 40px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--card); color: var(--fg); font: inherit; padding: 0 10px; }
 .rdsum { display: flex; flex-wrap: wrap; gap: 6px; } .fix { display: grid; gap: 6px; padding: 8px 0; border-top: 1px solid var(--line); }
 .thumbs { display: flex; gap: 8px; flex-wrap: wrap; } .thumbs img { width: 96px; height: 96px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); background: #fff; } .thph { width: 96px; height: 96px; display: grid; place-items: center; border-radius: 10px; border: 1px dashed var(--line); font-size: .8em; color: var(--sub); }
 input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; } [hidden] { display: none !important; }
@@ -880,6 +881,10 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     var dd = lev(a, b), n = Math.max(a.length, b.length);
     if (dd <= 1 && n >= 3) return 0.8; if (dd <= 2 && n >= 5) return 0.65; return 0;
   }
+  function applyAliases(rows) {
+    var al = (S.cfg && S.cfg.aliases) || {};
+    return rows.map(function (r) { var to = al[normName(r.name)]; return to && to !== r.name ? Object.assign({}, r, { name: to }) : r; });
+  }
   function parseCell(c) {
     c = String(c == null ? '' : c).trim();
     if (c === '?' || c === '？') return { k: 'unk' };
@@ -904,7 +909,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     }
     meRow = find('me', sheetName);
     fr.forEach(function (f, i) { frRows[i] = find(f.id, f.sheetName || f.name); });
-    plan.match = match; plan.rowNames = rows.map(function (r) { return String(r.name || ''); }); plan.args = { res: res, sheetName: sheetName, frList: frList, picks: picks };
+    plan.match = match; plan.rowsF = rows; plan.rowNames = rows.map(function (r) { return String(r.name || ''); }); plan.rowBlocks = rows.map(function (r) { return String(r.block || ''); }); plan.args = { res: res, sheetName: sheetName, frList: frList, picks: picks };
     plan.meFound = !!meRow; plan.frFound = frRows.map(function (r) { return !!r; });
     function personPlan(row, who, name, isMe) {
       var out = { who: who, name: name, days: {}, on: 0 };
@@ -953,7 +958,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   function saveSheetRes(plan, ps) {
     ps.push(put('sheets', plan.y + '-' + pad(plan.m), { month: plan.y + '-' + pad(plan.m), rows: plan.res.rows || [], events: plan.res.events || {}, savedAt: Date.now() }));
   }
-  function applyPlan(plan, sheetName) {
+  function applyPlan(plan, sheetName, extra) {
     var ps = [];
     toast('入れています…少し待ってね');
     if (plan.meFound) writePerson(plan, plan.me, true, ps);
@@ -962,7 +967,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     saveSheetRes(plan, ps);
     var pk = (plan.args && plan.args.picks) || {};
     var newFr = (plan.args && plan.args.frList || friends()).map(function (f) { return pk[f.id] != null && pk[f.id] >= 0 ? Object.assign({}, f, { sheetName: plan.rowNames[pk[f.id]] }) : f; });
-    ps.push(saveCfg({ sheetName: pk.me != null && pk.me >= 0 ? plan.rowNames[pk.me] : sheetName, friends: newFr }));
+    ps.push(saveCfg({ sheetName: pk.me != null && pk.me >= 0 ? plan.rowNames[pk.me] : sheetName, friends: newFr, aliases: Object.assign({}, (S.cfg && S.cfg.aliases) || {}, (extra && extra.aliases) || {}) }));
     return safe(Promise.all(ps), '勤務表を入れました').then(function (ok) { if (ok) { logIt(plan.y + '年' + plan.m + '月の勤務表を、写真から入れた'); S.y = plan.y; S.m = plan.m; closeSheet(); go('month'); } return ok; });
   }
   /* あの人を足したり直したりしたとき、保存してある読み取り結果から、その人の勤務を入れ直す（写真は撮り直さなくていい） */
@@ -981,7 +986,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   function readerPrompt() {
     return '添付は、介護施設の「月間勤務表」を紙で撮影した写真です（同じ表を分けて撮った複数枚のこともあります）。表を読み取って、JSONだけを返してください。説明文やコードブロックの囲みは付けないでください。\n\n' +
       '形式:\n{"year":西暦の数字,"month":月の数字,"days":その月の日数,"legend":{"記号":"時間"},"events":{"日にち(数字の文字列)":["行事や医師の記載"]},"rows":[{"block":"常|派|看|非|他","name":"名前","cells":["1日のマス","2日のマス"]}]}\n\n' +
-      '決まり:\n- 写真は90度横向きのことがあります。向きを直して読んでください。\n- 紙には表が2つ（左右、または上下）並んでいます。片方は常勤・派遣・計画作成者・施設長など、もう片方は看護職員と介護職員（非）です。写真に写っている表の、全員の行を読んでください。写真が1枚に1つの表だけのこともあります。\n- 日付の見出しが写っていない表でも、マスは1日から月末まで順に並んでいます。向きを直したとき、1日は左端です。\n- 令和は西暦に直す（令和8年=2026年）。\n- block は、見出しが「介護職員（常）」なら"常"、「介護職員（派）」なら"派"、「看護職員」なら"看"、「介護職員（非）」なら"非"、それ以外（施設長・計画作成者・生活相談員など）は"他"。\n' +
+      '決まり:\n- 写真は90度横向きのことがあります。向きを直して読んでください。\n- 紙には表が2つ（左右、または上下）並んでいます。片方は常勤・派遣・計画作成者・施設長など、もう片方は看護職員と介護職員（非）です。写真に写っている表の、全員の行を読んでください。表を左右・上下に分けて、4枚に撮ってあることもあります。同じ人の行が複数の写真に写っていたら、1人1行にまとめてください。名前の列が写っていない行は、読まないでください。\n- 日付の見出しが写っていない表でも、マスは1日から月末まで順に並んでいます。向きを直したとき、1日は左端です。\n- 令和は西暦に直す（令和8年=2026年）。\n- block は、見出しが「介護職員（常）」なら"常"、「介護職員（派）」なら"派"、「看護職員」なら"看"、「介護職員（非）」なら"非"、それ以外（施設長・計画作成者・生活相談員など）は"他"。\n' +
       '- cells は、その人の行の1日から月末までの記号を、1マスずつ、書いてある文字のまま入れる。記号の例: 日1〜日8、夜勤、明け、休み、希休、NS1〜NS3、1F午前、1F午後、2F午前、2F午後、3F午前、3F午後。空欄のマスは""。「有休」「希休」「休み」「明け」も、そのまま書く。\n' +
       '- 読み取れないマス、自信のないマスは、推測で埋めずに必ず"?"にする。\n- cells の長さは days と同じにする。\n- 名前は、表に書いてある通り（敬称は付けない）。\n- 行事（カンファレンス、消防訓練など）や医師の記載は、その日付の events に入れる。\n- 凡例（記号と時間の表）があれば legend に入れる。';
   }
@@ -1077,7 +1082,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     var lim = S.sampleImg, fr = friends(), sname = (S.cfg && S.cfg.sheetName) || '';
     var can = !!(S.sample && lim);
     v.innerHTML = '<div class="top"><button type="button" class="nav" data-act="back" aria-label="月にもどる">‹</button><h1>写真で勤務表を入れる</h1></div><section class="card">' +
-      '<div class="sub">紙を平らに置いて、真上から撮ってください。名前の列まで入れること。紙が大きい時は、左半分・右半分のように分けて（どちらにも名前の列が入るように）、' + (lim ? lim.maxCount : 4) + '枚まで。手の影は、あとでアプリがならします。</div>' +
+      '<div class="sub">紙を平らに置いて、真上から撮ってください。名前の列まで入れること。紙は、4つに分けて撮るのがおすすめです（左半分の上と下、右半分の上と下）。どの写真にも、名前の列が入るようにして、となりの写真と少し重なってもだいじょうぶ。' + (lim ? lim.maxCount : 4) + '枚まで。手の影は、あとでアプリがならします。</div>' +
       '<label class="f"><span>勤務表に書いてある、' + esc(mainName()) + 'の名前</span><input type="text" id="rd-name" maxlength="20" value="' + esc(sname) + '" placeholder="フルネーム（例：山口 花子）"></label>' +
       '<div class="sub">あの人：' + (fr.length ? fr.map(function (f) { return esc(f.name); }).join('・') : 'まだ登録なし') + '（この名前の行も読みます）</div>' +
       (can ? '<label class="btn ghost" for="rd-file" id="rd-lab" role="button" tabindex="0">写真を足す（撮る・選ぶ）</label><input type="file" id="rd-file" accept="image/*">' +
@@ -1117,6 +1122,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     S.sample.json(readerPrompt(), { images: rdBlobs(), signal: RD.ac.signal, modelTier: 'complex', cache: false, onText: function (o) { var el = $('#rd-prog'); if (el) el.textContent = '読んでいます…（' + o.text.length + '文字）'; } })
       .then(function (res) {
         if (!res || !res.year || !res.month || !Array.isArray(res.rows)) throw { code: 'bad' };
+        res.rows = applyAliases(res.rows);
         showConfirm(buildPlan(res, sheetName), sheetName);
       }).catch(function (e) {
         if (e && e.code === 'cancelled') return;
@@ -1143,6 +1149,8 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       h += '<div class="fix"><div class="row"><b>' + plan.m + '月' + f.d + '日</b><span class="sub">' + esc(f.name) + ' ・ 読めた字：「' + esc(f.raw) + '」</span></div><div class="seg" data-fixi="' + i + '">' +
         chipsFor(f).map(function (o) { return '<button type="button" class="chipb" data-v="' + o[0] + '" aria-pressed="false">' + o[1] + '</button>'; }).join('') + '</div></div>';
     });
+    h += '<details class="card nmd"><summary>名前を見直す（' + plan.rowNames.length + '人）</summary><div class="sub">読み間違いは、ここで直せます。直した名前は覚えて、次の月からは自動で直します。</div>' +
+      plan.rowNames.map(function (n, i) { return '<div class="nmrow"><span class="role">' + esc(plan.rowBlocks[i] || '-') + '</span><input type="text" data-nm="' + i + '" value="' + esc(n) + '" maxlength="20" aria-label="名前"></div>'; }).join('') + '</details>';
     h += '<button type="button" class="btn" id="rd-ok">この内容で入れる</button><button type="button" class="btn ghost" data-close>やめる</button>';
     sheet(h, function (root) {
       root.addEventListener('change', function (ev) {
@@ -1156,7 +1164,18 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
         f.sel = v === 'off' ? null : v.charAt(0) === '1' ? { floor: +v.split(':')[1], slot: 'pm' } : { floor: +v.split(':')[1], slot: v.charAt(0) === 'a' ? 'am' : 'pm' };
         Array.prototype.forEach.call(g.children, function (c) { c.setAttribute('aria-pressed', c === b); });
       });
-      $('#rd-ok', root).addEventListener('click', function () { applyPlan(plan, sheetName); });
+      $('#rd-ok', root).addEventListener('click', function () {
+        var edits = {}, aliases = {}, any = false;
+        $$('input[data-nm]', root).forEach(function (inp) {
+          var i = +inp.getAttribute('data-nm'), nv = inp.value.trim();
+          if (nv && nv !== plan.rowNames[i]) { edits[i] = nv; aliases[normName(plan.rowNames[i])] = nv; any = true; }
+        });
+        if (!any) { applyPlan(plan, sheetName); return; }
+        var a = plan.args, rows2 = plan.rowsF.map(function (r, i) { return edits[i] ? Object.assign({}, r, { name: edits[i] }) : r; });
+        var np = buildPlan(Object.assign({}, a.res, { rows: rows2 }), a.sheetName, a.frList, a.picks);
+        np.fixes.forEach(function (nf) { plan.fixes.forEach(function (of) { if (of.who === nf.who && of.d === nf.d) nf.sel = of.sel; }); });
+        applyPlan(np, sheetName, { aliases: aliases });
+      });
     });
   }
 
