@@ -581,7 +581,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   }
   var CREW_POOL = { sp: ['山田', '中村', '小川', '木村', '林', '佐藤', '高橋', '伊藤', '渡辺', '加藤'], day: ['高田', '石井', '内田', '三浦'], night: ['岡田', '野口', '吉川'], ns: ['松本', '青木', '井上'] };
   function crewHtml(date) {
-    var c = S.crew[date]; if (!c) return '';
+    var c = S.crew[date.slice(0, 7)]; c = c && c.days && c.days[date]; if (!c) return '';
     var sh = shiftOf('me', date), fr = friends();
     function chip(name, slot, f) {
       if (!name && !(sh && slot === 'pm' && sh.floor === f)) return '<span class="pp ' + slot + ' empty"><i>' + (slot === 'am' ? '午前' : '午後') + '</i><b>—</b></span>';
@@ -621,7 +621,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   }
   function seedCrew(y, m, ps, fr, frShifts) {
     var g = genCrew(y, m, fr, frShifts);
-    Object.keys(g).forEach(function (k) { g[k].example = true; ps.push(put('crew', k, g[k])); });
+    ps.push(put('crew', y + '-' + pad(m), { month: y + '-' + pad(m), days: g, example: true }));
   }
   function eventRow(e) {
     return '<button type="button" class="item" data-event="' + e.id + '"><span class="tag' + (e.owner === 'me' ? ' me' : '') + '">' + esc(ownerName(e.owner)) + '</span><span class="grow"><b>' + ico(e.icon, 'ico') + esc(e.title) + '</b>' + (e.time ? '<span class="sub"> ' + esc(e.time) + '</span>' : '') + (e.repeat && e.repeat !== 'none' ? '<span class="sub"> ・' + (e.repeat === 'weekly' ? '毎週' : '毎月') + '</span>' : '') + (e.bring ? '<div class="bring">持ち物：' + esc(e.bring) + '</div>' : '') + '</span><span class="sub">›</span></button>';
@@ -802,6 +802,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   /* ============ 例 / 控え ============ */
   function seedExample() {
     var y = S.y || new Date().getFullYear(), m = S.m || (new Date().getMonth() + 1), ps = [];
+    if (!S.mem) toast('入れています…少し待ってね');
     var fr = friends().length ? friends() : [{ id: 'p1', name: '田中', color: 6 }, { id: 'p2', name: '森', color: 3 }];
     if (!friends().length) ps.push(saveCfg({ friends: fr, example: true }));
     var meDays = { 2: 2, 4: 2, 5: 3, 9: 1, 11: 1, 12: 1, 16: 3, 18: 3, 19: 3, 24: 2, 26: 2, 27: 2 };
@@ -911,6 +912,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   }
   function applyPlan(plan, sheetName) {
     var ps = [], y = plan.y, m = plan.m;
+    toast('入れています…少し待ってね');
     function one(pp, isMe) {
       for (var d = 1; d <= plan.nd; d++) {
         var id = pp.who + '_' + ymd(y, m, d), has = Object.prototype.hasOwnProperty.call(pp.days, d), fix = null;
@@ -923,7 +925,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     }
     if (plan.meFound) one(plan.me, true);
     plan.fr.forEach(function (pp, i) { if (plan.frFound[i]) one(pp, false); });
-    Object.keys(plan.crew).forEach(function (k) { ps.push(put('crew', k, plan.crew[k])); });
+    ps.push(put('crew', plan.y + '-' + pad(plan.m), { month: plan.y + '-' + pad(plan.m), days: plan.crew, from: 'photo' }));
     ps.push(saveCfg({ sheetName: sheetName }));
     return safe(Promise.all(ps), '勤務表を入れました').then(function (ok) { if (ok) { logIt(plan.y + '年' + plan.m + '月の勤務表を、写真から入れた'); S.y = plan.y; S.m = plan.m; closeSheet(); go('month'); } return ok; });
   }
