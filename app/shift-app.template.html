@@ -973,6 +973,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       function upd() { if (go) go.disabled = !(RD.files.length && nameEl.value.trim()); }
       nameEl.addEventListener('input', upd);
       function add(inp) {
+        inp.addEventListener('click', function () { cnt.textContent = (inp === cam ? 'カメラ' : 'アルバム') + 'を開こうとしています…（何も出ない時は、もう一方を試してね）'; });
         inp.addEventListener('change', function () {
           RD.files = RD.files.concat(Array.prototype.slice.call(inp.files || [])).slice(0, lim.maxCount); inp.value = '';
           cnt.textContent = RD.files.length ? RD.files.length + '枚 選びました（最大' + lim.maxCount + '枚）' : '写真は、まだ選んでいません'; clr.hidden = !RD.files.length; upd();
