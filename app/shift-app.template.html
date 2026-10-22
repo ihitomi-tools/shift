@@ -1,4 +1,4 @@
-<title>シフト手帳</title>
+<title>おしごと手帳</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -730,7 +730,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
   }
   function exportAll() {
     var data = { app: 'shift-techo', savedAt: Date.now(), shifts: S.shifts, events: S.events, todos: S.todos, config: S.cfg };
-    var name = '手帳の控え-' + S.today + '.json';
+    var name = 'おしごと手帳の控え-' + S.today + '.json';
     if (!downloads) { toast('この画面では、保存が使えません'); return; }
     downloads.save({ filename: name, data: JSON.stringify(data, null, 1) }).then(function () { toast('控えを保存しました'); }).catch(function (e) { if (!e || e.code !== 'declined') toast('保存できませんでした'); });
   }
