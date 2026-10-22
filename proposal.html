@@ -46,6 +46,7 @@ h1 { font-size: clamp(28px, 6vw, 42px); font-weight: 800; letter-spacing: .01em;
 h2 { font-size: clamp(21px, 4vw, 26px); font-weight: 800; }
 h3 { font-size: 17px; font-weight: 700; }
 p { margin: 0; }
+a { color: var(--accent); }
 .lead { color: var(--sub); max-width: 40em; margin-top: 12px; }
 .eyebrow { font-size: 12px; letter-spacing: .14em; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
 section { display: grid; gap: 20px; min-width: 0; }
@@ -350,6 +351,8 @@ symbol { overflow: visible; }
 .phone[data-skin="dq"] .plate.todo { color: #000; }
 .dl.none { color: var(--p-sub); border: 1px dotted var(--p-sub); }
 
+.cal .c.hol:not(.today) .dn { color: #e0607a; }
+
 /* やること */
 .td { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 7px 0; }
 .td + .td { border-top: 1px dashed var(--p-sub); }
@@ -362,6 +365,7 @@ symbol { overflow: visible; }
 .dl.ok { color: var(--p-sub); border: 1px solid var(--p-sub); }
 .phone[data-skin="dq"] .dl.over { color: #000; }
 .td.over { color: inherit; }
+.bring { font-size: 9.5px; opacity: .8; margin-top: 1px; }
 .key { font-weight: 800; font-size: 12px; line-height: 1.7; padding: 6px 9px; margin-bottom: 4px; background: var(--p-bg); border: var(--p-border); border-radius: var(--p-r); }
 .code { font-family: ui-monospace, Menlo, monospace; font-size: 8.5px; line-height: 1.4; word-break: break-all; color: var(--p-sub); max-height: 44px; overflow: hidden; padding: 5px 7px; background: var(--p-bg); border: var(--p-border); border-radius: var(--p-r); }
 
@@ -565,9 +569,9 @@ td.rec, th.rec { background: var(--accent-soft); }
         <div class="body">
           <div class="title-row"><b>予定</b><span class="chip">＋ 追加</span></div>
           <div class="row"><span class="chip">すべて</span><span class="sub">自分</span><span class="sub">じいちゃん</span></div>
-          <div class="win"><div class="ev"><div class="d">6<small>金</small></div><div><span class="who-tag">じ</span><b><svg class="ico"><use href="#e-hosp"/></svg>○○病院 整形外科</b><div class="sub">10:30 ・ 送迎あり ・ 保険証</div></div></div></div>
-          <div class="win"><div class="ev"><div class="d">8<small>日</small></div><div><span class="who-tag me">自分</span><b><svg class="ico"><use href="#e-shop"/></svg>スーパー</b><div class="sub">10:00 ・ エコバッグ</div></div></div></div>
-          <div class="win"><div class="ev"><div class="d">13<small>金</small></div><div><span class="who-tag me">自分</span><b><svg class="ico"><use href="#e-hosp"/></svg>△△クリニック</b><div class="sub">14:00 ・ お薬手帳</div></div></div></div>
+          <div class="win"><div class="ev"><div class="d">6<small>金</small></div><div><span class="who-tag">じ</span><b><svg class="ico"><use href="#e-hosp"/></svg>○○病院 整形外科</b><div class="sub">10:30 ・ 送迎あり</div><div class="sub bring">持ち物：保険証</div></div></div></div>
+          <div class="win"><div class="ev"><div class="d">8<small>日</small></div><div><span class="who-tag me">自分</span><b><svg class="ico"><use href="#e-shop"/></svg>スーパー</b><div class="sub">10:00</div><div class="sub bring">持ち物：エコバッグ</div></div></div></div>
+          <div class="win"><div class="ev"><div class="d">13<small>金</small></div><div><span class="who-tag me">自分</span><b><svg class="ico"><use href="#e-hosp"/></svg>△△クリニック</b><div class="sub">14:00</div><div class="sub bring">持ち物：お薬手帳</div></div></div></div>
           <div class="win"><div class="ev"><div class="d">22<small>日</small></div><div><span class="who-tag">じ</span><b><svg class="ico"><use href="#e-meal"/></svg>家族でご飯</b><div class="sub">12:00 ・ ○○食堂</div></div></div></div>
           <div class="win" style="border-color:var(--p-warn)"><div class="ev"><div class="d">24<small>火</small></div><div><span class="who-tag">じ</span><b><svg class="ico"><use href="#e-hosp"/></svg>○○病院 内科</b><div class="sub">14:00</div><div class="warnbox">この日は午後勤務（2F）と重なっています</div></div></div></div>
         </div>
@@ -638,12 +642,13 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="win">
             <div class="row"><span class="grow sub">日にち</span><b>11月13日（金）</b></div>
             <div class="row" style="margin-top:6px"><span class="grow sub">時間</span><b>14:00</b></div>
+            <div class="row" style="margin-top:6px"><span class="grow sub">くりかえし</span><b>しない ›</b></div>
           </div>
-          <div class="win"><h4>メモ</h4><span class="sub">お薬手帳</span></div>
+          <div class="win"><h4>持ち物・メモ</h4><span class="sub">お薬手帳</span></div>
         </div>
         <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span class="on"><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
-      <figcaption><b>⑦ 予定を足す</b>だれの予定か、なにをするかを選びます。アイコンは、よく使う「病院・買い物・ご飯・銀行・★（ほか）」の5つ。「ほか」は、書く内容を自由に入れられます。あとから増やす予定です。</figcaption>
+      <figcaption><b>⑦ 予定を足す</b>だれの予定か、なにをするかを選びます。「くりかえし」で、毎週・毎月にもできます。持ち物は、予定の下に、そっと小さく出ます。アイコンは、よく使う「病院・買い物・ご飯・銀行・★（ほか）」の5つ。「ほか」は、書く内容を自由に入れられます。あとから増やす予定です。</figcaption>
     </figure>
     <figure class="fig">
       <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
@@ -670,7 +675,7 @@ td.rec, th.rec { background: var(--accent-soft); }
         <div class="body">
           <div class="title-row"><b>‹ 11月17日（火） ›</b><span class="sub">勤務なし</span></div>
           <div class="sub" style="text-align:center">↑ 上に、3階建ての「その日の職場」の図があります</div>
-          <div class="win"><h4>予定</h4><div class="row"><span class="who-tag me">自分</span><span class="grow"><svg class="ico"><use href="#e-bank"/></svg><b>銀行</b></span><span class="sub">10:00</span></div></div>
+          <div class="win"><h4>予定</h4><div class="row"><span class="who-tag me">自分</span><span class="grow"><svg class="ico"><use href="#e-bank"/></svg><b>銀行</b></span><span class="sub">10:00</span></div><div class="sub bring">持ち物：通帳・はんこ</div></div>
           <div class="win"><h4>やること（この日が締め切り）</h4><div class="row"><span class="who-tag me">自分</span><span class="grow"><svg class="ico"><use href="#e-hosp"/></svg><b>お薬をもらう</b></span><span class="dl soon">今日まで</span></div></div>
           <div class="win ano"><h4><svg class="cm"><use href="#cloud"/></svg>あの人は？</h4><div class="people"><span class="pc me off"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>お休み</i></span></span><span class="pc p1 off"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>お休み</i></span></span><span class="pc p2"><svg><use href="#pp"/></svg><span class="tx"><b>森</b><i>午前 2F</i></span></span></div></div>
         </div>
@@ -765,7 +770,7 @@ td.rec, th.rec { background: var(--accent-soft); }
     <table>
       <thead><tr><th>方式</th><th>できること</th><th>気をつける所</th></tr></thead>
       <tbody>
-        <tr><td class="rec"><b>ホーム画面に置くWebアプリ</b><span class="pill">おすすめ</span></td><td>アプリのように起動、カメラで撮影、通院の予定、画像・ファイル共有。App Store審査なしで、ここで作ってすぐ試せる。</td><td>iPhoneの標準カレンダーに直接書き込めない（Bのファイル経由になる）。データは端末内に保存するので、バックアップの仕組みも付けたい。</td></tr>
+        <tr><td class="rec"><b>ホーム画面に置くWebアプリ</b><span class="pill">おすすめ</span></td><td>アプリのように起動、カメラで撮影、予定・やること、画像・ファイル共有。App Store審査なしで、ここで作ってすぐ試せる。</td><td>iPhoneの標準カレンダーに直接書き込めない（Bのファイル経由になる）。データは端末内に保存するので、バックアップの仕組みも付けたい。</td></tr>
         <tr><td><b>ネイティブのiPhoneアプリ</b></td><td>標準カレンダーへ直接書き込み、通知の自由度が高い。</td><td>Macでの開発環境と、Apple Developer Program（有料・年額）が必要。ひとみの環境次第で、作るハードルが一段上がる。</td></tr>
       </tbody>
     </table>
@@ -803,28 +808,59 @@ td.rec, th.rec { background: var(--accent-soft); }
 
 <section>
   <div class="sec-head">
-    <h2>試作の前に：おすすめと気になる点</h2>
-    <p>ここまでの話から、足すと便利そうなことと、先に確かめたいことです。どれも、お母さんが「いらない」と言えば外せます。</p>
+    <h2>試作の前に：追加する機能と、確かめること</h2>
+    <p>お母さんと決めたことと、これから確かめることです。</p>
   </div>
   <div class="phases">
-    <div class="ph"><h3>おすすめの機能</h3>
+    <div class="ph"><h3>追加する機能（決定）</h3>
       <ul class="ul2">
-        <li><b>くりかえし</b>：じいちゃんのリハビリや、毎月の家賃の振込を、一度の入力で毎週・毎月に。</li>
-        <li><b>職場の行事</b>：表に載っているカンファレンスや消防訓練を、カレンダーに自動で入れる。</li>
-        <li><b>持ち物チェック</b>：通院の「保険証・お薬手帳」を、出かける前にチェックする。</li>
-        <li><b>文字の大きさ</b>：「ふつう」と「大きめ」を選べる。</li>
-        <li><b>祝日の表示</b>：祝日の日付を赤くする。</li>
+        <li><b>くりかえし</b>：予定とやること。毎週・毎月を、一度の入力で。</li>
+        <li><b>職場の行事</b>：表のカンファレンスや消防訓練を、カレンダーに自動で入れる。</li>
+        <li><b>持ち物</b>：チェックリストではなく、予定の下に、そっと小さく表示。</li>
+        <li><b>文字の大きさ</b>：「ふつう」と「大きめ」を、設定で選べる。</li>
+        <li><b>祝日</b>：カレンダーの日付を赤くする（画面①〜に反映しました）。</li>
       </ul>
     </div>
-    <div class="ph"><h3>先に確かめたいこと</h3>
+    <div class="ph"><h3>確かめること</h3>
       <ul class="ul2">
-        <li><b>アプリを置く場所</b>：お母さんのiPhoneで開けるURLが要ります。無料の置き場所はありますが、どこにするかを決めたい。</li>
-        <li><b>iPhoneでのデータの保持</b>：ホーム画面に追加した状態で、データが消えないか、試作で確かめます。</li>
-        <li><b>ひとみ側（Pixel）</b>：カレンダー用ファイルは、Googleカレンダーに取り込む形になります。動きは試作で確認します。</li>
-        <li><b>読み取りの精度</b>：1月からのシフト表の写真で確かめます。</li>
+        <li><b>アプリを置く場所</b>：決める。下の「置く場所の比較」を見てください。</li>
+        <li><b>iPhoneで記録が消えないか</b>：確認ページで、お母さんのiPhoneとは別に、ひとみのiPhone SEで試す。</li>
+        <li><b>ひとみ側（Pixel）</b>：カレンダー用ファイルは、Googleカレンダーに取り込む形。試作で確認。</li>
+        <li><b>読み取りの精度</b>：1月からのシフト表の写真で確かめる。</li>
+        <li><b>雲の素材</b>：問題なし（確認ずみ）。</li>
       </ul>
     </div>
   </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2>置く場所の比較</h2>
+    <p>アプリを、お母さんのiPhoneで開けるようにする「置き場所」です。記録は、それぞれの端末の中にだけ保存されます。置き場所に置くのは、アプリの部品（画面の作り）だけです。</p>
+  </div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>置き場所</th><th>お金</th><th>手間</th><th>ひとことで</th></tr></thead>
+      <tbody>
+        <tr><td class="rec"><b>GitHub Pages</b><span class="pill">おすすめ</span></td><td>無料（公開のリポジトリなら）<sup>※1</sup></td><td>設定で数回タップ</td><td>すでに使っているGitHubの中で完結。このリポジトリは、すでに公開なので、すぐ使えます。</td></tr>
+        <tr><td><b>Cloudflare Pages</b></td><td>無料枠あり<sup>※2</sup></td><td>アカウントを作って、GitHubとつなぐ</td><td>非公開のリポジトリでも使える（私の理解）。そのぶん、最初の設定が増えます。</td></tr>
+        <tr><td><b>ほかの無料サービス</b></td><td>—</td><td>—</td><td>似たものがありますが、最新の条件は確認していません。</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout">
+    <h3>知っておいてほしいこと</h3>
+    <ul>
+      <li><b>このリポジトリは、公開になっています。</b>誰でも中身（この提案ページや、アプリの部品）を見られます。シフト表の写真や、本物の名前・予定は、ここに入れないでください。（いまは、すべて架空のサンプルです）</li>
+      <li><b>置き場所のURLを知っている人は、アプリを開けます。</b>ただ、開いても中身は空です。記録は、お母さんのiPhoneの中にだけあります。</li>
+      <li><b>非公開にしたい場合</b>は、GitHub Pagesは有料プランが要ります<sup>※1</sup>。その時は、Cloudflare Pagesなどに移す手があります。</li>
+    </ul>
+  </div>
+  <p class="note"><b>確認ページを、いまのiPhoneで試す手順</b>（GitHubの画面で、一度だけ）：<br>
+    リポジトリの「Settings」→「Pages」→「Build and deployment」の「Source」を<b>Deploy from a branch</b>にして、ブランチは<b>claude/caregiving-shift-app-proposal-gubl9j</b>、フォルダは<b>/ (root)</b>を選んで「Save」。1〜2分すると、確認ページのURL（<b>https://ihitomi-tools.github.io/shift/app-check/</b>のはず）で開けます。（URLの形は私の推測です。Pagesの画面に出るURLが正しいです）</p>
+  <p class="note">※1 <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site" target="_blank" rel="noopener">GitHub公式の説明</a>（無料プランでは、公開リポジトリのPagesのみ）／<a href="https://smartscope.blog/Tips/GitHub/github-pages-private-repository/" target="_blank" rel="noopener">解説記事</a>。2026年10月時点の最新の料金は確認できていません。<br>
+  ※2 <a href="https://developers.cloudflare.com/pages/platform/limits" target="_blank" rel="noopener">Cloudflare Pagesの制限</a>（無料は、月500回のビルド、1サイト2万ファイルまで、など）。<br>
+  iPhoneの記録の保持については、<a href="https://developer.apple.com/forums/thread/710157" target="_blank" rel="noopener">Appleの開発者フォーラム</a>に、「ホーム画面に追加したWebアプリは、Safariとは別に数えられ、記録が消えることは想定していない」という説明があります（ただし、消えたという報告もあり、試して確かめるのが確実です）。</p>
 </section>
 
 <section>
@@ -843,6 +879,7 @@ td.rec, th.rec { background: var(--accent-soft); }
 <script>
 (function () {
   var shifts = {2:2,4:2,5:3,9:1,11:1,12:1,16:3,18:3,19:3,24:2,26:2,27:2};
+  var HOL = {3:1, 23:1};
   var appts = {6:['じ','hosp'],8:['自','shop'],13:['自','hosp'],17:['自','bank'],22:['じ','meal'],24:['じ','hosp']};
   function ico(k) { return '<svg class="ei"><use href="#e-' + k + '"/></svg>'; }
   var t = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,18:2,22:2,23:2,26:3,30:3};
@@ -852,7 +889,7 @@ td.rec, th.rec { background: var(--accent-soft); }
   var h = head();
   for (var d = 1; d <= 30; d++) {
     var f = shifts[d], a = appts[d];
-    h += '<div class="c' + (f ? ' work' : '') + (d === 12 ? ' today' : '') + '"><span class="dn">' + d + '</span>' +
+    h += '<div class="c' + (f ? ' work' : '') + (d === 12 ? ' today' : '') + (HOL[d] ? ' hol' : '') + '"><span class="dn">' + d + '</span>' +
       (f ? '<span class="fl f' + f + '">' + f + 'F</span>' : '') +
       (a ? '<span class="ap' + (a[0] === '自' ? ' me' : '') + (f ? ' clash' : '') + '">' + a[0] + ico(a[1]) + '</span>' : '') + '</div>';
   }
@@ -860,7 +897,7 @@ td.rec, th.rec { background: var(--accent-soft); }
   var h3 = head();
   for (var e = 1; e <= 30; e++) {
     var dots = (shifts[e] ? '<i class="me"></i>' : '') + (t[e] ? '<i class="p1"></i>' : '') + (s2[e] ? '<i class="p2"></i>' : '');
-    h3 += '<div class="c' + (e === 12 ? ' today' : '') + '"><span class="dn">' + e + '</span>' + (dots ? '<span class="dots">' + dots + '</span>' : '') + '</div>';
+    h3 += '<div class="c' + (e === 12 ? ' today' : '') + (HOL[e] ? ' hol' : '') + '"><span class="dn">' + e + '</span>' + (dots ? '<span class="dots">' + dots + '</span>' : '') + '</div>';
   }
   document.getElementById('cal3').innerHTML = h3;
   document.getElementById('m-sum').textContent = '勤務 ' + Object.keys(shifts).length + '日';
@@ -884,6 +921,7 @@ td.rec, th.rec { background: var(--accent-soft); }
 <script>
 (function () {
   var shifts = {2:2,4:2,5:3,9:1,11:1,12:1,16:3,18:3,19:3,24:2,26:2,27:2};
+  var HOL = {3:1, 23:1};
   var appts = {6:['じ','hosp'],8:['自','shop'],13:['自','hosp'],17:['自','bank'],22:['じ','meal'],24:['じ','hosp']};
   var tt = {1:2,2:2,5:2,6:2,9:2,12:2,13:2,15:1,16:3,18:2,22:2,23:2,26:3,30:3};
   var s2 = {3:3,5:2,6:2,10:3,13:3,14:3,17:2,20:3,21:3,24:3,25:2,28:3,29:3};
@@ -914,7 +952,7 @@ td.rec, th.rec { background: var(--accent-soft); }
     var h = head();
     for (var d = 1; d <= 30; d++) {
       var f = shifts[d], a = appts[d];
-      h += '<div class="c' + (f ? ' work' : '') + (d === 12 ? ' today' : '') + '"><span class="dn">' + d + '</span>' +
+      h += '<div class="c' + (f ? ' work' : '') + (d === 12 ? ' today' : '') + (HOL[d] ? ' hol' : '') + '"><span class="dn">' + d + '</span>' +
         (f ? '<span class="fl f' + f + '">' + f + 'F</span>' : '') +
         (a ? '<span class="ap' + (a[0] === '自' ? ' me' : '') + (f ? ' clash' : '') + '">' + a[0] + ico(a[1]) + '</span>' : '') + '</div>';
     }
@@ -924,7 +962,7 @@ td.rec, th.rec { background: var(--accent-soft); }
     var h = head();
     for (var d = 1; d <= 30; d++) {
       var dots = (shifts[d] ? '<i class="me"></i>' : '') + (tt[d] ? '<i class="p1"></i>' : '') + (s2[d] ? '<i class="p2"></i>' : '');
-      h += '<div class="c' + (d === 12 ? ' today' : '') + '"><span class="dn">' + d + '</span>' + (dots ? '<span class="dots">' + dots + '</span>' : '') + '</div>';
+      h += '<div class="c' + (d === 12 ? ' today' : '') + (HOL[d] ? ' hol' : '') + '"><span class="dn">' + d + '</span>' + (dots ? '<span class="dots">' + dots + '</span>' : '') + '</div>';
     }
     return h;
   }
@@ -932,7 +970,7 @@ td.rec, th.rec { background: var(--accent-soft); }
     var h = head();
     for (var d = 1; d <= 30; d++) {
       var t = todos[d];
-      h += '<div class="c' + (d === 12 ? ' today' : '') + '"><span class="dn">' + d + '</span>' +
+      h += '<div class="c' + (d === 12 ? ' today' : '') + (HOL[d] ? ' hol' : '') + '"><span class="dn">' + d + '</span>' +
         (t ? '<span class="tks"><i class="tk ' + t[0] + '"><svg><use href="#e-' + t[1] + '"/></svg></i></span>' : '') + '</div>';
     }
     return h;

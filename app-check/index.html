@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>シフト手帳 確認ページ</title>
+<meta name="theme-color" content="#3257d6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="確認ページ">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=M+PLUS+Rounded+1c:wght@700;800&display=swap">
+<style>
+/* 画面構成: 上から「いまの状態」→ 5つの確認 → 結果のコピー。大きいボタンを縦に並べる、1列だけの画面 */
+:root {
+  --bg: #f4f6f8; --card: #ffffff; --fg: #1b2330; --sub: #5b6676; --line: #d9dee5;
+  --accent: #3257d6; --on-accent: #ffffff; --ok: #1f7a4d; --ok-bg: #e3f3ea; --warn: #a85a00; --warn-bg: #fdf0dc;
+  --font: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --head: "M PLUS Rounded 1c", "BIZ UDPGothic", "Hiragino Maru Gothic ProN", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #12171e; --card: #1a212b; --fg: #e8ecf1; --sub: #9aa6b6; --line: #2a333f; --accent: #7d9bff; --on-accent: #0c1530; --ok: #62c796; --ok-bg: #16302a; --warn: #f0a85a; --warn-bg: #33260f; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 17px; line-height: 1.7;
+  padding: max(20px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(40px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+main { max-width: 560px; margin: 0 auto; display: grid; gap: 16px; }
+h1, h2 { font-family: var(--head); line-height: 1.35; margin: 0; }
+h1 { font-size: 26px; font-weight: 800; }
+h2 { font-size: 19px; font-weight: 800; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+p { margin: 0; }
+.lead { color: var(--sub); font-size: 15px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: grid; gap: 10px; }
+.sub { color: var(--sub); font-size: 15px; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 16px; }
+.kv dt { color: var(--sub); } .kv dd { margin: 0; text-align: right; font-weight: 700; word-break: break-all; }
+.chip { font-size: 13px; font-weight: 700; padding: 1px 10px; border-radius: 999px; background: var(--line); color: var(--sub); }
+.chip.ok { background: var(--ok-bg); color: var(--ok); }
+.chip.warn { background: var(--warn-bg); color: var(--warn); }
+button, .btn { font: inherit; font-weight: 700; min-height: 52px; padding: 12px 18px; border-radius: 14px; border: 2px solid var(--accent); background: var(--accent); color: var(--on-accent); cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; }
+button.ghost, .btn.ghost { background: transparent; color: var(--accent); }
+button:focus-visible, .btn:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
+input[type="text"] { font: inherit; width: 100%; min-height: 52px; padding: 10px 14px; border: 2px solid var(--line); border-radius: 14px; background: var(--bg); color: var(--fg); }
+input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+ol.steps { margin: 0; padding-left: 1.3em; display: grid; gap: 4px; font-size: 16px; }
+ul.notes { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 16px; }
+ul.notes li { border-top: 1px dashed var(--line); padding-top: 4px; }
+img.thumb { max-width: 100%; max-height: 220px; border-radius: 12px; justify-self: start; }
+textarea { font: inherit; font-size: 14px; width: 100%; min-height: 150px; padding: 10px; border: 2px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--fg); }
+@media (prefers-reduced-motion: no-preference) { button { transition: transform .08s; } button:active { transform: scale(.98); } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>シフト手帳<br>確認ページ</h1>
+    <p class="lead">アプリ本体を作る前に、iPhoneで「ちゃんと動くか」を確かめるための小さなページです。中の記録は、この端末の中だけに保存され、どこにも送られません。</p>
+  </header>
+
+  <section class="card" aria-labelledby="h-now">
+    <h2 id="h-now">いまの状態</h2>
+    <dl class="kv">
+      <dt>ホーム画面から開いている</dt><dd id="st-standalone">…</dd>
+      <dt>ネットにつながっている</dt><dd id="st-online">…</dd>
+      <dt>このページを開いた回数</dt><dd id="st-opens">…</dd>
+      <dt>はじめて開いた日時</dt><dd id="st-first">…</dd>
+      <dt>それから</dt><dd id="st-days">…</dd>
+    </dl>
+  </section>
+
+  <section class="card" aria-labelledby="h-1">
+    <h2 id="h-1">① ホーム画面に置く <span class="chip" id="c-1">まだ</span></h2>
+    <ol class="steps">
+      <li>いま、<b>Safari</b>で開いていますか？（Chromeなどでは、できません）</li>
+      <li>画面の下の <b>共有ボタン（□に↑）</b> を押す</li>
+      <li><b>「ホーム画面に追加」</b> を押す → 右上の「追加」</li>
+      <li>ホーム画面にできたアイコンから、開き直す</li>
+    </ol>
+    <p class="sub">開き直したあと、上の「ホーム画面から開いている」が <b>はい</b> になれば成功です。</p>
+  </section>
+
+  <section class="card" aria-labelledby="h-2">
+    <h2 id="h-2">② 記録が消えないか <span class="chip" id="c-2">まだ</span></h2>
+    <p class="sub">メモを1つ保存して、数日たってからもう一度開いてみてください。残っていれば成功です。</p>
+    <input type="text" id="note" placeholder="メモを書く（例：11/22 テスト）" aria-label="メモ" maxlength="60">
+    <button type="button" id="save-note">メモを保存する</button>
+    <ul class="notes" id="notes" aria-live="polite"></ul>
+    <p class="sub" id="persist-line">…</p>
+  </section>
+
+  <section class="card" aria-labelledby="h-3">
+    <h2 id="h-3">③ ネットがなくても開けるか <span class="chip" id="c-3">まだ</span></h2>
+    <ol class="steps">
+      <li>このページを、ネットにつながった状態で開く</li>
+      <li>機内モードにして、ホーム画面のアイコンから開き直す</li>
+      <li>ページが出て、「ネットにつながっている」が <b>いいえ</b> になれば成功です</li>
+    </ol>
+    <p class="sub" id="sw-line">…</p>
+  </section>
+
+  <section class="card" aria-labelledby="h-4">
+    <h2 id="h-4">④ バックアップ <span class="chip" id="c-4">まだ</span></h2>
+    <p class="sub">いまの記録を、ファイルにして保存します。保存先は、iPhoneの画面で選べます。</p>
+    <button type="button" id="backup-save">バックアップを保存</button>
+    <label class="btn ghost" for="backup-file" role="button" tabindex="0" id="backup-label">バックアップから戻す</label>
+    <input type="file" id="backup-file" accept=".json,application/json">
+    <p class="sub" id="backup-line"></p>
+  </section>
+
+  <section class="card" aria-labelledby="h-5">
+    <h2 id="h-5">⑤ 写真をとる <span class="chip" id="c-5">まだ</span></h2>
+    <p class="sub">シフト表を読み取る時の、カメラの動きを確かめます。</p>
+    <label class="btn" for="cam" role="button" tabindex="0" id="cam-label">カメラでとる</label>
+    <input type="file" id="cam" accept="image/*" capture="environment">
+    <img class="thumb" id="thumb" alt="" hidden>
+    <p class="sub" id="cam-line"></p>
+  </section>
+
+  <section class="card" aria-labelledby="h-r">
+    <h2 id="h-r">結果をひとみに送る</h2>
+    <p class="sub">下のボタンで、結果をコピーできます。そのまま貼り付けて、送ってください。</p>
+    <button type="button" id="copy">結果をコピー</button>
+    <textarea id="report" readonly aria-label="結果" hidden></textarea>
+  </section>
+</main>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var LS = {
+    get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+  };
+  var results = { standalone: null, persist: null, sw: null, backup: null, camera: null };
+
+  function fmt(ts) {
+    var d = new Date(ts);
+    return d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate() + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+  }
+  function chip(id, ok, text) { var c = $(id); c.textContent = text; c.className = 'chip ' + (ok === true ? 'ok' : ok === false ? 'warn' : ''); }
+
+  /* 起動の記録（localStorage と IndexedDB の両方に） */
+  var now = Date.now();
+  var first = parseInt(LS.get('chk_first') || '0', 10);
+  if (!first) { first = now; LS.set('chk_first', String(first)); }
+  var opens = parseInt(LS.get('chk_opens') || '0', 10) + 1;
+  LS.set('chk_opens', String(opens));
+
+  var db = null;
+  function openDb() {
+    return new Promise(function (res) {
+      if (!window.indexedDB) return res(null);
+      var rq = indexedDB.open('shift-check', 1);
+      rq.onupgradeneeded = function () { rq.result.createObjectStore('kv'); };
+      rq.onsuccess = function () { res(rq.result); };
+      rq.onerror = function () { res(null); };
+    });
+  }
+  function dbGet(k) { return new Promise(function (res) { if (!db) return res(null); var r = db.transaction('kv').objectStore('kv').get(k); r.onsuccess = function () { res(r.result === undefined ? null : r.result); }; r.onerror = function () { res(null); }; }); }
+  function dbSet(k, v) { return new Promise(function (res) { if (!db) return res(false); var t = db.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = function () { res(true); }; t.onerror = function () { res(false); }; }); }
+
+  function notes() { try { return JSON.parse(LS.get('chk_notes') || '[]'); } catch (e) { return []; } }
+  function renderNotes() {
+    var ul = $('notes'); ul.innerHTML = '';
+    notes().forEach(function (n) { var li = document.createElement('li'); li.textContent = fmt(n.t) + '　' + n.text; ul.appendChild(li); });
+    if (!ul.children.length) { var li = document.createElement('li'); li.className = 'sub'; li.textContent = 'まだ、メモはありません'; ul.appendChild(li); }
+  }
+
+  /* いまの状態 */
+  var standalone = (window.navigator.standalone === true) || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+  $('st-standalone').textContent = standalone ? 'はい' : 'いいえ';
+  results.standalone = standalone;
+  chip('c-1', standalone ? true : null, standalone ? 'できた' : 'まだ');
+  function online() { $('st-online').textContent = navigator.onLine ? 'はい' : 'いいえ'; }
+  online(); addEventListener('online', online); addEventListener('offline', online);
+  $('st-opens').textContent = opens + '回';
+  $('st-first').textContent = fmt(first);
+  var days = Math.floor((now - first) / 86400000);
+  $('st-days').textContent = days < 1 ? '1日たっていません' : days + '日たちました';
+
+  /* ② 保存 */
+  renderNotes();
+  openDb().then(function (d) {
+    db = d;
+    return dbGet('first').then(function (v) { if (!v) return dbSet('first', first); });
+  }).then(function () {
+    return dbGet('first');
+  }).then(function (v) {
+    var lsNotes = notes().length;
+    var ok = !!v && lsNotes >= 0 && !!LS.get('chk_first');
+    results.persist = ok;
+    chip('c-2', ok ? true : false, ok ? '保存できている' : '保存に問題あり');
+  });
+  if (navigator.storage && navigator.storage.persist) {
+    navigator.storage.persist().then(function (p) {
+      navigator.storage.estimate().then(function (e) {
+        $('persist-line').textContent = '消えにくくする申請：' + (p ? '通りました' : '通っていません（ふつうの保存です）') + '／使用量 ' + Math.round((e.usage || 0) / 1024) + 'KB';
+      }).catch(function () { $('persist-line').textContent = '消えにくくする申請：' + (p ? '通りました' : '通っていません'); });
+    }).catch(function () { $('persist-line').textContent = '消えにくくする申請：できませんでした'; });
+  } else { $('persist-line').textContent = '消えにくくする申請：この端末では使えません'; }
+  $('save-note').addEventListener('click', function () {
+    var v = $('note').value.trim(); if (!v) { $('note').focus(); return; }
+    var list = notes(); list.push({ t: Date.now(), text: v }); LS.set('chk_notes', JSON.stringify(list));
+    dbSet('notes', list); $('note').value = ''; renderNotes();
+  });
+
+  /* ③ オフライン */
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').then(function (reg) {
+      var done = function () { results.sw = true; chip('c-3', true, '準備できた'); $('sw-line').textContent = 'オフライン用の準備：できました'; };
+      if (reg.active) done(); else {
+        var w = reg.installing || reg.waiting;
+        if (w) w.addEventListener('statechange', function () { if (w.state === 'activated') done(); });
+      }
+    }).catch(function () { results.sw = false; chip('c-3', false, '準備できず'); $('sw-line').textContent = 'オフライン用の準備：できませんでした'; });
+  } else { results.sw = false; chip('c-3', false, '使えない'); $('sw-line').textContent = 'この端末では、オフライン用の準備ができません'; }
+
+  /* ④ バックアップ */
+  function snapshot() { return { app: 'shift-check', savedAt: Date.now(), first: first, opens: opens, notes: notes() }; }
+  $('backup-save').addEventListener('click', function () {
+    var json = JSON.stringify(snapshot(), null, 1);
+    var name = 'shift-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+    var file;
+    try { file = new File([json], name, { type: 'application/json' }); } catch (e) { file = null; }
+    var line = $('backup-line');
+    if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: 'シフト手帳のバックアップ' }).then(function () {
+        results.backup = true; chip('c-4', true, '保存できた'); line.textContent = '保存先を選べました。';
+      }).catch(function (e) {
+        if (e && e.name === 'AbortError') { line.textContent = '保存をやめました。'; return; }
+        results.backup = false; chip('c-4', false, '保存できず'); line.textContent = '共有画面が開けませんでした。';
+      });
+    } else {
+      var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([json], { type: 'application/json' })); a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      results.backup = true; chip('c-4', true, 'ダウンロードした'); line.textContent = '共有画面は使えなかったので、ダウンロードにしました。';
+    }
+  });
+  $('backup-file').addEventListener('change', function (e) {
+    var f = e.target.files && e.target.files[0]; if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      try {
+        var d = JSON.parse(r.result);
+        if (d.app !== 'shift-check') throw new Error('x');
+        LS.set('chk_notes', JSON.stringify(d.notes || [])); dbSet('notes', d.notes || []); renderNotes();
+        results.backup = true; chip('c-4', true, '戻せた'); $('backup-line').textContent = 'メモ ' + (d.notes || []).length + '件を、戻しました。';
+      } catch (err) { results.backup = false; chip('c-4', false, '戻せず'); $('backup-line').textContent = 'このファイルは、読み込めませんでした。'; }
+    };
+    r.readAsText(f);
+  });
+
+  /* ⑤ カメラ */
+  $('cam').addEventListener('change', function (e) {
+    var f = e.target.files && e.target.files[0]; if (!f) return;
+    var img = $('thumb'); img.src = URL.createObjectURL(f); img.hidden = false;
+    img.onload = function () { $('cam-line').textContent = '読み込めました：' + img.naturalWidth + '×' + img.naturalHeight + '／' + Math.round(f.size / 1024) + 'KB'; };
+    results.camera = true; chip('c-5', true, 'とれた');
+  });
+  [['backup-label', 'backup-file'], ['cam-label', 'cam']].forEach(function (p) {
+    $(p[0]).addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $(p[1]).click(); } });
+  });
+
+  /* 結果のコピー */
+  $('copy').addEventListener('click', function () {
+    var yn = function (v) { return v === true ? 'OK' : v === false ? 'うまくいかない' : 'まだ'; };
+    var text = [
+      '【シフト手帳 確認ページの結果】',
+      '日時：' + fmt(Date.now()),
+      '①ホーム画面から開いた：' + (results.standalone ? 'はい' : 'いいえ'),
+      '②保存：' + yn(results.persist) + '／開いた回数 ' + opens + '回／はじめて開いてから ' + days + '日',
+      '③オフライン：' + yn(results.sw) + '／いま ' + (navigator.onLine ? 'オンライン' : 'オフライン'),
+      '④バックアップ：' + yn(results.backup),
+      '⑤カメラ：' + yn(results.camera),
+      '記録しているメモ：' + notes().length + '件',
+      '端末：' + navigator.userAgent
+    ].join('\n');
+    var ta = $('report'); ta.hidden = false; ta.value = text;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { $('copy').textContent = 'コピーしました'; }, function () { ta.select(); });
+    } else { ta.select(); }
+  });
+})();
+</script>
+</body>
+</html>
