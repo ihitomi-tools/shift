@@ -101,7 +101,7 @@ section { display: grid; gap: 20px; min-width: 0; }
   --p-f1: #e08a1e; --p-f2: #1a9d8f; --p-f3: #7a5bd1; --p-warn-bg: #fff3dc; --p-warn: #a85a00; --p-ok: #1f8a57;
   --p-head-font: var(--f-head); --p-shadow: 0 1px 2px rgba(20, 30, 60, .06);
   --p-bad: #d9432f; --p-todo: #d9a400; --p-today-bg: #e6ecfd; --p-me: #3257d6; --p-p1: #d6457a; --p-p2: #5a8f1f;
-  --pal1: #3257d6; --pal2: #d6457a; --pal3: #5a8f1f; --pal4: #d9432f; --pal5: #d9a400; --pal6: #1ea0d6; --pal7: #8a5a3c;
+  --pal1: #3257d6; --pal2: #d6457a; --pal3: #5a8f1f; --pal4: #d9432f; --pal5: #d9a400; --pal6: #1ea0d6; --pal7: #8a5a3c; --pal8: #8a4fd6;
 }
 .phone[data-skin="dq"] {
   --p-bg: #000; --p-fg: #fff; --p-sub: #b8c0ff; --p-card: #0b1170;
@@ -109,7 +109,7 @@ section { display: grid; gap: 20px; min-width: 0; }
   --p-f1: #ff9a3c; --p-f2: #4de0c0; --p-f3: #c9a0ff; --p-warn-bg: #5a1010; --p-warn: #ffe14d; --p-ok: #7dff9a;
   --p-head-font: var(--f-body); --p-shadow: none;
   --p-bad: #ff6b5e; --p-todo: #ffb347; --p-today-bg: #1a22a8; --p-me: #ffe14d; --p-p1: #ff7ac8; --p-p2: #9dff7a;
-  --pal1: #ffe14d; --pal2: #ff7ac8; --pal3: #9dff7a; --pal4: #ff6b5e; --pal5: #ffb347; --pal6: #6fd8ff; --pal7: #d0a27a;
+  --pal1: #ffe14d; --pal2: #ff7ac8; --pal3: #9dff7a; --pal4: #ff6b5e; --pal5: #ffb347; --pal6: #6fd8ff; --pal7: #d0a27a; --pal8: #c9a0ff;
 }
 .win { background: var(--p-card); border: var(--p-border); border-radius: var(--p-r); padding: 8px 10px; box-shadow: var(--p-shadow); min-width: 0; }
 .win h4 { margin: 0 0 4px; font-family: var(--p-head-font); font-size: 12px; font-weight: 700; }
@@ -119,7 +119,7 @@ section { display: grid; gap: 20px; min-width: 0; }
 .right { margin-left: auto; text-align: right; }
 .title-row { display: flex; align-items: baseline; justify-content: space-between; padding: 0 2px; }
 .title-row b { font-family: var(--p-head-font); font-size: 16px; }
-.chip { display: inline-block; padding: 0 7px; border-radius: 999px; font-size: 10px; font-weight: 700; background: var(--p-accent); color: #fff; }
+.chip { flex: none; white-space: nowrap; display: inline-block; padding: 0 7px; border-radius: 999px; font-size: 10px; font-weight: 700; background: var(--p-accent); color: #fff; }
 .phone[data-skin="dq"] .chip { background: transparent; color: var(--p-accent); border: 1px solid var(--p-accent); border-radius: 3px; }
 .fl { display: inline-block; font-style: normal; min-width: 24px; text-align: center; font-weight: 800; font-size: 10px; line-height: 15px; border-radius: 4px; color: #fff; padding: 0 4px; }
 .phone[data-skin="dq"] .fl { color: #000; }
@@ -194,6 +194,8 @@ section { display: grid; gap: 20px; min-width: 0; }
 .phone[data-skin="stylish"] .opt.sel::before { content: "●"; color: var(--p-accent); }
 .opt::before { content: ""; }
 .tog { width: 30px; height: 17px; border-radius: 9px; background: var(--p-sub); position: relative; flex: none; opacity: .6; }
+.tog.on { background: var(--p-accent); opacity: 1; }
+.tog.on::after { left: 15px; }
 .tog::after { content: ""; position: absolute; width: 13px; height: 13px; border-radius: 50%; background: #fff; top: 2px; left: 2px; }
 .mini { height: 54px; border-radius: 4px; border: var(--p-border); display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; padding: 3px; }
 .mini i { background: var(--p-sub); opacity: .35; border-radius: 1px; }
@@ -250,8 +252,8 @@ section { display: grid; gap: 20px; min-width: 0; }
 .crow svg { flex: none; width: 24px; height: 24px; padding: 4px; border-radius: 50%; background: var(--pc); fill: #fff; }
 .phone[data-skin="dq"] .crow svg { fill: #000; }
 .crow b { width: 30px; font-size: 11px; }
-.sw { display: flex; gap: 4px; margin-left: auto; }
-.sw i { width: 14px; height: 14px; border-radius: 50%; background: var(--c); flex: none; }
+.sw { display: flex; gap: 3px; margin-left: auto; }
+.sw i { width: 13px; height: 13px; border-radius: 50%; background: var(--c); flex: none; }
 .sw i.on { box-shadow: 0 0 0 2px var(--p-card), 0 0 0 3.5px var(--c); }
 
 /* 回る看板のデモ */
@@ -351,6 +353,8 @@ symbol { overflow: visible; }
 .dl.ok { color: var(--p-sub); border: 1px solid var(--p-sub); }
 .phone[data-skin="dq"] .dl.over { color: #000; }
 .td.over { color: inherit; }
+.key { font-weight: 800; font-size: 12px; line-height: 1.7; padding: 6px 9px; margin-bottom: 4px; background: var(--p-bg); border: var(--p-border); border-radius: var(--p-r); }
+.code { font-family: ui-monospace, Menlo, monospace; font-size: 8.5px; line-height: 1.4; word-break: break-all; color: var(--p-sub); max-height: 44px; overflow: hidden; padding: 5px 7px; background: var(--p-bg); border: var(--p-border); border-radius: var(--p-r); }
 
 /* 予定のアイコン */
 .ei, .ico, .ib svg { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
@@ -427,14 +431,15 @@ td.rec, th.rec { background: var(--accent-soft); }
     <p>ここまでの話し合いで固まった内容です。画面の例は、下の「画面イメージ」に並べています。</p>
   </div>
   <div class="summary">
-    <div class="sum"><b>見た目と色</b><span>スタイリッシュ。フォントはBIZ UDPゴシックとM PLUS Rounded 1c。自分の色は、設定で7色から選べます。</span></div>
-    <div class="sum"><b>トップ画面</b><span>自分のカレンダーだけ。今日は丸と枠で目立たせます。月の切り替えは「‹ ›」。</span></div>
+    <div class="sum"><b>見た目と色</b><span>スタイリッシュ。フォントはBIZ UDPゴシックとM PLUS Rounded 1c。自分の色は、設定で8色から選べます。</span></div>
+    <div class="sum"><b>トップ画面</b><span>自分のカレンダーだけ。今日は丸と枠で目立たせます。月の切り替えは「‹ ›」。日付をタップすると、その日の詳細（職場・予定・やること・あの人たち）が開きます。</span></div>
     <div class="sum"><b>吊り看板（3ページ）</b><span>下の人型の雲「あの人は？」「やることあったっけ？」をタップすると、看板が回って、登録した2人の重ね表示／締め切りの印つきカレンダーが出ます。</span></div>
     <div class="sum"><b>日ごとの職場</b><span>3階建ての図で、午後（お母さん）を大きく、午前は参考に。常勤・夜勤・看護は下の表に。</span></div>
     <div class="sum"><b>予定とやること</b><span>予定は、自分とじいちゃん別に、病院・買い物・ご飯・銀行・★のアイコンで。やることは、締め切りつき（なしもOK）。</span></div>
     <div class="sum"><b>呼び方</b><span>じいちゃん（狭い所は「じ」）、あの人は？、やることあったっけ？</span></div>
-    <div class="sum"><b>共有</b><span>最初は画像、次にカレンダー用ファイル、必要なら自動更新。病院の予定は初期設定では送りません。</span></div>
+    <div class="sum"><b>共有</b><span>最初は画像、次にカレンダー用ファイル、必要なら自動更新。やることも送ります。病院の予定は初期設定では送りません。</span></div>
     <div class="sum"><b>撮影の読み取り</b><span>撮影して候補を作り、あやしい所だけ黄色で確認。登録した2人と、自分の行を拾います。</span></div>
+    <div class="sum"><b>引き継ぎ（バックアップ）</b><span>キーのことば＋コードで、機種変更の時に全部もどします。通知は、最初の版ではなしです。</span></div>
   </div>
 </section>
 
@@ -574,11 +579,14 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="win">
             <div class="row"><div class="grow"><b>病院の予定も送る</b><div class="sub">オフの時は「予定あり」とだけ表示</div></div><span class="tog"></span></div>
           </div>
+          <div class="win">
+            <div class="row"><div class="grow"><b>やることも送る</b><div class="sub">締め切りつきのやること</div></div><span class="tog on"></span></div>
+          </div>
           <div class="btn">送る</div>
         </div>
         <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span class="on"><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
-      <figcaption><b>⑤ 共有</b>病院の予定の詳細はオフが初期設定。病院名や病名は、送りたい時だけ送ります。</figcaption>
+      <figcaption><b>⑤ 共有</b>病院の予定の詳細はオフが初期設定。病院名や病名は、送りたい時だけ送ります。やることは、送る設定にしました（オフにもできます）。</figcaption>
     </figure>
     <figure class="fig">
       <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
@@ -593,15 +601,15 @@ td.rec, th.rec { background: var(--accent-soft); }
           <div class="btn ghost">＋ 人を追加（いまは2人で上限）</div>
           <div class="win">
             <h4>人の色（自分も変えられます）</h4>
-            <div class="crow me"><svg><use href="#pp"/></svg><b>自分</b><span class="sw"><i style="--c:var(--pal1)" class="on"></i><i style="--c:var(--pal2)"></i><i style="--c:var(--pal3)"></i><i style="--c:var(--pal4)"></i><i style="--c:var(--pal5)"></i><i style="--c:var(--pal6)"></i><i style="--c:var(--pal7)"></i></span></div>
-            <div class="crow p1"><svg><use href="#pp"/></svg><b>田中</b><span class="sw"><i style="--c:var(--pal1)"></i><i style="--c:var(--pal2)" class="on"></i><i style="--c:var(--pal3)"></i><i style="--c:var(--pal4)"></i><i style="--c:var(--pal5)"></i><i style="--c:var(--pal6)"></i><i style="--c:var(--pal7)"></i></span></div>
-            <div class="crow p2"><svg><use href="#pp"/></svg><b>森</b><span class="sw"><i style="--c:var(--pal1)"></i><i style="--c:var(--pal2)"></i><i style="--c:var(--pal3)" class="on"></i><i style="--c:var(--pal4)"></i><i style="--c:var(--pal5)"></i><i style="--c:var(--pal6)"></i><i style="--c:var(--pal7)"></i></span></div>
+            <div class="crow me"><svg><use href="#pp"/></svg><b>自分</b><span class="sw"><i style="--c:var(--pal1)" class="on"></i><i style="--c:var(--pal2)"></i><i style="--c:var(--pal3)"></i><i style="--c:var(--pal4)"></i><i style="--c:var(--pal5)"></i><i style="--c:var(--pal6)"></i><i style="--c:var(--pal7)"></i><i style="--c:var(--pal8)"></i></span></div>
+            <div class="crow p1"><svg><use href="#pp"/></svg><b>田中</b><span class="sw"><i style="--c:var(--pal1)"></i><i style="--c:var(--pal2)" class="on"></i><i style="--c:var(--pal3)"></i><i style="--c:var(--pal4)"></i><i style="--c:var(--pal5)"></i><i style="--c:var(--pal6)"></i><i style="--c:var(--pal7)"></i><i style="--c:var(--pal8)"></i></span></div>
+            <div class="crow p2"><svg><use href="#pp"/></svg><b>森</b><span class="sw"><i style="--c:var(--pal1)"></i><i style="--c:var(--pal2)"></i><i style="--c:var(--pal3)" class="on"></i><i style="--c:var(--pal4)"></i><i style="--c:var(--pal5)"></i><i style="--c:var(--pal6)"></i><i style="--c:var(--pal7)"></i><i style="--c:var(--pal8)"></i></span></div>
           </div>
           <div class="win"><h4>プライバシー</h4><span class="sub">端末の中だけに保存。相手への通知も、ひとみへの共有もありません。</span></div>
         </div>
         <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
       </div></div>
-      <figcaption><b>⑥ 設定：登録する人と色</b>登録は2人まで。人の色は7色から選べて、自分の色も変えられます。辞めたら外して、別の人を入れます。</figcaption>
+      <figcaption><b>⑥ 設定：登録する人と色</b>登録は2人まで。人の色は8色から選べて、自分の色も変えられます。辞めたら外して、別の人を入れます。</figcaption>
     </figure>
     <figure class="fig">
       <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
@@ -645,6 +653,33 @@ td.rec, th.rec { background: var(--accent-soft); }
       </div></div>
       <figcaption><b>⑧ やること（締め切りつき）</b>予定とは別のリストです。期限をすぎたものが赤、近いものがオレンジで上に並びます。丸を押すと完了。内容、締め切り（なしでもOK）、だれの、アイコン（なくてもOK）を書けます。締め切りなしは、いちばん下に並びます。</figcaption>
     </figure>
+    <figure class="fig">
+      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+        <div class="body">
+          <div class="title-row"><b>‹ 11月17日（火） ›</b><span class="sub">勤務なし</span></div>
+          <div class="sub" style="text-align:center">↑ 上に、3階建ての「その日の職場」の図があります</div>
+          <div class="win"><h4>予定</h4><div class="row"><span class="who-tag me">自分</span><span class="grow"><svg class="ico"><use href="#e-bank"/></svg><b>銀行</b></span><span class="sub">10:00</span></div></div>
+          <div class="win"><h4>やること（この日が締め切り）</h4><div class="row"><span class="who-tag me">自分</span><span class="grow"><svg class="ico"><use href="#e-hosp"/></svg><b>お薬をもらう</b></span><span class="dl soon">今日まで</span></div></div>
+          <div class="win"><h4>あの人は？</h4><div class="people"><span class="pc me off"><svg><use href="#pp"/></svg><span class="tx"><b>自分</b><i>お休み</i></span></span><span class="pc p1 off"><svg><use href="#pp"/></svg><span class="tx"><b>田中</b><i>お休み</i></span></span><span class="pc p2"><svg><use href="#pp"/></svg><span class="tx"><b>森</b><i>午前 2F</i></span></span></div></div>
+        </div>
+        <div class="tabbar"><span class="on"><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+      </div></div>
+      <figcaption><b>⑨ 日付をタップすると</b>どのカレンダーの日付でも、その日の詳細が開きます。上に「その日の職場」の図、下に、その日の予定、締め切りのやること、あの人たちの様子が並びます。休みの日でも開きます。</figcaption>
+    </figure>
+    <figure class="fig">
+      <div class="phone" data-skin="stylish"><div class="screen"><div class="island"></div>
+        <div class="status"><span>9:41</span><span>●●● 5G</span></div>
+        <div class="body">
+          <div class="title-row"><b>引き継ぎ</b><span class="sub">設定 ›</span></div>
+          <div class="win"><h4>バックアップキー</h4><div class="key">さくら ・ みかん ・ ほし<br>うみ ・ ねこ ・ もり</div><span class="sub">このことばを、メモして保管します。</span></div>
+          <div class="win"><h4>バックアップコード</h4><div class="code">Qm9yZGVyOiAxLjA7IGFHRjJaU0J6YUdsbWRDQjBiMlJ2SUhCc1lXNHNJR3AxYzNRZ1lTQnpZVzF3YkdVZ2MzUnlhVzVuTGk0dUpGOTNPVE5xVVVOaGNtVWdkR1Z6ZEE9PQ…</div><div class="row" style="margin-top:6px"><span class="chip">コピー</span><span class="sub">LINEのKeepなどに貼って保管</span></div></div>
+          <div class="win"><h4>新しいスマホで戻す</h4><span class="sub">コードを貼って、キーのことばを入れると、予定もシフトも全部もどります。</span></div>
+        </div>
+        <div class="tabbar"><span><i><svg class="ic"><use href="#ic-cal"/></svg></i>月</span><span><i><svg class="ic"><use href="#ic-today"/></svg></i>今日</span><span><i><svg class="ic"><use href="#ic-plus"/></svg></i>予定</span><span><i><svg class="ic"><use href="#ic-todo"/></svg></i>やること</span><span><i><svg class="ic"><use href="#ic-send"/></svg></i>送る</span></div>
+      </div></div>
+      <figcaption><b>⑩ 引き継ぎ（バックアップ）</b>ゲームの引き継ぎのような形です。キーのことばで、データを暗号にしてコードにします。機種変更の前にコードを保管して、新しいスマホで、コードとキーを入れると戻ります。</figcaption>
+    </figure>
 
   </div>
 </section>
@@ -652,7 +687,7 @@ td.rec, th.rec { background: var(--accent-soft); }
 <section>
   <div class="sec-head">
     <h2>自分の色を変えると</h2>
-    <p>設定で、自分の色を7色から選べます。色を押すと、このページの画面すべて（人型、自分の札、今日の丸、タブ、ボタン）がその色に変わります。下の一覧は、トップ画面を7色で並べたものです。押すと、全画面がその色になります。</p>
+    <p>設定で、自分の色を8色から選べます。色を押すと、このページの画面すべて（人型、自分の札、今日の丸、タブ、ボタン）がその色に変わります。下の一覧は、トップ画面を8色で並べたものです。押すと、全画面がその色になります。</p>
   </div>
   <div class="swrow" id="swrow" role="group" aria-label="自分の色"></div>
   <div class="cmpgrid" id="cmp"></div>
@@ -733,7 +768,8 @@ td.rec, th.rec { background: var(--accent-soft); }
       <li><b>Webアプリ方式で細かい動作（通知・保存の安定性など）は、iPhoneのバージョンで差が出ることがあります。</b>最初に小さい試作を入れて実機で確かめるのが安全です。</li>
       <li><b>病院の予定は、配慮が必要な個人情報です。</b>共有の初期設定は「送らない」にして、送る時に毎回選べる形を考えています。</li>
       <li><b>同僚の名前を読み取るには、写真を読み取りサービスに送る方式が現実的です。</b>端末内だけで読む方式にもできますが、表の読み取りは精度が落ちると思います（推測）。職場の方針として問題がないか、確認しておくと安心です。</li>
-      <li><b>締め切りや通院の前の「お知らせ（通知）」は、約束できません。</b>ホーム画面に置くWebアプリで、iPhoneにきちんと届けるには、通知を送る仕組み（サーバー）が別に要ると思います（私の理解です）。最初の版は、開いた時に「あと◯日」と色で知らせます。</li>
+      <li><b>「お知らせ（通知）」は、最初の版ではなしにします。</b>iPhoneにきちんと届けるには、通知を送る仕組み（サーバー）が別に要ると思います（私の理解です）。最初は、開いた時に「あと◯日」と色で知らせます。</li>
+      <li><b>引き継ぎのコードは、保管するのはお母さんです。</b>キーのことばを忘れたり、コードをなくしたりすると、戻せません。短いコードだけで戻す方式（ゲームの引き継ぎコード）は、データを置くサーバーが要るので、別の案です。</li>
     </ul>
   </div>
 </section>
@@ -744,9 +780,9 @@ td.rec, th.rec { background: var(--accent-soft); }
     <p>まだ決まっていないことです。分かる所からで大丈夫。</p>
   </div>
   <ol class="qs">
-    <li><b>保存のしかた（バックアップ）</b><span>基本は、お母さんのiPhone Airの中だけに保存します。機種変更や、アプリを消した時のために、バックアップをどうしますか？</span></li>
-    <li><b>お知らせ（通知）は、必要？</b><span>必要なら、通知を送る仕組みが別に要ります。まずは「開いた時の色の知らせ」だけで足りるか、使いながら決める手もあります。</span></li>
-    <li><b>ひとみに見せる範囲は、どこまで？</b><span>勤務、買い物・ご飯、じいちゃんの予定。病院の予定は、初期設定では送らない案でいいですか？</span></li>
+    <li><b>引き継ぎは、「キーのことば＋コード」でいい？</b><span>保管するのはお母さん（またはひとみ）です。コードをLINEのKeepなどに貼っておく形で、使えそうですか？</span></li>
+    
+    <li><b>ひとみに見せる範囲</b><span>勤務、予定、やること（送る設定）で決まりました。病院の予定だけ、初期設定ではオフです。</span></li>
     <li><b>1月からの過去のシフト表を、何枚か見せてもらえますか？</b><span>月ごとにレイアウトが変わるかを確かめて、読み取りのテストに使います。</span></li>
     <li><b>雲の素材の利用条件</b><span>素材サイトの規約（アプリへの組み込み・加工）を確認してもらえると安心です。</span></li>
     <li><b>アプリの名前</b><span>「シフト手帳（仮）」のままでいいですか？　予定とやることも入るので、変えたい気持ちがあれば。</span></li>
@@ -873,7 +909,7 @@ td.rec, th.rec { background: var(--accent-soft); }
   function faceHtml(i) {
     if (i === 0) return '<div class="mrow">‹ 2026年11月 ›</div><div class="cal">' + cellsMe() + '</div>';
     if (i === 1) return '<div class="plate ov"><span class="av3"><i class="me"></i><i class="p1"></i><i class="p2"></i></span>あの人は？<span class="sub">11月</span></div><div class="cal">' + cellsOv() + '</div>';
-    return '<div class="plate td"><svg class="ei" style="width:15px;height:15px"><use href="#ic-todo"/></svg>やることあったっけ？<span class="sub">4件</span></div><div class="cal">' + cellsTodo() + '</div>';
+    return '<div class="plate td">やることあったっけ？</div><div class="cal">' + cellsTodo() + '</div>';
   }
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -900,7 +936,7 @@ td.rec, th.rec { background: var(--accent-soft); }
       if (n === cur) return;
       var tgt = 1 - side;
       faces[tgt].innerHTML = faceHtml(n);
-      var dir = (n === 1 || (n === 0 && cur === 1)) ? -1 : 1;   // あの人は？ だけ逆回転
+      var dir = n === 1 ? -1 : n === 2 ? 1 : (cur === 1 ? 1 : -1);   // 左へ回ったら右にもどる／右へ回ったら左にもどる
       rot += dir * 180;
       fin.style.transform = 'rotateY(' + rot + 'deg)';
       side = tgt; cur = n;
@@ -924,8 +960,8 @@ td.rec, th.rec { background: var(--accent-soft); }
   });
 
   /* 自分の色 */
-  var NAMES = ['ブルー', 'ピンク', 'グリーン', 'レッド', 'イエロー', 'スカイ', 'ブラウン'];
-  var HEX = ['#3257d6', '#d6457a', '#5a8f1f', '#d9432f', '#d9a400', '#1ea0d6', '#8a5a3c'];
+  var NAMES = ['ブルー', 'ピンク', 'グリーン', 'レッド', 'イエロー', 'スカイ', 'ブラウン', 'パープル'];
+  var HEX = ['#3257d6', '#d6457a', '#5a8f1f', '#d9432f', '#d9a400', '#1ea0d6', '#8a5a3c', '#8a4fd6'];
   function applyColor(ph, i) {
     var v = 'var(--pal' + (i + 1) + ')';
     ph.style.setProperty('--p-me', v);
