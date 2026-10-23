@@ -991,6 +991,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       if (v) ps.push(put('shifts', id, { person: pp.who, date: ymd(y, m, d), slot: isMe ? 'pm' : v.slot, floor: v.floor, from: 'photo' }));
       else if (S.shifts[id]) ps.push(del('shifts', id));
     }
+    plan.fixes.forEach(function (f) { if (f.who === pp.who && f.sel === undefined) done[pp.who + '_' + ymd(y, m, f.d)] = 1; });
     Object.keys(S.shifts).forEach(function (id) {
       var x = S.shifts[id];
       if (x.person === pp.who && x.from === 'photo' && String(x.date).slice(0, 7) === ym && !done[id]) ps.push(del('shifts', id));
