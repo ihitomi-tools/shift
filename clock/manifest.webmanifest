@@ -1,11 +1,11 @@
 {
-  "name": "シンプル時計",
+  "name": "ねこ時計",
   "short_name": "時計",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#1f2a37",
-  "theme_color": "#1f2a37",
+  "background_color": "#1a1025",
+  "theme_color": "#1a1025",
   "lang": "ja",
   "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
 }
