@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ねこフリップ時計</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+/* Tailwind（このページで使う分だけ事前に変換したもの。外部CDN不使用） */
+*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.absolute{position:absolute}.relative{position:relative}.-top-36{top:-9rem}.-top-6{top:-1.5rem}.bottom-2{bottom:.5rem}.left-0{left:0}.left-3\.5{left:.875rem}.left-4{left:1rem}.right-0{right:0}.right-3{right:.75rem}.right-4{right:1rem}.right-\[22\%\]{right:22%}.top-1\/2{top:50%}.top-2\.5{top:.625rem}.z-20{z-index:20}.z-30{z-index:30}.my-auto{margin-top:auto;margin-bottom:auto}.inline-block{display:inline-block}.flex{display:flex}.h-2{height:.5rem}.h-32{height:8rem}.h-36{height:9rem}.h-4{height:1rem}.h-8{height:2rem}.h-\[2px\]{height:2px}.h-full{height:100%}.w-1\.5{width:.375rem}.w-10{width:2.5rem}.w-2{width:.5rem}.w-20{width:5rem}.w-32{width:8rem}.w-6{width:1.5rem}.w-full{width:100%}.-translate-y-1\/2{--tw-translate-y:-50%}.-translate-y-1\/2,.scale-x-\[-1\]{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.scale-x-\[-1\]{--tw-scale-x:-1}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-2{gap:.5rem}.gap-4{gap:1rem}.overflow-hidden{overflow:hidden}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-xl{border-radius:.75rem}.rounded-l{border-top-left-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-r{border-top-right-radius:.25rem;border-bottom-right-radius:.25rem}.border{border-width:1px}.border-\[\#38302C\]{--tw-border-opacity:1;border-color:rgb(56 48 44/var(--tw-border-opacity,1))}.border-\[\#4E423D\]{--tw-border-opacity:1;border-color:rgb(78 66 61/var(--tw-border-opacity,1))}.bg-\[\#181412\]{--tw-bg-opacity:1;background-color:rgb(24 20 18/var(--tw-bg-opacity,1))}.bg-\[\#1B1715\]{--tw-bg-opacity:1;background-color:rgb(27 23 21/var(--tw-bg-opacity,1))}.bg-\[\#1F1A17\]{--tw-bg-opacity:1;background-color:rgb(31 26 23/var(--tw-bg-opacity,1))}.bg-\[\#26211E\]{--tw-bg-opacity:1;background-color:rgb(38 33 30/var(--tw-bg-opacity,1))}.bg-\[\#38302C\]{--tw-bg-opacity:1;background-color:rgb(56 48 44/var(--tw-bg-opacity,1))}.bg-amber-400{--tw-bg-opacity:1;background-color:rgb(251 191 36/var(--tw-bg-opacity,1))}.p-4{padding:1rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.pt-3{padding-top:.75rem}.text-right{text-align:right}.text-7xl{font-size:4.5rem;line-height:1}.text-\[10px\]{font-size:10px}.text-base{font-size:1rem;line-height:1.5rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.tracking-tighter{letter-spacing:-.05em}.tracking-wider{letter-spacing:.05em}.tracking-widest{letter-spacing:.1em}.text-\[\#38302C\]{--tw-text-opacity:1;color:rgb(56 48 44/var(--tw-text-opacity,1))}.text-\[\#A6968C\]{--tw-text-opacity:1;color:rgb(166 150 140/var(--tw-text-opacity,1))}.text-\[\#F5EBE6\]{--tw-text-opacity:1;color:rgb(245 235 230/var(--tw-text-opacity,1))}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36/var(--tw-text-opacity,1))}.text-amber-400\/80{color:rgba(251,191,36,.8)}.opacity-20{opacity:.2}.shadow-sm{--tw-shadow:0 1px 2px 0 rgba(0,0,0,.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.drop-shadow-\[0_8px_15px_rgba\(0\2c 0\2c 0\2c 0\.6\)\]{--tw-drop-shadow:drop-shadow(0 8px 15px rgba(0,0,0,.6));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-300{transition-duration:.3s}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}.group:hover .group-hover\:opacity-50{opacity:.5}@media (min-width:0px){.sm\:-top-8{top:-2rem}.sm\:right-\[26\%\]{right:26%}.sm\:h-10{height:2.5rem}.sm\:h-44{height:11rem}.sm\:h-48{height:12rem}.sm\:h-6{height:1.5rem}.sm\:h-\[3px\]{height:3px}.sm\:w-14{width:3.5rem}.sm\:w-2{width:.5rem}.sm\:w-28{width:7rem}.sm\:w-52{width:13rem}.sm\:gap-8{gap:2rem}.sm\:rounded-3xl{border-radius:1.5rem}.sm\:p-7{padding:1.75rem}.sm\:text-9xl{font-size:8rem;line-height:1}.sm\:text-lg{font-size:1.125rem;line-height:1.75rem}.sm\:text-sm{font-size:.875rem;line-height:1.25rem}.sm\:text-xs{font-size:.75rem;line-height:1rem}}
+/* ここからデザイン元のCSS（そのまま） */
+html,body{height:100%; margin:0; overflow:hidden; background:#26211E}
+body{font-family:'M PLUS Rounded 1c', sans-serif; user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent}
+.font-flip{font-family:'Share Tech Mono','M PLUS Rounded 1c',monospace}
+.flip-card{box-shadow:0 12px 25px -5px rgba(0,0,0,.5), inset 0 2px 4px rgba(255,255,255,.1)}
+@keyframes flipBounce{0%{transform:scaleY(1)}30%{transform:scaleY(.85)}100%{transform:scaleY(1)}}
+.flip-anim{animation:flipBounce .35s ease-out}
+/* 画面の大きさに合わせて拡大縮小（元デザインは19.5:9の横画面） */
+#canvas{position:absolute; left:50%; top:50%; width:800px; height:369px; transform-origin:center}
+</style>
+</head>
+<body>
+<div id="canvas">
+            <div id="design-3" class="w-full h-full relative bg-[#26211E] text-[#F5EBE6] flex flex-col items-center justify-between p-4 sm:p-7 overflow-hidden">
+                <div class="w-full flex items-center justify-between px-4 text-xs sm:text-sm font-flip tracking-widest text-[#A6968C]">
+                    <div class="flex items-center gap-2">
+                        <span class="inline-block w-2 h-2 rounded-full bg-amber-400"></span>
+                        <span>NEKO-FLIP CLOCK</span>
+                    </div>
+                    <div id="d3-date">2026-10-25 SUN</div>
+                </div>
+                <div id="d3-cat-paw" style="transform:translateY(-28px)" class="absolute -top-36 right-[22%] sm:right-[26%] z-30 transition-transform duration-300 ease-in-out pointer-events-none">
+                    <svg class="w-20 h-36 sm:w-28 sm:h-44 drop-shadow-[0_8px_15px_rgba(0,0,0,0.6)]" viewBox="0 0 100 170">
+                        <rect x="28" y="0" width="44" height="115" fill="#E5DCD3"/>
+                        <path d="M 28 25 H 45 M 28 45 H 48 M 72 35 H 55" stroke="#8C7A6B" stroke-width="6" stroke-linecap="round"/>
+                        <circle cx="50" cy="115" r="26" fill="#FFFFFF"/>
+                        <ellipse cx="50" cy="120" rx="11" ry="9" fill="#F48FB1"/>
+                        <circle cx="35" cy="105" r="5.5" fill="#F48FB1"/>
+                        <circle cx="45" cy="99" r="5.5" fill="#F48FB1"/>
+                        <circle cx="56" cy="99" r="5.5" fill="#F48FB1"/>
+                        <circle cx="65" cy="105" r="5.5" fill="#F48FB1"/>
+                    </svg>
+                </div>
+                <div class="flex items-center justify-center gap-4 sm:gap-8 my-auto pt-3">
+                    <div class="relative">
+                        <svg class="w-10 h-8 sm:w-14 sm:h-10 absolute -top-6 sm:-top-8 left-4 text-[#38302C]" viewBox="0 0 60 45" fill="currentColor"><path d="M 5 45 L 15 5 Q 18 0 23 4 L 55 45 Z"/><polygon points="15,40 20,14 42,40" fill="#4E423D"/></svg>
+                        <svg class="w-10 h-8 sm:w-14 sm:h-10 absolute -top-6 sm:-top-8 right-4 text-[#38302C] scale-x-[-1]" viewBox="0 0 60 45" fill="currentColor"><path d="M 5 45 L 15 5 Q 18 0 23 4 L 55 45 Z"/><polygon points="15,40 20,14 42,40" fill="#4E423D"/></svg>
+                        <div id="d3-card-h" class="flip-card relative w-32 h-32 sm:w-52 sm:h-48 bg-[#38302C] rounded-2xl sm:rounded-3xl border border-[#4E423D] flex items-center justify-center overflow-hidden">
+                            <div class="w-full h-[2px] sm:h-[3px] bg-[#1F1A17] absolute top-1/2 left-0 z-20 shadow-sm"></div>
+                            <div class="w-1.5 h-4 sm:w-2 sm:h-6 bg-[#181412] absolute top-1/2 -translate-y-1/2 left-0 z-20 rounded-r"></div>
+                            <div class="w-1.5 h-4 sm:w-2 sm:h-6 bg-[#181412] absolute top-1/2 -translate-y-1/2 right-0 z-20 rounded-l"></div>
+                            <span id="d3-ampm" class="absolute top-2.5 left-3.5 text-[10px] sm:text-xs font-flip text-amber-400/80 tracking-wider">PM</span>
+                            <span id="d3-hours" class="font-flip text-7xl sm:text-9xl font-bold text-[#F5EBE6] tracking-tighter select-none">18</span>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <svg class="w-10 h-8 sm:w-14 sm:h-10 absolute -top-6 sm:-top-8 left-4 text-[#38302C]" viewBox="0 0 60 45" fill="currentColor"><path d="M 5 45 L 15 5 Q 18 0 23 4 L 55 45 Z"/><polygon points="15,40 20,14 42,40" fill="#4E423D"/></svg>
+                        <svg class="w-10 h-8 sm:w-14 sm:h-10 absolute -top-6 sm:-top-8 right-4 text-[#38302C] scale-x-[-1]" viewBox="0 0 60 45" fill="currentColor"><path d="M 5 45 L 15 5 Q 18 0 23 4 L 55 45 Z"/><polygon points="15,40 20,14 42,40" fill="#4E423D"/></svg>
+                        <div id="d3-card-m" class="flip-card cursor-pointer relative w-32 h-32 sm:w-52 sm:h-48 bg-[#38302C] rounded-2xl sm:rounded-3xl border border-[#4E423D] flex items-center justify-center overflow-hidden group">
+                            <div class="w-full h-[2px] sm:h-[3px] bg-[#1F1A17] absolute top-1/2 left-0 z-20 shadow-sm"></div>
+                            <div class="w-1.5 h-4 sm:w-2 sm:h-6 bg-[#181412] absolute top-1/2 -translate-y-1/2 left-0 z-20 rounded-r"></div>
+                            <div class="w-1.5 h-4 sm:w-2 sm:h-6 bg-[#181412] absolute top-1/2 -translate-y-1/2 right-0 z-20 rounded-l"></div>
+                            <span class="absolute bottom-2 right-3 text-xs sm:text-sm opacity-20 group-hover:opacity-50 transition-opacity">🐾</span>
+                            <span id="d3-minutes" class="font-flip text-7xl sm:text-9xl font-bold text-[#F5EBE6] tracking-tighter select-none">49</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full flex items-center justify-between bg-[#1B1715] px-5 py-2 rounded-xl border border-[#38302C]">
+                    <div class="flex items-center gap-2 text-xs text-[#A6968C]">
+                        <span>🐾 タップでねこの手</span>
+                    </div>
+                    <div class="flex items-center gap-2 font-flip text-amber-400">
+                        <span class="text-xs text-[#A6968C]">SEC</span>
+                        <span id="d3-sec" class="text-base sm:text-lg font-bold w-6 text-right">00</span>
+                    </div>
+                </div>
+            </div>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const canvas = $('canvas');
+  const fit = () => {
+    const s = Math.min(innerWidth / 800, innerHeight / 369);
+    canvas.style.transform = `translate(-50%,-50%) scale(${s})`;
+  };
+  addEventListener('resize', fit); fit();
+
+  const daysEn = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const h12 = () => { try { return localStorage.getItem('h12') === '1'; } catch { return false; } };
+  let lastMinute = -1, busy = false;
+
+  function setDigits(hStr, mStr){ $('d3-hours').textContent = hStr; $('d3-minutes').textContent = mStr; }
+
+  // ねこの手がニュッと降りてきて、分パネルをパタッとめくる
+  function playPaw(onHit){
+    if (busy) { onHit && onHit(); return; }
+    busy = true;
+    const paw = $('d3-cat-paw'), card = $('d3-card-m');
+    paw.style.transform = 'translateY(115px)';
+    setTimeout(() => {
+      card.classList.remove('flip-anim'); void card.offsetWidth; card.classList.add('flip-anim');
+      onHit && onHit();
+    }, 220);
+    setTimeout(() => { paw.style.transform = 'translateY(-28px)'; busy = false; }, 520);
+  }
+  $('d3-card-m').addEventListener('click', () => playPaw());
+
+  let timer = 0;
+  function update(){
+    clearTimeout(timer);
+    const now = new Date(), h = now.getHours(), m = now.getMinutes();
+    const hStr = String(h12() ? (h % 12 || 12) : h).padStart(2, '0'), mStr = String(m).padStart(2, '0');
+    $('d3-sec').textContent = String(now.getSeconds()).padStart(2, '0');
+    $('d3-ampm').textContent = h >= 12 ? 'PM' : 'AM';
+    $('d3-date').textContent = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${daysEn[now.getDay()]}`;
+    if (lastMinute !== -1 && lastMinute !== m && !document.hidden) playPaw(() => setDigits(hStr, mStr));
+    else setDigits(hStr, mStr);
+    lastMinute = m;
+    timer = setTimeout(update, 1000 - (Date.now() % 1000) + 15);
+  }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) update(); });
+  update();
+})();
+</script>
+</body>
+</html>
