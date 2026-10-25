@@ -49,74 +49,11 @@ button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
 }
 #app{height:100dvh; display:flex; flex-direction:column; background:var(--bg); color:var(--text); transition:background .6s}
 #stage{flex:1; min-height:0; position:relative; container-type:size; overflow:hidden}
-.view,.face{position:absolute; inset:0; display:none}
+.view{position:absolute; inset:0; display:none}
 #app[data-view="clock"] #v-clock,#app[data-view="sw"] #v-sw,#app[data-view="tm"] #v-tm{display:block}
-#app[data-face="1"] #f1{display:block}
-#app[data-face="2"] #f2{display:flex}
-#app[data-face="3"] #f3{display:block}
 
-/* ===== 案1 窓辺のシルエット ===== */
-.stars,.sun{position:absolute; inset:0; transition:opacity 1s; pointer-events:none}
-.stars i{position:absolute; border-radius:50%; background:#fff; animation:twinkle 3s infinite ease-in-out}
-.moon{position:absolute; right:6%; top:7cqh; width:min(8cqw,15cqh); color:#fef3c7; filter:drop-shadow(0 0 10px rgba(254,243,199,.55))}
-.sun b{position:absolute; border-radius:50%}
-.sun .glow{right:4%; top:3cqh; width:min(16cqw,30cqh); aspect-ratio:1; background:rgba(253,230,138,.45); filter:blur(14px)}
-.sun .disc{right:7%; top:7cqh; width:min(9cqw,17cqh); aspect-ratio:1; background:#fef3c7; box-shadow:0 0 30px rgba(255,255,255,.85)}
-#app[data-sky="night"] .sun,#app[data-sky="day"] .stars{opacity:0}
-#app[data-sky="sunset"] .stars{opacity:.3}
-.f1-frame{position:absolute; inset:0; border:min(1.8cqw,3.5cqh) solid rgba(5,8,18,.88); z-index:3; pointer-events:none}
-.f1-frame::after{content:""; position:absolute; left:50%; top:0; bottom:0; width:max(2px,.4cqw); transform:translateX(-50%); background:rgba(5,8,18,.35)}
-.f1-time{position:absolute; left:0; right:0; top:calc(min(1.8cqw,3.5cqh) + 3cqh); text-align:center; z-index:4; pointer-events:none}
-#app[data-sky="sunset"] .f1-time{text-shadow:0 2px 14px rgba(0,0,0,.4)}
-.f1-date{font-size:min(2.8cqw,5.2cqh); letter-spacing:.25em; font-weight:700; color:var(--sub)}
-.f1-big{display:inline-flex; align-items:baseline; gap:.15em; font-size:min(19cqw,42cqh); font-weight:800; line-height:1.05; letter-spacing:.02em; font-variant-numeric:tabular-nums}
-.f1-ss{font-size:.28em; font-weight:700; opacity:.78; width:1.3em; text-align:left}
-.sill{position:absolute; left:0; right:0; bottom:0; height:9cqh; background:#090d16; border-top:1px solid rgba(255,255,255,.14); z-index:6}
-.cat1{position:absolute; bottom:calc(9cqh - 1px); left:58%; height:min(38cqh,34cqw); aspect-ratio:200/220; z-index:5; cursor:pointer; filter:drop-shadow(0 0 1.2px var(--rim))}
-.cat1 svg{width:100%; height:100%; overflow:visible}
-.sil{fill:#090d16}.sil-s{stroke:#090d16}
-.cat1 .tail-w{transform-box:view-box; transform-origin:100px 185px; animation:tailWag 2s infinite ease-in-out}
-.cat1 .ear{transform-box:view-box; transition:transform .15s}
-.cat1 #e-l{transform-origin:82px 52px}.cat1 #e-r{transform-origin:118px 52px}
-.cat1.twitch #e-l{transform:rotate(-16deg)}.cat1.twitch #e-r{transform:rotate(14deg)}
-.heart{position:absolute; left:50%; top:6%; font-size:min(4.4cqw,8cqh); color:#f472b6; opacity:0; pointer-events:none; transform:translateX(-50%)}
-.cat1.pet .heart{animation:heart 1s ease-out}
-
-/* ===== 案2 数字の上のねこ ===== */
-#f2{flex-direction:column; align-items:center; justify-content:center; gap:2.2cqh}
-#f2::before,#f2::after{content:""; position:absolute; border-radius:50%; pointer-events:none}
-#f2::before{width:min(24cqw,44cqh); aspect-ratio:1; left:-5cqw; top:-7cqh; background:rgba(245,158,11,.14)}
-#f2::after{width:min(30cqw,52cqh); aspect-ratio:1; right:-6cqw; bottom:-12cqh; background:rgba(244,114,182,.13)}
-.f2-badge{display:flex; align-items:center; gap:1.4em; background:var(--badge); padding:.5em 1.6em; border-radius:99px; font-size:min(2.5cqw,4.8cqh); font-weight:700; color:var(--sub); z-index:1; white-space:nowrap}
-.f2-badge .bar{opacity:.4}
-.f2-row{position:relative; display:flex; align-items:center; margin-top:min(13cqw,18cqh); z-index:1}
-.f2-d{font-size:min(27cqw,44cqh); font-weight:800; line-height:.9; letter-spacing:-.02em; font-variant-numeric:tabular-nums; position:relative; color:var(--text)}
-.f2-cat{position:absolute; left:50%; bottom:calc(100% - min(1.6cqw,3cqh)); transform:translateX(-50%); width:min(26cqw,36cqh); cursor:pointer; z-index:2; filter:var(--cat-shadow)}
-.f2-cat svg{width:100%; height:auto; overflow:visible}
-.f2-cat .breathe{transform-box:fill-box; transform-origin:bottom center; animation:breathe 3.5s infinite ease-in-out}
-.cf{fill:var(--cat); stroke:var(--cat-line); stroke-width:1.5}
-.cs{stroke:var(--cat)}
-.ei{fill:var(--ear-in)}
-.stripe{stroke:#b45309; opacity:var(--stripe)}
-.eye{stroke:var(--cat-eye)}
-.zzz{position:absolute; top:-6%; right:2%; font-weight:800; color:var(--accent); opacity:.85; pointer-events:none; font-size:min(2.4cqw,4.4cqh)}
-.zzz span{display:inline-block; opacity:0; animation:floatZzz 3s infinite linear}
-.zzz span:nth-child(2){animation-delay:1.5s}
-.nya{position:absolute; top:-18%; left:50%; transform:translate(-50%,0); background:var(--accent); color:var(--accent-text); font-size:min(2.2cqw,4cqh); font-weight:800; padding:.2em .9em; border-radius:99px; opacity:0; transition:all .3s; white-space:nowrap; pointer-events:none}
-.nya.show{opacity:1; transform:translate(-50%,-8px)}
-.f2-colon{position:relative; display:flex; flex-direction:column; gap:min(3.5cqw,6cqh); margin:0 min(1.8cqw,3cqh)}
-.f2-colon i{width:min(3cqw,5.4cqh); aspect-ratio:1; border-radius:50%; background:var(--dot)}
-.f2-colon i:first-of-type{animation:bounce 1s infinite}
-.bat{position:absolute; width:min(7cqw,13cqh); top:calc(-1 * min(7.5cqw,13.5cqh)); left:-45%; transform-origin:top left; animation:pawBat 2s infinite ease-in-out; pointer-events:none}
-.bat .arm{stroke:var(--dot)}
-.f2-sec{position:absolute; right:calc(-1 * min(4.6cqw,8cqh)); bottom:0; display:flex; align-items:center; gap:.4em; background:var(--text); color:var(--bg); padding:.25em .8em; border-radius:99px; font-size:min(2.6cqw,5cqh); font-weight:800}
-.f2-sec svg{width:1em; height:1em; fill:currentColor}
-.f2-paws{display:flex; gap:min(2cqw,3.4cqh); z-index:1}
-.f2-paws svg{width:min(3.6cqw,6.4cqh); height:min(3.6cqw,6.4cqh); fill:var(--text); opacity:.18; transition:opacity .3s}
-.f2-paws svg.on{opacity:.8}
-
-/* ===== 案3 ねこ耳フリップ（flip.html を埋め込み） ===== */
-#f3 iframe{width:100%; height:100%; border:0; display:block; background:#26211e}
+/* ===== 時計（iframe） ===== */
+#face-frame{position:absolute; inset:0; width:100%; height:100%; border:0; display:block; background:#26211e}
 
 /* ===== ストップウォッチ / タイマー ===== */
 .vwrap{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:0 3cqw; overflow:auto}
@@ -153,17 +90,10 @@ nav button{font-weight:700; font-size:.85rem; color:var(--text); background:tran
 .tools button:disabled{opacity:.4}
 
 /* ===== アニメーション ===== */
-@keyframes twinkle{0%,100%{opacity:.2; transform:scale(.8)}50%{opacity:1; transform:scale(1.1)}}
-@keyframes tailWag{0%,100%{transform:rotate(-18deg)}50%{transform:rotate(18deg)}}
-@keyframes heart{0%{opacity:0; transform:translate(-50%,0)}20%{opacity:1}100%{opacity:0; transform:translate(-50%,-40px)}}
-@keyframes breathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.02,1.06)}}
-@keyframes floatZzz{0%{opacity:0; transform:translate(0,0) scale(.6)}40%{opacity:.9}100%{opacity:0; transform:translate(18px,-28px) scale(1.2)}}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-35%)}}
-@keyframes pawBat{0%,100%{transform:rotate(0)}30%{transform:rotate(25deg) translateY(4px)}60%{transform:rotate(-5deg)}}
 @keyframes wag{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
 @keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
 @media (prefers-reduced-motion: reduce){
-  .stars i,.cat1 .tail-w,.f2-cat .breathe,.zzz span,.f2-colon i,.bat,.catslot svg.tail,.catslot .eyes{animation:none}
+  .catslot svg.tail,.catslot .eyes{animation:none}
 }
 @media (orientation:landscape) and (max-height:620px){
   nav{padding-top:3px; padding-bottom:calc(3px + env(safe-area-inset-bottom))}
@@ -180,65 +110,8 @@ nav button{font-weight:700; font-size:.85rem; color:var(--text); background:tran
 <main id="stage">
   <section class="view" id="v-clock" aria-label="現在時刻">
 
-    <!-- 案1 窓辺のシルエット -->
-    <div class="face" id="f1">
-      <div class="stars" id="stars">
-        <svg class="moon" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      </div>
-      <div class="sun"><b class="glow"></b><b class="disc"></b></div>
-      <div class="f1-frame"></div>
-      <div class="f1-time">
-        <div class="f1-date" id="f1-date"></div>
-        <div class="f1-big"><span id="f1-hm">--:--</span><span class="f1-ss" id="f1-ss">00</span></div>
-      </div>
-      <div class="cat1" id="cat1" title="タップしてみてね">
-        <div class="heart">♥</div>
-        <svg viewBox="0 0 200 220" aria-hidden="true">
-          <path class="sil" d="M 65 185 C 55 135, 72 95, 100 95 C 128 95, 145 135, 135 185 Z"/>
-          <circle class="sil" cx="100" cy="72" r="27"/>
-          <polygon class="sil ear" id="e-l" points="75,58 68,26 94,47"/>
-          <polygon class="sil ear" id="e-r" points="125,58 132,26 106,47"/>
-          <g class="sil-s" stroke-width="2" stroke-linecap="round"><line x1="60" y1="70" x2="75" y2="72"/><line x1="58" y1="77" x2="75" y2="76"/><line x1="140" y1="70" x2="125" y2="72"/><line x1="142" y1="77" x2="125" y2="76"/></g>
-          <path class="sil-s tail-w" d="M 100 180 Q 100 215 135 205 T 155 170" fill="none" stroke-width="13" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="sill"></div>
-    </div>
-
-    <!-- 案2 数字の上のねこ -->
-    <div class="face" id="f2">
-      <div class="f2-badge"><span id="f2-date"></span><span class="bar">|</span><span id="f2-status"></span></div>
-      <div class="f2-row">
-        <div class="f2-d"><span id="f2-hh">--</span>
-        <div class="f2-cat" id="cat2" title="なでてみてね">
-          <div class="zzz"><span>Z</span><span>z</span></div>
-          <div class="nya" id="nya">ゴロゴロ…♪</div>
-          <svg viewBox="0 0 150 75" aria-hidden="true"><g class="breathe">
-            <path class="cf" d="M 25 62 C 20 22, 95 18, 118 62 Z"/>
-            <path class="stripe" d="M 60 28 Q 65 40 60 45 M 75 27 Q 80 40 75 46 M 90 31 Q 94 42 90 48" stroke-width="4" stroke-linecap="round" fill="none"/>
-            <circle class="cf" cx="35" cy="48" r="20"/>
-            <polygon class="cf" points="18,36 14,15 32,29"/><polygon class="cf" points="38,31 46,13 53,34"/>
-            <polygon class="ei" points="19,33 17,20 29,29"/><polygon class="ei" points="40,30 45,18 50,32"/>
-            <path class="eye" d="M 23 48 Q 28 53 33 48 M 38 48 Q 43 53 48 48" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <circle cx="21" cy="52" r="3" fill="#f87171" opacity=".5"/><circle cx="50" cy="52" r="3" fill="#f87171" opacity=".5"/>
-            <ellipse cx="20" cy="62" rx="8" ry="5" fill="#fffbeb"/><ellipse cx="48" cy="63" rx="8" ry="5" fill="#fffbeb"/>
-            <path class="cs" d="M 112 58 Q 135 60 132 82" stroke-width="10" fill="none" stroke-linecap="round"/>
-          </g></svg>
-        </div>
-        </div>
-        <div class="f2-colon">
-          <svg class="bat" viewBox="0 0 60 60" aria-hidden="true"><path class="arm" d="M 10 5 C 20 25, 30 35, 38 42" stroke-width="14" stroke-linecap="round" fill="none"/><circle cx="38" cy="42" r="8" fill="#fffbeb"/><circle cx="42" cy="45" r="3.5" fill="#f472b6"/></svg>
-          <i></i><i></i>
-        </div>
-        <div class="f2-d" id="f2-mwrap"><span id="f2-m">--</span>
-          <div class="f2-sec"><svg><use href="#paw"/></svg><span id="f2-s">00</span></div>
-        </div>
-      </div>
-      <div class="f2-paws" id="f2-paws"><svg><use href="#paw"/></svg><svg><use href="#paw"/></svg><svg><use href="#paw"/></svg><svg><use href="#paw"/></svg><svg><use href="#paw"/></svg></div>
-    </div>
-
-    <!-- 案3 ねこ耳フリップ（flip.html をそのまま表示） -->
-    <div class="face" id="f3"><iframe id="f3-frame" title="ねこフリップ時計"></iframe></div>
+    <!-- 時計のデザイン3種（Gemini版をそのまま別ページ化したもの）を切り替えて表示 -->
+    <iframe id="face-frame" title="時計"></iframe>
   </section>
 
   <section class="view" id="v-sw" aria-label="ストップウォッチ"><div class="vwrap"><div class="vcard">
@@ -296,6 +169,7 @@ nav button{font-weight:700; font-size:.85rem; color:var(--text); background:tran
   /* ---------- 状態 ---------- */
   let face = +store.get('face', '2'), skyMode = store.get('sky', 'auto'), breed = store.get('breed', 'black');
   let h12 = store.get('h12', '0') === '1', view = 'clock';
+  const FACES = ['window.html','sleepy.html','flip.html'];
   const SKY = ['auto','day','sunset','night'], SKYL = {auto:'自動', day:'昼', sunset:'夕方', night:'夜'};
   const BREED = ['black','tabby','calico'], BREEDL = {black:'黒猫', tabby:'茶トラ', calico:'白ねこ'};
   if (![1,2,3].includes(face)) face = 2;
@@ -313,20 +187,16 @@ nav button{font-weight:700; font-size:.85rem; color:var(--text); background:tran
     else if (face === 2) { vb.textContent = BREEDL[breed]; vb.disabled = false; }
     else { vb.textContent = 'いろ'; vb.disabled = true; }
     $('b-fmt').textContent = h12 ? '12h' : '24h';
-    const fr = $('f3-frame'), want = face === 3 ? 'flip.html' : 'about:blank';
+    const fr = $('face-frame'), want = FACES[face - 1];
     if (fr.getAttribute('src') !== want) fr.setAttribute('src', want);
+    post();
   }
-
-  /* ---------- 星 ---------- */
-  (() => {
-    let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-    const box = $('stars');
-    for (let i = 0; i < 22; i++) {
-      const s = document.createElement('i'), z = 2 + rnd() * 3;
-      s.style.cssText = `left:${6 + rnd()*88}%;top:${6 + rnd()*50}%;width:${z}px;height:${z}px;animation-delay:${(rnd()*3).toFixed(2)}s`;
-      box.appendChild(s);
-    }
-  })();
+  // 時計ページへ、空の色・毛色・12/24時間を知らせる
+  function post(){
+    const w = $('face-frame').contentWindow;
+    if (w) w.postMessage({ sky: app.dataset.sky, breed, h12 }, '*');
+  }
+  $('face-frame').addEventListener('load', post);
 
   /* ---------- 猫（ストップウォッチ/タイマー用） ---------- */
   const CAT = `<svg class="tail" viewBox="0 0 60 70" aria-hidden="true"><path class="tl" d="M30 70 C30 42 8 42 14 12" stroke-width="14" fill="none" stroke-linecap="round"/></svg>
@@ -337,47 +207,14 @@ nav button{font-weight:700; font-size:.85rem; color:var(--text); background:tran
   <g class="wh" stroke-width="2" stroke-linecap="round"><path d="M64 80 L30 74M64 85 L32 90M136 80 L170 74M136 85 L168 90"/></g></svg>`;
   document.querySelectorAll('.catslot').forEach(s => s.innerHTML = CAT);
 
-  /* ---------- 時計 ---------- */
-  let statusUntil = 0;
-  const f2Status = h => h >= 5 && h < 10 ? '☀ のびのび朝さんぽ' : h >= 10 && h < 17 ? '💤 すやすや昼寝中' : h >= 17 && h < 21 ? '🍽 ごはんまだかな' : '🌙 ぐっすり夜ねんね';
-
-  function render(d){
-    const h = d.getHours(), mi = pad(d.getMinutes()), ss = pad(d.getSeconds());
-    const hh = pad(h12 ? (h % 12 || 12) : h);
-    const y = d.getFullYear(), mo = pad(d.getMonth() + 1), da = pad(d.getDate());
-    app.dataset.sky = skyMode === 'auto' ? autoSky(h) : skyMode;
-
-    $('f1-date').textContent = `${y}.${mo}.${da} ${DE[d.getDay()]}`;
-    $('f1-hm').textContent = `${hh}:${mi}`; $('f1-ss').textContent = ss;
-
-    $('f2-date').textContent = `${d.getMonth() + 1}月${d.getDate()}日（${DJ[d.getDay()]}）`;
-    if (Date.now() > statusUntil) $('f2-status').textContent = f2Status(h);
-    $('f2-hh').textContent = hh;
-    $('f2-m').textContent = mi; $('f2-s').textContent = ss;
-    const on = (d.getSeconds() % 5) + 1;
-    [...$('f2-paws').children].forEach((p, i) => p.classList.toggle('on', i < on));
-
-  }
-  let clockT = 0;
+  /* ---------- 時間帯で空の色（自動）を更新 ---------- */
   function tick(){
-    clearTimeout(clockT);
-    render(new Date());
-    clockT = setTimeout(tick, 1000 - (Date.now() % 1000) + 15);
+    const s = skyMode === 'auto' ? autoSky(new Date().getHours()) : skyMode;
+    if (app.dataset.sky !== s) { app.dataset.sky = s; post(); }
   }
+  setInterval(tick, 30000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { tick(); lock(); } });
 
-  /* 案1: ねこをタップ */
-  $('cat1').addEventListener('click', () => {
-    const c = $('cat1'); c.classList.add('twitch'); c.classList.remove('pet'); void c.offsetWidth; c.classList.add('pet');
-    setTimeout(() => c.classList.remove('twitch'), 220);
-  });
-  /* 案2: ねこをタップ */
-  $('cat2').addEventListener('click', () => {
-    const ph = ['ゴロゴロ…♪', 'むにゃ…🐾', 'にゃ〜ん♡', 'スヤァ…💤'], n = $('nya');
-    n.textContent = ph[Math.floor(Math.random() * ph.length)]; n.classList.add('show');
-    $('f2-status').textContent = '🐾 ごきげんに喉を鳴らし中'; statusUntil = Date.now() + 4000;
-    setTimeout(() => n.classList.remove('show'), 1400);
-  });
   /* ---------- 切り替え ---------- */
   document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => setView(b.dataset.v));
   function setView(v){
@@ -385,13 +222,13 @@ nav button{font-weight:700; font-size:.85rem; color:var(--text); background:tran
     document.querySelectorAll('.tabs button').forEach(x => x.setAttribute('aria-selected', x.dataset.v === v));
     if (v === 'sw') swLoop();
   }
-  $('b-face').onclick = () => { face = face % 3 + 1; store.set('face', face); applyState(); render(new Date()); };
+  $('b-face').onclick = () => { face = face % 3 + 1; store.set('face', face); applyState(); };
   $('b-var').onclick = () => {
     if (face === 1) { skyMode = SKY[(SKY.indexOf(skyMode) + 1) % SKY.length]; store.set('sky', skyMode); }
     else if (face === 2) { breed = BREED[(BREED.indexOf(breed) + 1) % BREED.length]; store.set('breed', breed); }
     applyState();
   };
-  $('b-fmt').onclick = () => { h12 = !h12; store.set('h12', h12 ? '1' : '0'); applyState(); render(new Date()); };
+  $('b-fmt').onclick = () => { h12 = !h12; store.set('h12', h12 ? '1' : '0'); applyState(); };
   if (document.documentElement.requestFullscreen) {
     $('b-fs').onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => {});
   } else $('b-fs').style.display = 'none';
@@ -493,7 +330,7 @@ nav button{font-weight:700; font-size:.85rem; color:var(--text); background:tran
   }
 
   /* ---------- 起動 ---------- */
-  setTimer(300000); syncSw(); syncTm(); applyState(); tick();
+  setTimer(300000); syncSw(); syncTm(); applyState();
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 })();
 </script>
