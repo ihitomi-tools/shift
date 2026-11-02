@@ -1,4 +1,4 @@
-const CACHE = 'clock-v12';
+const CACHE = 'clock-v13';
 const FILES = ['./', './index.html', './big.html', './manifest.webmanifest', './icon.svg'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())));

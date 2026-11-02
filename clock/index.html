@@ -78,7 +78,33 @@ nav.hide{display:none}
   nav{padding-top:3px; padding-bottom:3px}
   nav button{min-height:34px; padding:5px 10px}
 }
+/* ===== 設定画面 / メニューの案内 ===== */
+#app{position:relative}
+#hint{position:absolute; left:50%; bottom:calc(env(safe-area-inset-bottom) + 12px); transform:translateX(-50%); z-index:6; pointer-events:none; white-space:nowrap;
+  background:rgba(0,0,0,.8); color:var(--text); border:2px solid var(--line); border-radius:99px; padding:8px 18px; font-weight:700; font-size:.95rem}
+@media (orientation: portrait){#hint{bottom:auto; top:calc(env(safe-area-inset-top) + 10px)}}
+#dlg{color-scheme:dark; background:var(--panel); color:var(--text); border:3px solid var(--line); border-radius:20px; padding:16px 20px; width:min(92vw,460px); max-height:92dvh; overflow:auto; font-family:inherit}
+#dlg::backdrop{background:rgba(0,0,0,.75)}
+#dlg h2{margin:0 0 10px; font-size:1.15rem}
+#dlg .opt{display:flex; align-items:center; gap:10px; padding:9px 0; font-size:1.05rem; font-weight:700}
+#dlg input[type=radio]{width:1.4em; height:1.4em; accent-color:var(--accent); flex:none}
+#dlg .times{display:flex; align-items:center; gap:10px; padding:2px 0 8px 2.4em; font-size:1.4rem; font-weight:700}
+#dlg .times.off{opacity:.35}
+#dlg input[type=time]{font:inherit; font-size:1.5rem; font-weight:700; color:var(--text); background:transparent; border:2px solid var(--line); border-radius:10px; padding:4px 8px; min-width:7.2em}
+#dlg .note{margin:6px 0 12px; color:var(--sub); font-size:.85rem; line-height:1.5}
+#dlg .btn{width:100%}
+#dlg .times{flex-wrap:wrap}
+@media (orientation: landscape) and (max-height: 520px){
+  #dlg{padding:10px 16px; max-height:96dvh}
+  #dlg h2{margin-bottom:2px; font-size:1rem}
+  #dlg .opt{padding:4px 0; font-size:.95rem}
+  #dlg .times{padding:0 0 4px 2.4em; gap:6px; font-size:1.1rem}
+  #dlg input[type=time]{font-size:1.15rem; min-width:0; padding:2px 6px}
+  #dlg .note{display:none}
+  #dlg .btn{padding:8px 16px; font-size:1rem; margin-top:4px}
+}
 </style>
+
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -128,10 +154,22 @@ nav.hide{display:none}
   <div class="tools">
     <button id="b-sec" aria-label="秒の表示切り替え">秒</button>
     <button id="b-fmt" aria-label="12時間/24時間の切り替え">24h</button>
-    <button id="b-wake" aria-label="画面をつけっぱなしにする設定">点灯</button>
+    <button id="b-wake" aria-label="画面をつけておく時間の設定">点灯</button>
     <button id="b-fs" aria-label="全画面">全画面</button>
   </div>
 </nav>
+<div id="hint" hidden>画面をタップするとメニューが出ます</div>
+<dialog id="dlg" aria-label="画面をつけておく設定">
+  <form method="dialog">
+    <h2>画面をつけておく設定</h2>
+    <label class="opt"><input type="radio" name="wm" value="window"> 決めた時間だけ、つけておく</label>
+    <div class="times" id="times"><input type="time" id="t-from" aria-label="開始時刻"> 〜 <input type="time" id="t-to" aria-label="終了時刻"></div>
+    <label class="opt"><input type="radio" name="wm" value="always"> ずっと、つけておく</label>
+    <label class="opt"><input type="radio" name="wm" value="off"> スマホの設定どおり（そのうち消える）</label>
+    <p class="note">決めた時間より外では、スマホの自動ロックの時間で画面が消えます。ストップウォッチとタイマーが動いている間は、時間に関係なく消えません。</p>
+    <button class="btn primary" value="close">とじる</button>
+  </form>
+</dialog>
 </div>
 
 <script>
@@ -183,13 +221,18 @@ nav.hide{display:none}
   }
   // 時計を出している間は、操作バーを数秒で隠して時計だけにする（時計をタップするとまた出る）
   let navT = 0;
+  const hint = $('hint');
   const nav = document.querySelector('nav');
   function navAwake(){
     nav.classList.remove('hide'); clearTimeout(navT);
-    if (view === 'clock') navT = setTimeout(() => nav.classList.add('hide'), 5000);
+    hint.hidden = true;
+    if (view === 'clock') navT = setTimeout(() => {
+      nav.classList.add('hide');
+      if (store.get('menuSeen', '0') !== '1') hint.hidden = false;   // はじめて使う間だけ、タップするとメニューが出ることを知らせる
+    }, 5000);
   }
   nav.addEventListener('pointerdown', navAwake);
-  addEventListener('message', e => { if (e.source === $('face-frame').contentWindow && e.data && e.data.type === 'tap') navAwake(); });
+  addEventListener('message', e => { if (e.source === $('face-frame').contentWindow && e.data && e.data.type === 'tap') { store.set('menuSeen', '1'); navAwake(); } });
   $('b-sec').onclick = () => { secs = !secs; store.set('secs', secs ? '1' : '0'); applyState(); };
   $('b-fmt').onclick = () => { h12 = !h12; store.set('h12', h12 ? '1' : '0'); applyState(); };
   if (document.documentElement.requestFullscreen) {
@@ -197,14 +240,21 @@ nav.hide{display:none}
   } else $('b-fs').style.display = 'none';
 
   /* ---------- 画面を消さない（既定は、勤務中の時間帯だけ） ---------- */
-  const WAKE_FROM = 15 * 60, WAKE_TO = 18 * 60 + 30;   // 15:00〜18:30（分で表す）。変えるときはここを直す
   const WAKE_MODES = ['window', 'always', 'off'];
+  const toMin = t => { const m = /^(\d{1,2}):(\d{2})$/.exec(t || ''); return m ? (+m[1]) * 60 + (+m[2]) : null; };
+  const hm = m => pad(Math.floor(m / 60)) + ':' + pad(m % 60);
+  let wakeFrom = toMin(store.get('wakeFrom', '15:00')) ?? 15 * 60;    // 既定: 15:00〜18:30（設定画面で変えられる）
+  let wakeTo = toMin(store.get('wakeTo', '18:30')) ?? 18 * 60 + 30;
   let wakeMode = store.get('wake', 'window');
   if (!WAKE_MODES.includes(wakeMode)) wakeMode = 'window';
   let wake = null;
-  const hm = m => pad(Math.floor(m / 60)) + ':' + pad(m % 60);
-  const wakeLabel = () => wakeMode === 'window' ? `点灯 ${hm(WAKE_FROM)}-${hm(WAKE_TO)}` : wakeMode === 'always' ? '点灯:つけっぱなし' : '点灯:通常';
-  function inWakeWindow(){ const d = new Date(), m = d.getHours() * 60 + d.getMinutes(); return m >= WAKE_FROM && m < WAKE_TO; }
+  const wakeLabel = () => wakeMode === 'window' ? `点灯 ${hm(wakeFrom)}-${hm(wakeTo)}` : wakeMode === 'always' ? '点灯:つけっぱなし' : '点灯:通常';
+  // 開始 < 終了 なら同じ日の中、開始 > 終了 なら日またぎ（例 22:00〜06:00）、同じ時刻なら「なし」
+  function inWakeWindow(){
+    const d = new Date(), m = d.getHours() * 60 + d.getMinutes();
+    if (wakeFrom === wakeTo) return false;
+    return wakeFrom < wakeTo ? (m >= wakeFrom && m < wakeTo) : (m >= wakeFrom || m < wakeTo);
+  }
   // ストップウォッチ・タイマーが動いている間は、時間帯に関係なく消さない
   const wantAwake = () => !document.hidden && (wakeMode === 'always' || (wakeMode === 'window' && inWakeWindow()) || tmRun || swRun);
   async function syncWake(){
@@ -217,10 +267,24 @@ nav.hide{display:none}
       } else if (wake) { const w = wake; wake = null; await w.release(); }
     } catch {}
   }
-  $('b-wake').onclick = () => {
-    wakeMode = WAKE_MODES[(WAKE_MODES.indexOf(wakeMode) + 1) % WAKE_MODES.length];
-    store.set('wake', wakeMode); $('b-wake').textContent = wakeLabel(); syncWake();
-  };
+  // 設定画面
+  const dlg = $('dlg');
+  function syncDlg(){
+    document.querySelectorAll('input[name=wm]').forEach(r => { r.checked = r.value === wakeMode; });
+    $('t-from').value = hm(wakeFrom); $('t-to').value = hm(wakeTo);
+    $('times').classList.toggle('off', wakeMode !== 'window');
+  }
+  function saveWake(){
+    const f = toMin($('t-from').value), t = toMin($('t-to').value);
+    if (f !== null) { wakeFrom = f; store.set('wakeFrom', hm(f)); }
+    if (t !== null) { wakeTo = t; store.set('wakeTo', hm(t)); }
+    const r = document.querySelector('input[name=wm]:checked');
+    if (r) { wakeMode = r.value; store.set('wake', wakeMode); }
+    $('times').classList.toggle('off', wakeMode !== 'window');
+    $('b-wake').textContent = wakeLabel(); syncWake();
+  }
+  $('b-wake').onclick = () => { syncDlg(); if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', ''); };
+  dlg.addEventListener('input', saveWake); dlg.addEventListener('change', saveWake);
   document.addEventListener('pointerdown', syncWake, { once: true });   // 初回タップでも要求し直す（ブラウザによっては必要）
   setInterval(syncWake, 30000);                                          // 時間帯の開始・終了を拾う
 
