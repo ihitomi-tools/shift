@@ -1,5 +1,5 @@
-const CACHE = 'clock-v6';
-const FILES = ['./', './index.html', './flip.html', './window.html', './sleepy.html', './manifest.webmanifest', './icon.svg'];
+const CACHE = 'clock-v7';
+const FILES = ['./', './index.html', './flip.html', './big.html', './window.html', './sleepy.html', './manifest.webmanifest', './icon.svg'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())));
 self.addEventListener('activate', e => e.waitUntil(

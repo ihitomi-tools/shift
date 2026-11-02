@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>でっかい時計</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0; height:100%; overflow:hidden; background:#000}
+canvas{display:block; position:absolute; inset:0}
+</style>
+</head>
+<body>
+<canvas id="c" role="img" aria-label="時計"></canvas>
+<script>
+(() => {
+  // 文字を画面いっぱいに描く時計。canvasに描くので、どんな画面でも文字の大きさをぴったり計算できる
+  const FONT = '"BIZ UDGothic","BIZ UDPGothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif';
+  const SCHEMES = {
+    white:  { bg: '#000000', fg: '#ffffff' },   // 黒地に白
+    yellow: { bg: '#000000', fg: '#ffe600' },   // 黒地に黄
+    light:  { bg: '#ffffff', fg: '#000000' }    // 白地に黒
+  };
+  const DJ = ['日','月','火','水','木','金','土'];
+  const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+  const get = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch { return d; } };
+  let scheme = get('scheme', 'white'), secs = get('secs', '1') === '1', h12 = get('h12', '0') === '1';
+  if (!SCHEMES[scheme]) scheme = 'white';
+  let W = 0, H = 0, timer = 0;
+
+  function resize(){
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    W = innerWidth; H = innerHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  // 数字1文字の幅・高さ（フォントが違っても自動で合わせる）
+  function metrics(){
+    ctx.font = `700 100px ${FONT}`;
+    const z = ctx.measureText('0'), c = ctx.measureText(':');
+    return { dw: z.width / 100, asc: (z.actualBoundingBoxAscent || 72) / 100, colon: c.width / 100 };
+  }
+
+  function draw(){
+    clearTimeout(timer);
+    const th = SCHEMES[scheme], now = new Date(), h = now.getHours();
+    const hh = String(h12 ? (h % 12 || 12) : h).padStart(2, '0'), mm = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    const date = (h12 ? (h < 12 ? '午前 ' : '午後 ') : '') + `${now.getMonth() + 1}月${now.getDate()}日（${DJ[now.getDay()]}）`;
+    const m = metrics(), wide = W / H >= 1.15, pad = Math.min(W, H) * 0.035;
+    ctx.fillStyle = th.bg; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = th.fg; ctx.textBaseline = 'alphabetic';
+
+    // 日付・秒の行を、幅に収まる最大の大きさで描く
+    const fitRow = (maxFs, parts, maxW) => {
+      let fs = maxFs;
+      ctx.font = `700 ${fs}px ${FONT}`;
+      const w = parts.reduce((a, t) => a + ctx.measureText(t).width, 0) + fs * 0.8 * (parts.length - 1);
+      return w > maxW ? fs * maxW / w : fs;
+    };
+
+    if (wide) {
+      // 横長: 「12:34」を1行で最大に。下に日付と秒
+      const rowH = H * 0.17, gapY = H * 0.04, avail = H - pad * 2 - rowH - gapY;
+      const fs = Math.min(0.97 * W / (4 * m.dw + m.colon), avail / m.asc);
+      ctx.font = `700 ${fs}px ${FONT}`; ctx.textAlign = 'center';
+      ctx.fillText(`${hh}:${mm}`, W / 2, pad + avail / 2 + m.asc * fs / 2);
+      const parts = secs ? [date, ss + '秒'] : [date];
+      const fs2 = fitRow(rowH * 0.78, parts, W * 0.94), base = H - pad - rowH / 2 + fs2 * 0.36;
+      ctx.font = `700 ${fs2}px ${FONT}`;
+      if (secs) {
+        ctx.textAlign = 'left';  ctx.fillText(date, W * 0.03, base);
+        ctx.textAlign = 'right'; ctx.fillText(ss + '秒', W * 0.97, base);
+      } else { ctx.textAlign = 'center'; ctx.fillText(date, W / 2, base); }
+    } else {
+      // 縦長: 「12」の下に「34」を積んで最大に。下に日付と秒
+      const lines = secs ? 2 : 1, rowH = H * 0.055, gap = 0.14;
+      const gapY = H * 0.03, avail = H - pad * 2 - lines * rowH * 1.35 - gapY;
+      const fs = Math.min(0.94 * W / (2 * m.dw), avail / (2 * m.asc + gap));
+      const block = (2 * m.asc + gap) * fs, top = pad + (avail - block) / 2;
+      ctx.font = `700 ${fs}px ${FONT}`; ctx.textAlign = 'center';
+      ctx.fillText(hh, W / 2, top + m.asc * fs);
+      ctx.fillText(mm, W / 2, top + (2 * m.asc + gap) * fs);
+      const fsD = fitRow(rowH, [date], W * 0.94);
+      ctx.font = `700 ${fsD}px ${FONT}`;
+      let y = pad + avail + gapY + rowH;
+      ctx.fillText(date, W / 2, y);
+      if (secs) { y += rowH * 1.35; ctx.fillText(ss + '秒', W / 2, y); }
+    }
+    cv.setAttribute('aria-label', `${h}時${now.getMinutes()}分`);
+    timer = setTimeout(draw, 1000 - (Date.now() % 1000) + 15);
+  }
+
+  addEventListener('resize', () => { resize(); draw(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) draw(); });
+  // 親の時計アプリから、色・秒・12/24時間の指定を受け取る
+  addEventListener('message', e => {
+    const d = e.data || {};
+    if (SCHEMES[d.scheme]) scheme = d.scheme;
+    if (typeof d.secs === 'boolean') secs = d.secs;
+    if (typeof d.h12 === 'boolean') h12 = d.h12;
+    draw();
+  });
+  // タップしたら、親に操作バーを出してもらう
+  addEventListener('pointerdown', () => { try { parent.postMessage({ type: 'tap' }, '*'); } catch {} });
+
+  resize(); draw();
+  // フォント（BIZ UDゴシック）が読み込めたら、もう一度ぴったり描き直す
+  if (document.fonts && document.fonts.load) {
+    document.fonts.load(`700 100px "BIZ UDGothic"`, '0123456789:月日（）火水木金土曜午前後秒').then(draw).catch(() => {});
+    document.fonts.ready.then(draw);
+  }
+})();
+</script>
+</body>
+</html>
