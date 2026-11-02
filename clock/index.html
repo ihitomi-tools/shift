@@ -156,6 +156,7 @@ nav.hide{display:none}
   </div>
   <div class="tools">
     <button id="b-sec" aria-label="秒の表示切り替え">秒</button>
+    <button id="b-edge" aria-label="数字のふちどりを切り替え">ふち</button>
     <button id="b-fmt" aria-label="12時間/24時間の切り替え">24h</button>
     <button id="b-wake" aria-label="画面をつけておく時間の設定">点灯</button>
     <button id="b-fs" aria-label="全画面">全画面</button>
@@ -171,7 +172,7 @@ nav.hide{display:none}
     <label class="opt"><input type="radio" name="wm" value="off"> スマホの設定どおり（そのうち消える）</label>
     <p class="note">決めた時間より外では、スマホの自動ロックの時間で画面が消えます。ストップウォッチとタイマーが動いている間は、時間に関係なく消えません。</p>
     <button class="btn primary" value="close">とじる</button>
-    <p class="ver">バージョン 14</p>
+    <p class="ver">バージョン 15</p>
   </form>
 </dialog>
 </div>
@@ -188,18 +189,21 @@ nav.hide{display:none}
   const DJ = ['日','月','火','水','木','金','土'], DE = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 
   /* ---------- 状態 ---------- */
+  const EDGE = ['none', 'bold', 'white', 'boldwhite'], EDGEL = { none: 'ふち:なし', bold: 'ふち:太字', white: 'ふち:白', boldwhite: 'ふち:太字+白' };
+  let edge = store.get('edge', 'none'); if (!EDGE.includes(edge)) edge = 'none';
   let secs = store.get('secs', '1') === '1', h12 = store.get('h12', '0') === '1', view = 'clock';
 
   function applyState(){
     app.dataset.view = view;
     $('b-sec').textContent = '秒:' + (secs ? 'あり' : 'なし');
     $('b-fmt').textContent = h12 ? '12h' : '24h';
+    $('b-edge').textContent = EDGEL[edge];
     post(); navAwake();
   }
   // 時計ページへ、秒の表示と12/24時間を知らせる
   function post(){
     const w = $('face-frame').contentWindow;
-    if (w) w.postMessage({ h12, secs }, '*');
+    if (w) w.postMessage({ h12, secs, edge }, '*');
   }
   $('face-frame').addEventListener('load', post);
 
@@ -220,7 +224,7 @@ nav.hide{display:none}
     view = v; app.dataset.view = v;
     document.querySelectorAll('.tabs button').forEach(x => x.setAttribute('aria-selected', x.dataset.v === v));
     if (v === 'sw') swLoop();
-    ['b-sec', 'b-fmt'].forEach(id => $(id).style.display = v === 'clock' ? '' : 'none');  // 時計にだけ効くボタン
+    ['b-sec', 'b-edge', 'b-fmt'].forEach(id => $(id).style.display = v === 'clock' ? '' : 'none');  // 時計にだけ効くボタン
     navAwake();
   }
   // 時計を出している間は、操作バーを数秒で隠して時計だけにする（時計をタップするとまた出る）
@@ -240,6 +244,7 @@ nav.hide{display:none}
   const reveal = () => { store.set('menuSeen', '1'); navAwake(); };
   ['pointerdown', 'touchstart', 'click'].forEach(t => $('tapzone').addEventListener(t, reveal, { passive: true }));
   addEventListener('message', e => { if (e.source === $('face-frame').contentWindow && e.data && e.data.type === 'tap') { store.set('menuSeen', '1'); navAwake(); } });
+  $('b-edge').onclick = () => { edge = EDGE[(EDGE.indexOf(edge) + 1) % EDGE.length]; store.set('edge', edge); applyState(); };
   $('b-sec').onclick = () => { secs = !secs; store.set('secs', secs ? '1' : '0'); applyState(); };
   $('b-fmt').onclick = () => { h12 = !h12; store.set('h12', h12 ? '1' : '0'); applyState(); };
   if (document.documentElement.requestFullscreen) {

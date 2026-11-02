@@ -25,7 +25,9 @@ canvas{display:block; position:absolute; inset:0}
   const DJ = ['日','月','火','水','木','金','土'];
   const cv = document.getElementById('c'), ctx = cv.getContext('2d');
   const get = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch { return d; } };
-  let secs = get('secs', '1') === '1', h12 = get('h12', '0') === '1';
+  const EDGES = ['none', 'bold', 'white', 'boldwhite'];   // なし / 太らせる / 白いふち / 両方
+  let secs = get('secs', '1') === '1', h12 = get('h12', '0') === '1', edge = get('edge', 'none');
+  if (!EDGES.includes(edge)) edge = 'none';
   let W = 0, H = 0, timer = 0;
 
   const spec = px => `${WEIGHT} ${px}px "${FAMILY}","BIZ UDGothic","BIZ UDPGothic",${FALL}`;
@@ -52,12 +54,21 @@ canvas{display:block; position:absolute; inset:0}
     off[':'] = ((cr - cl) / 2 - c.width / 2) / 100;
     return { dw: inkW + GAP, asc, colon: (cl + cr) / 100 + GAP * 1.4, off };
   }
+  // 文字を描く。ふちどりの種類に応じて、太らせたり、外側に白い細線を足したりする（textAlign は呼ぶ側で設定済み）
+  function put(str, x, y, fs){
+    const white = edge === 'white' || edge === 'boldwhite', bold = edge === 'bold' || edge === 'boldwhite';
+    const bw = bold ? fs * 0.03 : 0, ow = Math.max(1.5, fs * 0.008);   // 太らせる量 / 白線の見える太さ
+    ctx.lineJoin = 'round'; ctx.miterLimit = 2;
+    if (white) { ctx.strokeStyle = '#ffffff'; ctx.lineWidth = bw + ow * 2; ctx.strokeText(str, x, y); }
+    ctx.fillText(str, x, y);
+    if (bold) { ctx.strokeStyle = FG; ctx.lineWidth = bw; ctx.strokeText(str, x, y); }
+  }
   // 1文字ずつ、同じ幅のマスの真ん中に（見えている部分が中央に来るように）描く。sy>1 なら縦に伸ばす
   function drawCells(str, cx, y, fs, m, sy = 1){
     const cw = ch => (ch === ':' ? m.colon : m.dw) * fs;
     let x = cx - [...str].reduce((a, ch) => a + cw(ch), 0) / 2;
     ctx.save(); ctx.translate(0, y); ctx.scale(1, sy); ctx.textAlign = 'center';
-    for (const ch of str) { ctx.fillText(ch, x + cw(ch) / 2 - m.off[ch] * fs, 0); x += cw(ch); }
+    for (const ch of str) { put(ch, x + cw(ch) / 2 - m.off[ch] * fs, 0, fs); x += cw(ch); }
     ctx.restore();
   }
 
@@ -66,7 +77,8 @@ canvas{display:block; position:absolute; inset:0}
     const now = new Date(), h = now.getHours();
     const hh = String(h12 ? (h % 12 || 12) : h).padStart(2, '0'), mm = String(now.getMinutes()).padStart(2, '0');
     const ss = String(now.getSeconds()).padStart(2, '0');
-    const date = (h12 ? (h < 12 ? '午前 ' : '午後 ') : '') + `${now.getMonth() + 1}月${now.getDate()}日（${DJ[now.getDay()]}）`;
+    const ampm = h12 ? (h < 12 ? '午前' : '午後') : '';
+    const date = `${now.getMonth() + 1}月${now.getDate()}日（${DJ[now.getDay()]}）`;
     const m = metrics(), wide = W / H >= 1.15, pad = Math.min(W, H) * 0.03;
     ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = FG; ctx.textBaseline = 'alphabetic';
@@ -80,32 +92,34 @@ canvas{display:block; position:absolute; inset:0}
 
     if (wide) {
       // 横長: 「12:34」を1行で最大に（横幅いっぱい。縦が余ったら数字を縦に伸ばす）。下に日付と秒
-      const rowH = H * (secs ? 0.15 : 0.12), gapY = H * 0.035, avail = H - pad * 2 - rowH - gapY;
+      const rowH = H * (secs ? 0.15 : 0.12), gapY = H * 0.035, apH = ampm ? H * 0.14 : 0, avail = H - pad * 2 - rowH - gapY - apH;
       const fsW = 0.99 * W / (4 * m.dw + m.colon), fs = Math.min(fsW, avail / m.asc);
       const sy = fs === fsW ? Math.max(1, Math.min(MAX_STRETCH, avail / (m.asc * fs))) : 1;
       ctx.font = spec(fs);
-      drawCells(`${hh}:${mm}`, W / 2, pad + avail / 2 + m.asc * fs * sy / 2, fs, m, sy);
+      if (ampm) { const fa = apH * 0.66; ctx.font = spec(fa); ctx.textAlign = 'left'; put(ampm, W * 0.02, pad + apH * 0.7, fa); ctx.font = spec(fs); }
+      drawCells(`${hh}:${mm}`, W / 2, pad + apH + avail / 2 + m.asc * fs * sy / 2, fs, m, sy);
       const parts = secs ? [date, ss + '秒'] : [date];
       const fs2 = fitRow(rowH * 0.8, parts, W * 0.96), base = H - pad - rowH / 2 + fs2 * 0.36;
       ctx.font = spec(fs2);
       if (secs) {
-        ctx.textAlign = 'left';  ctx.fillText(date, W * 0.02, base);
-        ctx.textAlign = 'right'; ctx.fillText(ss + '秒', W * 0.98, base);
-      } else { ctx.textAlign = 'center'; ctx.fillText(date, W / 2, base); }
+        ctx.textAlign = 'left';  put(date, W * 0.02, base, fs2);
+        ctx.textAlign = 'right'; put(ss + '秒', W * 0.98, base, fs2);
+      } else { ctx.textAlign = 'center'; put(date, W / 2, base, fs2); }
     } else {
       // 縦長: 「12」の下に「34」を積んで最大に。下に日付と秒
       const lines = secs ? 2 : 1, rowH = H * 0.055, gap = 0.14;
-      const gapY = H * 0.03, avail = H - pad * 2 - lines * rowH * 1.35 - gapY;
+      const gapY = H * 0.03, apH = ampm ? H * 0.06 : 0, avail = H - pad * 2 - lines * rowH * 1.35 - gapY - apH;
       const fs = Math.min(0.94 * W / (2 * m.dw), avail / (2 * m.asc + gap));
-      const block = (2 * m.asc + gap) * fs, top = pad + (avail - block) / 2;
+      const block = (2 * m.asc + gap) * fs, top = pad + apH + (avail - block) / 2;
+      if (ampm) { const fa = apH * 0.66; ctx.font = spec(fa); ctx.textAlign = 'left'; put(ampm, W * 0.04, pad + apH * 0.7, fa); }
       ctx.font = spec(fs);
       drawCells(hh, W / 2, top + m.asc * fs, fs, m);
       drawCells(mm, W / 2, top + (2 * m.asc + gap) * fs, fs, m);
       const fsD = fitRow(rowH, [date], W * 0.94);
       ctx.font = spec(fsD); ctx.textAlign = 'center';
-      let y = pad + avail + gapY + rowH;
-      ctx.fillText(date, W / 2, y);
-      if (secs) { y += rowH * 1.35; ctx.fillText(ss + '秒', W / 2, y); }
+      let y = pad + apH + avail + gapY + rowH;
+      put(date, W / 2, y, fsD);
+      if (secs) { y += rowH * 1.35; put(ss + '秒', W / 2, y, fsD); }
     }
     cv.setAttribute('aria-label', `${h}時${now.getMinutes()}分`);
     // 秒を出すときは毎秒、出さないときは1分ごとに描き直す（電池のため）
@@ -126,6 +140,7 @@ canvas{display:block; position:absolute; inset:0}
     const d = e.data || {};
     if (typeof d.secs === 'boolean') secs = d.secs;
     if (typeof d.h12 === 'boolean') h12 = d.h12;
+    if (EDGES.includes(d.edge)) edge = d.edge;
     draw();
   });
   // タップしたら、親に操作バーを出してもらう
