@@ -25,7 +25,7 @@ canvas{display:block; position:absolute; inset:0}
   const DJ = ['日','月','火','水','木','金','土'];
   const cv = document.getElementById('c'), ctx = cv.getContext('2d');
   const get = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch { return d; } };
-  // 時刻の数字とAM/PMには、外側に白い細いふちをつける（日付と秒にはつけない）
+  // 時刻の数字だけ、外側に白い細いふちをつける（AM/PM・日付・秒にはつけない）
   const EDGE_COLOR = '#ffffff';
   let secs = get('secs', '1') === '1', h12 = get('h12', '0') === '1';
   let W = 0, H = 0, timer = 0;
@@ -96,7 +96,7 @@ canvas{display:block; position:absolute; inset:0}
       const fsW = 0.99 * W / (4 * m.dw + m.colon), fs = Math.min(fsW, avail / m.asc);
       const sy = fs === fsW ? Math.max(1, Math.min(MAX_STRETCH, avail / (m.asc * fs))) : 1;
       ctx.font = spec(fs);
-      if (ampm) { const fa = apH * 0.66; ctx.font = spec(fa); ctx.textAlign = 'left'; put(ampm, W * 0.02, pad + apH * 0.7, fa, true); ctx.font = spec(fs); }
+      if (ampm) { const fa = apH * 0.66; ctx.font = spec(fa); ctx.textAlign = 'left'; put(ampm, W * 0.02, pad + apH * 0.7, fa); ctx.font = spec(fs); }
       drawCells(`${hh}:${mm}`, W / 2, pad + apH + avail / 2 + m.asc * fs * sy / 2, fs, m, sy);
       const parts = secs ? [date, ss + '秒'] : [date];
       const fs2 = fitRow(rowH * 0.8, parts, W * 0.96), base = H - pad - rowH / 2 + fs2 * 0.36;
@@ -111,7 +111,7 @@ canvas{display:block; position:absolute; inset:0}
       const gapY = H * 0.03, apH = ampm ? H * 0.06 : 0, avail = H - pad * 2 - lines * rowH * 1.35 - gapY - apH;
       const fs = Math.min(0.94 * W / (2 * m.dw), avail / (2 * m.asc + gap));
       const block = (2 * m.asc + gap) * fs, top = pad + apH + (avail - block) / 2;
-      if (ampm) { const fa = apH * 0.66; ctx.font = spec(fa); ctx.textAlign = 'left'; put(ampm, W * 0.04, pad + apH * 0.7, fa, true); }
+      if (ampm) { const fa = apH * 0.66; ctx.font = spec(fa); ctx.textAlign = 'left'; put(ampm, W * 0.04, pad + apH * 0.7, fa); }
       ctx.font = spec(fs);
       drawCells(hh, W / 2, top + m.asc * fs, fs, m);
       drawCells(mm, W / 2, top + (2 * m.asc + gap) * fs, fs, m);
