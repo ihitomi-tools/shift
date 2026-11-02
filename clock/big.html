@@ -37,22 +37,28 @@ canvas{display:block; position:absolute; inset:0}
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
-  // 数字の「いちばん広い幅」と高さ、コロンの幅。この幅のマスに1文字ずつ置くので、数字が変わっても位置がずれない
+  // 数字は「実際に見えている幅」で測って、文字どうしの余白を詰める（その分、数字を大きくできる）
+  const GAP = 0.07;   // 数字と数字のすき間（文字の高さに対する割合ではなく、フォントサイズに対する割合）
+  const MAX_STRETCH = 1.3;   // 横長の画面で、数字を縦に伸ばして余白を埋める上限（1.3 = 最大30%）
   function metrics(){
-    ctx.font = spec(100);
-    let dw = 0, asc = 0;
+    ctx.font = spec(100); ctx.textAlign = 'left';   // 前の描画の文字寄せが残っていると測り方がずれるので、必ず左寄せで測る
+    let inkW = 0, asc = 0; const off = {};
     for (const ch of '0123456789') {
-      const t = ctx.measureText(ch);
-      dw = Math.max(dw, t.width / 100); asc = Math.max(asc, (t.actualBoundingBoxAscent || 72) / 100);
+      const t = ctx.measureText(ch), l = t.actualBoundingBoxLeft || 0, r = t.actualBoundingBoxRight || t.width;
+      inkW = Math.max(inkW, (l + r) / 100); asc = Math.max(asc, (t.actualBoundingBoxAscent || 72) / 100);
+      off[ch] = ((r - l) / 2 - t.width / 2) / 100;   // 見えている部分の中心が、文字の送り幅の中心からどれだけずれているか（em）
     }
-    return { dw, asc, colon: ctx.measureText(':').width / 100 };
+    const c = ctx.measureText(':'), cl = c.actualBoundingBoxLeft || 0, cr = c.actualBoundingBoxRight || c.width;
+    off[':'] = ((cr - cl) / 2 - c.width / 2) / 100;
+    return { dw: inkW + GAP, asc, colon: (cl + cr) / 100 + GAP * 1.4, off };
   }
-  // 1文字ずつ、同じ幅のマスの真ん中に描く
-  function drawCells(str, cx, y, fs, m){
+  // 1文字ずつ、同じ幅のマスの真ん中に（見えている部分が中央に来るように）描く。sy>1 なら縦に伸ばす
+  function drawCells(str, cx, y, fs, m, sy = 1){
     const cw = ch => (ch === ':' ? m.colon : m.dw) * fs;
     let x = cx - [...str].reduce((a, ch) => a + cw(ch), 0) / 2;
-    ctx.textAlign = 'center';
-    for (const ch of str) { ctx.fillText(ch, x + cw(ch) / 2, y); x += cw(ch); }
+    ctx.save(); ctx.translate(0, y); ctx.scale(1, sy); ctx.textAlign = 'center';
+    for (const ch of str) { ctx.fillText(ch, x + cw(ch) / 2 - m.off[ch] * fs, 0); x += cw(ch); }
+    ctx.restore();
   }
 
   function draw(){
@@ -61,7 +67,7 @@ canvas{display:block; position:absolute; inset:0}
     const hh = String(h12 ? (h % 12 || 12) : h).padStart(2, '0'), mm = String(now.getMinutes()).padStart(2, '0');
     const ss = String(now.getSeconds()).padStart(2, '0');
     const date = (h12 ? (h < 12 ? '午前 ' : '午後 ') : '') + `${now.getMonth() + 1}月${now.getDate()}日（${DJ[now.getDay()]}）`;
-    const m = metrics(), wide = W / H >= 1.15, pad = Math.min(W, H) * 0.035;
+    const m = metrics(), wide = W / H >= 1.15, pad = Math.min(W, H) * 0.03;
     ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = FG; ctx.textBaseline = 'alphabetic';
 
@@ -73,17 +79,18 @@ canvas{display:block; position:absolute; inset:0}
     };
 
     if (wide) {
-      // 横長: 「12:34」を1行で最大に。下に日付と秒
-      const rowH = H * 0.17, gapY = H * 0.04, avail = H - pad * 2 - rowH - gapY;
-      const fs = Math.min(0.97 * W / (4 * m.dw + m.colon), avail / m.asc);
+      // 横長: 「12:34」を1行で最大に（横幅いっぱい。縦が余ったら数字を縦に伸ばす）。下に日付と秒
+      const rowH = H * (secs ? 0.15 : 0.12), gapY = H * 0.035, avail = H - pad * 2 - rowH - gapY;
+      const fsW = 0.99 * W / (4 * m.dw + m.colon), fs = Math.min(fsW, avail / m.asc);
+      const sy = fs === fsW ? Math.max(1, Math.min(MAX_STRETCH, avail / (m.asc * fs))) : 1;
       ctx.font = spec(fs);
-      drawCells(`${hh}:${mm}`, W / 2, pad + avail / 2 + m.asc * fs / 2, fs, m);
+      drawCells(`${hh}:${mm}`, W / 2, pad + avail / 2 + m.asc * fs * sy / 2, fs, m, sy);
       const parts = secs ? [date, ss + '秒'] : [date];
-      const fs2 = fitRow(rowH * 0.78, parts, W * 0.94), base = H - pad - rowH / 2 + fs2 * 0.36;
+      const fs2 = fitRow(rowH * 0.8, parts, W * 0.96), base = H - pad - rowH / 2 + fs2 * 0.36;
       ctx.font = spec(fs2);
       if (secs) {
-        ctx.textAlign = 'left';  ctx.fillText(date, W * 0.03, base);
-        ctx.textAlign = 'right'; ctx.fillText(ss + '秒', W * 0.97, base);
+        ctx.textAlign = 'left';  ctx.fillText(date, W * 0.02, base);
+        ctx.textAlign = 'right'; ctx.fillText(ss + '秒', W * 0.98, base);
       } else { ctx.textAlign = 'center'; ctx.fillText(date, W / 2, base); }
     } else {
       // 縦長: 「12」の下に「34」を積んで最大に。下に日付と秒
@@ -101,7 +108,8 @@ canvas{display:block; position:absolute; inset:0}
       if (secs) { y += rowH * 1.35; ctx.fillText(ss + '秒', W / 2, y); }
     }
     cv.setAttribute('aria-label', `${h}時${now.getMinutes()}分`);
-    timer = setTimeout(draw, 1000 - (Date.now() % 1000) + 15);
+    // 秒を出すときは毎秒、出さないときは1分ごとに描き直す（電池のため）
+    timer = setTimeout(draw, secs ? 1000 - (Date.now() % 1000) + 15 : 60000 - (Date.now() % 60000) + 50);
   }
 
   // フォントが読み込めたら、もう一度ぴったり描き直す
