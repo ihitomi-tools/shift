@@ -39,9 +39,9 @@ canvas{display:block; position:absolute; inset:0}
   const DJ = ['日','月','火','水','木','金','土'];
   const cv = document.getElementById('c'), ctx = cv.getContext('2d');
   const get = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch { return d; } };
-  let scheme = get('scheme', 'white'), font = get('font', 'biz'), secs = get('secs', '1') === '1', h12 = get('h12', '0') === '1';
-  if (!SCHEMES[scheme]) scheme = 'white';
-  if (!FONTS[font]) font = 'biz';
+  let scheme = get('scheme', 'cyan'), font = get('font', 'barlow'), secs = get('secs', '1') === '1', h12 = get('h12', '0') === '1';
+  if (!SCHEMES[scheme]) scheme = 'cyan';
+  if (!FONTS[font]) font = 'barlow';
   let W = 0, H = 0, timer = 0;
 
   const stack = () => `"${FONTS[font].family}","BIZ UDGothic","BIZ UDPGothic",${FALL}`;

@@ -92,7 +92,7 @@ button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
 nav{display:flex; flex-wrap:wrap; align-items:center; gap:4px 8px; padding:6px 8px calc(6px + env(safe-area-inset-bottom)); background:var(--panel); border-top:2px solid var(--line); z-index:5; backdrop-filter:blur(6px)}
 .tabs{display:flex; flex:1 1 300px; gap:4px}
 .tabs button{flex:1}
-.tools{display:flex; gap:6px; flex:0 0 auto; margin-left:auto}
+.tools{display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; flex:1 1 auto; margin-left:auto}
 nav button{font-weight:700; font-size:.85rem; color:var(--text); background:transparent; border:2px solid transparent; border-radius:10px; padding:8px 10px; min-height:40px; cursor:pointer; white-space:nowrap}
 .tabs button[aria-selected="true"]{background:var(--accent); color:var(--accent-text)}
 .tools button{border-color:var(--line)}
@@ -116,7 +116,7 @@ nav.hide{display:none}
   <symbol id="paw" viewBox="0 0 64 64"><ellipse cx="32" cy="42" rx="14" ry="11"/><ellipse cx="13" cy="28" rx="6" ry="8"/><ellipse cx="25" cy="17" rx="6" ry="8"/><ellipse cx="39" cy="17" rx="6" ry="8"/><ellipse cx="51" cy="28" rx="6" ry="8"/></symbol>
 </defs></svg>
 
-<div id="app" data-face="1" data-scheme="white" data-sky="night" data-breed="black" data-view="clock">
+<div id="app" data-face="1" data-scheme="cyan" data-sky="night" data-breed="black" data-view="clock">
 <main id="stage">
   <section class="view" id="v-clock" aria-label="現在時刻">
 
@@ -179,7 +179,7 @@ nav.hide{display:none}
   const DJ = ['日','月','火','水','木','金','土'], DE = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 
   /* ---------- 状態 ---------- */
-  let face = +store.get('face2', '1'), scheme = store.get('scheme', 'white'), font = store.get('font', 'biz'), secs = store.get('secs', '1') === '1', skyMode = store.get('sky', 'auto'), breed = store.get('breed', 'black');
+  let face = +store.get('face2', '1'), scheme = store.get('scheme', 'cyan'), font = store.get('font', 'barlow'), secs = store.get('secs', '1') === '1', skyMode = store.get('sky', 'auto'), breed = store.get('breed', 'black');
   let h12 = store.get('h12', '0') === '1', view = 'clock';
   const FACES = ['big.html','window.html','sleepy.html','flip.html'];
   const SCHEME = ['white','yellow','amber','cyan','navy','navyyellow','yellowbg','light'];
@@ -188,8 +188,8 @@ nav.hide{display:none}
   const SKY = ['auto','day','sunset','night'], SKYL = {auto:'自動', day:'昼', sunset:'夕方', night:'夜'};
   const BREED = ['black','tabby','calico'], BREEDL = {black:'黒猫', tabby:'茶トラ', calico:'白ねこ'};
   if (![1,2,3,4].includes(face)) face = 1;
-  if (!SCHEME.includes(scheme)) scheme = 'white';
-  if (!FONT.includes(font)) font = 'biz';
+  if (!SCHEME.includes(scheme)) scheme = 'cyan';
+  if (!FONT.includes(font)) font = 'barlow';
   if (!SKY.includes(skyMode)) skyMode = 'auto';
   if (!BREED.includes(breed)) breed = 'black';
 
