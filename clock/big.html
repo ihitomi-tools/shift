@@ -25,10 +25,9 @@ canvas{display:block; position:absolute; inset:0}
   const DJ = ['日','月','火','水','木','金','土'];
   const cv = document.getElementById('c'), ctx = cv.getContext('2d');
   const get = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch { return d; } };
-  // 数字のふちどりの色（なし = ふちどりなし）
-  const EDGE_COLORS = { none: null, white: '#ffffff', pink: '#ff3dcb', yellow: '#ffe600', lime: '#39ff14', orange: '#ff8a00', purple: '#b44cff' };
-  let secs = get('secs', '1') === '1', h12 = get('h12', '0') === '1', edge = get('edge', 'none');
-  if (!(edge in EDGE_COLORS)) edge = 'none';
+  // 時刻の数字とAM/PMには、外側に白い細いふちをつける（日付と秒にはつけない）
+  const EDGE_COLOR = '#ffffff';
+  let secs = get('secs', '1') === '1', h12 = get('h12', '0') === '1';
   let W = 0, H = 0, timer = 0;
 
   const spec = px => `${WEIGHT} ${px}px "${FAMILY}","BIZ UDGothic","BIZ UDPGothic",${FALL}`;
@@ -55,12 +54,11 @@ canvas{display:block; position:absolute; inset:0}
     off[':'] = ((cr - cl) / 2 - c.width / 2) / 100;
     return { dw: inkW + GAP, asc, colon: (cl + cr) / 100 + GAP * 1.4, off };
   }
-  // 文字を描く。ふちどりの色が決まっていれば、文字の外側に細い線を足す（textAlign は呼ぶ側で設定済み）
-  function put(str, x, y, fs){
-    const col = EDGE_COLORS[edge];
-    if (col) {
+  // 文字を描く。outline が true のときだけ、文字の外側に白い細線を足す（textAlign は呼ぶ側で設定済み）
+  function put(str, x, y, fs, outline = false){
+    if (outline) {
       ctx.lineJoin = 'round'; ctx.miterLimit = 2;
-      ctx.strokeStyle = col; ctx.lineWidth = Math.max(2, fs * 0.01) * 2;   // 文字の内側は塗りつぶしで隠れるので、外側に半分だけ見える
+      ctx.strokeStyle = EDGE_COLOR; ctx.lineWidth = Math.max(2, fs * 0.01) * 2;   // 文字の内側は塗りつぶしで隠れるので、外側に半分だけ見える
       ctx.strokeText(str, x, y);
     }
     ctx.fillText(str, x, y);
@@ -70,7 +68,7 @@ canvas{display:block; position:absolute; inset:0}
     const cw = ch => (ch === ':' ? m.colon : m.dw) * fs;
     let x = cx - [...str].reduce((a, ch) => a + cw(ch), 0) / 2;
     ctx.save(); ctx.translate(0, y); ctx.scale(1, sy); ctx.textAlign = 'center';
-    for (const ch of str) { put(ch, x + cw(ch) / 2 - m.off[ch] * fs, 0, fs); x += cw(ch); }
+    for (const ch of str) { put(ch, x + cw(ch) / 2 - m.off[ch] * fs, 0, fs, true); x += cw(ch); }
     ctx.restore();
   }
 
@@ -98,7 +96,7 @@ canvas{display:block; position:absolute; inset:0}
       const fsW = 0.99 * W / (4 * m.dw + m.colon), fs = Math.min(fsW, avail / m.asc);
       const sy = fs === fsW ? Math.max(1, Math.min(MAX_STRETCH, avail / (m.asc * fs))) : 1;
       ctx.font = spec(fs);
-      if (ampm) { const fa = apH * 0.66; ctx.font = spec(fa); ctx.textAlign = 'left'; put(ampm, W * 0.02, pad + apH * 0.7, fa); ctx.font = spec(fs); }
+      if (ampm) { const fa = apH * 0.66; ctx.font = spec(fa); ctx.textAlign = 'left'; put(ampm, W * 0.02, pad + apH * 0.7, fa, true); ctx.font = spec(fs); }
       drawCells(`${hh}:${mm}`, W / 2, pad + apH + avail / 2 + m.asc * fs * sy / 2, fs, m, sy);
       const parts = secs ? [date, ss + '秒'] : [date];
       const fs2 = fitRow(rowH * 0.8, parts, W * 0.96), base = H - pad - rowH / 2 + fs2 * 0.36;
@@ -113,7 +111,7 @@ canvas{display:block; position:absolute; inset:0}
       const gapY = H * 0.03, apH = ampm ? H * 0.06 : 0, avail = H - pad * 2 - lines * rowH * 1.35 - gapY - apH;
       const fs = Math.min(0.94 * W / (2 * m.dw), avail / (2 * m.asc + gap));
       const block = (2 * m.asc + gap) * fs, top = pad + apH + (avail - block) / 2;
-      if (ampm) { const fa = apH * 0.66; ctx.font = spec(fa); ctx.textAlign = 'left'; put(ampm, W * 0.04, pad + apH * 0.7, fa); }
+      if (ampm) { const fa = apH * 0.66; ctx.font = spec(fa); ctx.textAlign = 'left'; put(ampm, W * 0.04, pad + apH * 0.7, fa, true); }
       ctx.font = spec(fs);
       drawCells(hh, W / 2, top + m.asc * fs, fs, m);
       drawCells(mm, W / 2, top + (2 * m.asc + gap) * fs, fs, m);
@@ -142,7 +140,6 @@ canvas{display:block; position:absolute; inset:0}
     const d = e.data || {};
     if (typeof d.secs === 'boolean') secs = d.secs;
     if (typeof d.h12 === 'boolean') h12 = d.h12;
-    if (d.edge in EDGE_COLORS) edge = d.edge;
     draw();
   });
   // タップしたら、親に操作バーを出してもらう
