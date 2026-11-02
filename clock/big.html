@@ -6,7 +6,7 @@
 <title>でっかい時計</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@700&family=Atkinson+Hyperlegible:wght@700&family=M+PLUS+Rounded+1c:wght@800&family=Barlow+Condensed:wght@800&display=swap" rel="stylesheet">
 <style>
 html,body{margin:0; height:100%; overflow:hidden; background:#000}
 canvas{display:block; position:absolute; inset:0}
@@ -17,18 +17,35 @@ canvas{display:block; position:absolute; inset:0}
 <script>
 (() => {
   // 文字を画面いっぱいに描く時計。canvasに描くので、どんな画面でも文字の大きさをぴったり計算できる
-  const FONT = '"BIZ UDGothic","BIZ UDPGothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif';
+  const FALL = '"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif';
+  // 数字のフォント（日付の漢字は、どれを選んでもBIZ UDゴシックで描く）
+  const FONTS = {
+    biz:      { weight: 700, family: 'BIZ UDGothic' },
+    atkinson: { weight: 700, family: 'Atkinson Hyperlegible' },
+    mplus:    { weight: 800, family: 'M PLUS Rounded 1c' },
+    barlow:   { weight: 800, family: 'Barlow Condensed' }
+  };
+  // 色（背景 / 文字）
   const SCHEMES = {
-    white:  { bg: '#000000', fg: '#ffffff' },   // 黒地に白
-    yellow: { bg: '#000000', fg: '#ffe600' },   // 黒地に黄
-    light:  { bg: '#ffffff', fg: '#000000' }    // 白地に黒
+    white:      { bg: '#000000', fg: '#ffffff' },   // 黒地に白
+    yellow:     { bg: '#000000', fg: '#ffe600' },   // 黒地に黄
+    amber:      { bg: '#000000', fg: '#ffb000' },   // 黒地にアンバー
+    cyan:       { bg: '#000000', fg: '#00e5ff' },   // 黒地に水色
+    navy:       { bg: '#0a1f44', fg: '#ffffff' },   // 紺地に白
+    navyyellow: { bg: '#0a1f44', fg: '#ffe600' },   // 紺地に黄
+    yellowbg:   { bg: '#ffd400', fg: '#000000' },   // 黄地に黒
+    light:      { bg: '#ffffff', fg: '#000000' }    // 白地に黒
   };
   const DJ = ['日','月','火','水','木','金','土'];
   const cv = document.getElementById('c'), ctx = cv.getContext('2d');
   const get = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch { return d; } };
-  let scheme = get('scheme', 'white'), secs = get('secs', '1') === '1', h12 = get('h12', '0') === '1';
+  let scheme = get('scheme', 'white'), font = get('font', 'biz'), secs = get('secs', '1') === '1', h12 = get('h12', '0') === '1';
   if (!SCHEMES[scheme]) scheme = 'white';
+  if (!FONTS[font]) font = 'biz';
   let W = 0, H = 0, timer = 0;
+
+  const stack = () => `"${FONTS[font].family}","BIZ UDGothic","BIZ UDPGothic",${FALL}`;
+  const spec = px => `${FONTS[font].weight} ${px}px ${stack()}`;
 
   function resize(){
     const dpr = Math.max(1, window.devicePixelRatio || 1);
@@ -37,11 +54,22 @@ canvas{display:block; position:absolute; inset:0}
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
-  // 数字1文字の幅・高さ（フォントが違っても自動で合わせる）
+  // 数字の「いちばん広い幅」と高さ、コロンの幅。この幅のマスに1文字ずつ置くので、数字が変わっても位置がずれない
   function metrics(){
-    ctx.font = `700 100px ${FONT}`;
-    const z = ctx.measureText('0'), c = ctx.measureText(':');
-    return { dw: z.width / 100, asc: (z.actualBoundingBoxAscent || 72) / 100, colon: c.width / 100 };
+    ctx.font = spec(100);
+    let dw = 0, asc = 0;
+    for (const ch of '0123456789') {
+      const t = ctx.measureText(ch);
+      dw = Math.max(dw, t.width / 100); asc = Math.max(asc, (t.actualBoundingBoxAscent || 72) / 100);
+    }
+    return { dw, asc, colon: ctx.measureText(':').width / 100 };
+  }
+  // 1文字ずつ、同じ幅のマスの真ん中に描く
+  function drawCells(str, cx, y, fs, m){
+    const cw = ch => (ch === ':' ? m.colon : m.dw) * fs;
+    let x = cx - [...str].reduce((a, ch) => a + cw(ch), 0) / 2;
+    ctx.textAlign = 'center';
+    for (const ch of str) { ctx.fillText(ch, x + cw(ch) / 2, y); x += cw(ch); }
   }
 
   function draw(){
@@ -54,23 +82,22 @@ canvas{display:block; position:absolute; inset:0}
     ctx.fillStyle = th.bg; ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = th.fg; ctx.textBaseline = 'alphabetic';
 
-    // 日付・秒の行を、幅に収まる最大の大きさで描く
+    // 日付・秒の行を、幅に収まる最大の大きさにする
     const fitRow = (maxFs, parts, maxW) => {
-      let fs = maxFs;
-      ctx.font = `700 ${fs}px ${FONT}`;
-      const w = parts.reduce((a, t) => a + ctx.measureText(t).width, 0) + fs * 0.8 * (parts.length - 1);
-      return w > maxW ? fs * maxW / w : fs;
+      ctx.font = spec(maxFs);
+      const w = parts.reduce((a, t) => a + ctx.measureText(t).width, 0) + maxFs * 0.8 * (parts.length - 1);
+      return w > maxW ? maxFs * maxW / w : maxFs;
     };
 
     if (wide) {
       // 横長: 「12:34」を1行で最大に。下に日付と秒
       const rowH = H * 0.17, gapY = H * 0.04, avail = H - pad * 2 - rowH - gapY;
       const fs = Math.min(0.97 * W / (4 * m.dw + m.colon), avail / m.asc);
-      ctx.font = `700 ${fs}px ${FONT}`; ctx.textAlign = 'center';
-      ctx.fillText(`${hh}:${mm}`, W / 2, pad + avail / 2 + m.asc * fs / 2);
+      ctx.font = spec(fs);
+      drawCells(`${hh}:${mm}`, W / 2, pad + avail / 2 + m.asc * fs / 2, fs, m);
       const parts = secs ? [date, ss + '秒'] : [date];
       const fs2 = fitRow(rowH * 0.78, parts, W * 0.94), base = H - pad - rowH / 2 + fs2 * 0.36;
-      ctx.font = `700 ${fs2}px ${FONT}`;
+      ctx.font = spec(fs2);
       if (secs) {
         ctx.textAlign = 'left';  ctx.fillText(date, W * 0.03, base);
         ctx.textAlign = 'right'; ctx.fillText(ss + '秒', W * 0.97, base);
@@ -81,11 +108,11 @@ canvas{display:block; position:absolute; inset:0}
       const gapY = H * 0.03, avail = H - pad * 2 - lines * rowH * 1.35 - gapY;
       const fs = Math.min(0.94 * W / (2 * m.dw), avail / (2 * m.asc + gap));
       const block = (2 * m.asc + gap) * fs, top = pad + (avail - block) / 2;
-      ctx.font = `700 ${fs}px ${FONT}`; ctx.textAlign = 'center';
-      ctx.fillText(hh, W / 2, top + m.asc * fs);
-      ctx.fillText(mm, W / 2, top + (2 * m.asc + gap) * fs);
+      ctx.font = spec(fs);
+      drawCells(hh, W / 2, top + m.asc * fs, fs, m);
+      drawCells(mm, W / 2, top + (2 * m.asc + gap) * fs, fs, m);
       const fsD = fitRow(rowH, [date], W * 0.94);
-      ctx.font = `700 ${fsD}px ${FONT}`;
+      ctx.font = spec(fsD); ctx.textAlign = 'center';
       let y = pad + avail + gapY + rowH;
       ctx.fillText(date, W / 2, y);
       if (secs) { y += rowH * 1.35; ctx.fillText(ss + '秒', W / 2, y); }
@@ -94,12 +121,21 @@ canvas{display:block; position:absolute; inset:0}
     timer = setTimeout(draw, 1000 - (Date.now() % 1000) + 15);
   }
 
+  // 選んだフォントが読み込めたら、もう一度ぴったり描き直す
+  function loadFonts(){
+    if (!(document.fonts && document.fonts.load)) return;
+    const f = FONTS[font];
+    document.fonts.load(`${f.weight} 100px "${f.family}"`, '0123456789:秒').then(draw).catch(() => {});
+    document.fonts.load('700 100px "BIZ UDGothic"', '月日（）火水木金土曜午前後秒0123456789').then(draw).catch(() => {});
+  }
+
   addEventListener('resize', () => { resize(); draw(); });
   document.addEventListener('visibilitychange', () => { if (!document.hidden) draw(); });
-  // 親の時計アプリから、色・秒・12/24時間の指定を受け取る
+  // 親の時計アプリから、色・フォント・秒・12/24時間の指定を受け取る
   addEventListener('message', e => {
     const d = e.data || {};
     if (SCHEMES[d.scheme]) scheme = d.scheme;
+    if (FONTS[d.font] && d.font !== font) { font = d.font; loadFonts(); }
     if (typeof d.secs === 'boolean') secs = d.secs;
     if (typeof d.h12 === 'boolean') h12 = d.h12;
     draw();
@@ -107,12 +143,8 @@ canvas{display:block; position:absolute; inset:0}
   // タップしたら、親に操作バーを出してもらう
   addEventListener('pointerdown', () => { try { parent.postMessage({ type: 'tap' }, '*'); } catch {} });
 
-  resize(); draw();
-  // フォント（BIZ UDゴシック）が読み込めたら、もう一度ぴったり描き直す
-  if (document.fonts && document.fonts.load) {
-    document.fonts.load(`700 100px "BIZ UDGothic"`, '0123456789:月日（）火水木金土曜午前後秒').then(draw).catch(() => {});
-    document.fonts.ready.then(draw);
-  }
+  resize(); draw(); loadFonts();
+  if (document.fonts) document.fonts.ready.then(draw);
 })();
 </script>
 </body>

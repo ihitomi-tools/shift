@@ -28,6 +28,11 @@ button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
 /* でっかい時計（読みやすさ最優先: 黒地に白がいちばんコントラストが高い） */
 #app[data-face="1"]{--bg:#000; --text:#fff; --sub:#d0d0d0; --panel:#111; --line:#fff; --accent:#ffe600; --accent-text:#000; --danger:#ff7b7b; --rim:rgba(255,255,255,.35)}
 #app[data-face="1"][data-scheme="yellow"]{--text:#ffe600; --sub:#ffe600; --line:#ffe600}
+#app[data-face="1"][data-scheme="amber"]{--text:#ffb000; --sub:#ffb000; --line:#ffb000; --accent:#ffb000}
+#app[data-face="1"][data-scheme="cyan"]{--text:#00e5ff; --sub:#00e5ff; --line:#00e5ff; --accent:#00e5ff}
+#app[data-face="1"][data-scheme="navy"]{--bg:#0a1f44; --panel:#0f2a5c; --text:#fff; --sub:#e6ecf7; --line:#fff}
+#app[data-face="1"][data-scheme="navyyellow"]{--bg:#0a1f44; --panel:#0f2a5c; --text:#ffe600; --sub:#ffe600; --line:#ffe600; --accent:#ffe600; --accent-text:#0a1f44}
+#app[data-face="1"][data-scheme="yellowbg"]{--bg:#ffd400; --panel:#ffe566; --text:#000; --sub:#000; --line:#000; --accent:#000; --accent-text:#ffd400; --danger:#a00000; --rim:transparent}
 #app[data-face="1"][data-scheme="light"]{--bg:#fff; --text:#000; --sub:#333; --panel:#f2f2f2; --line:#000; --accent:#000; --accent-text:#fff; --danger:#c00000; --rim:transparent}
 /* 窓辺（空は時間帯で変わる） */
 #app[data-face="2"][data-sky="night"]{--bg:linear-gradient(180deg,#1e1b4b,#3b0764 55%,#0f172a)}
@@ -154,6 +159,7 @@ nav.hide{display:none}
   <div class="tools">
     <button id="b-face" aria-label="デザインを切り替え">デザイン</button>
     <button id="b-var" aria-label="色や毛色を切り替え">いろ</button>
+    <button id="b-font" aria-label="数字のフォントを切り替え">もじ</button>
     <button id="b-sec" aria-label="秒の表示切り替え">秒</button>
     <button id="b-fmt" aria-label="12時間/24時間の切り替え">24h</button>
     <button id="b-fs" aria-label="全画面">全画面</button>
@@ -173,14 +179,17 @@ nav.hide{display:none}
   const DJ = ['日','月','火','水','木','金','土'], DE = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 
   /* ---------- 状態 ---------- */
-  let face = +store.get('face2', '1'), scheme = store.get('scheme', 'white'), secs = store.get('secs', '1') === '1', skyMode = store.get('sky', 'auto'), breed = store.get('breed', 'black');
+  let face = +store.get('face2', '1'), scheme = store.get('scheme', 'white'), font = store.get('font', 'biz'), secs = store.get('secs', '1') === '1', skyMode = store.get('sky', 'auto'), breed = store.get('breed', 'black');
   let h12 = store.get('h12', '0') === '1', view = 'clock';
   const FACES = ['big.html','window.html','sleepy.html','flip.html'];
-  const SCHEME = ['white','yellow','light'], SCHEMEL = {white:'白', yellow:'黄', light:'白地'};
+  const SCHEME = ['white','yellow','amber','cyan','navy','navyyellow','yellowbg','light'];
+  const SCHEMEL = {white:'黒地に白', yellow:'黒地に黄', amber:'黒地に橙', cyan:'黒地に水色', navy:'紺地に白', navyyellow:'紺地に黄', yellowbg:'黄地に黒', light:'白地に黒'};
+  const FONT = ['biz','atkinson','mplus','barlow'], FONTL = {biz:'BIZ UD', atkinson:'Atkinson', mplus:'M PLUS', barlow:'Barlow'};
   const SKY = ['auto','day','sunset','night'], SKYL = {auto:'自動', day:'昼', sunset:'夕方', night:'夜'};
   const BREED = ['black','tabby','calico'], BREEDL = {black:'黒猫', tabby:'茶トラ', calico:'白ねこ'};
   if (![1,2,3,4].includes(face)) face = 1;
   if (!SCHEME.includes(scheme)) scheme = 'white';
+  if (!FONT.includes(font)) font = 'biz';
   if (!SKY.includes(skyMode)) skyMode = 'auto';
   if (!BREED.includes(breed)) breed = 'black';
 
@@ -191,11 +200,12 @@ nav.hide{display:none}
     app.dataset.sky = skyMode === 'auto' ? autoSky(d.getHours()) : skyMode;
     $('b-face').textContent = 'デザイン ' + face + '/4';
     const vb = $('b-var');
-    if (face === 1) { vb.textContent = 'いろ:' + SCHEMEL[scheme]; vb.disabled = false; }
+    if (face === 1) { vb.textContent = SCHEMEL[scheme]; vb.disabled = false; }
     else if (face === 2) { vb.textContent = 'そら:' + SKYL[skyMode]; vb.disabled = false; }
     else if (face === 3) { vb.textContent = BREEDL[breed]; vb.disabled = false; }
     else { vb.textContent = 'いろ'; vb.disabled = true; }
-    $('b-sec').style.display = face === 1 ? '' : 'none';
+    $('b-sec').style.display = $('b-font').style.display = face === 1 ? '' : 'none';
+    $('b-font').textContent = 'もじ:' + FONTL[font];
     $('b-sec').textContent = '秒:' + (secs ? 'あり' : 'なし');
     $('b-fmt').textContent = h12 ? '12h' : '24h';
     const fr = $('face-frame'), want = FACES[face - 1];
@@ -205,7 +215,7 @@ nav.hide{display:none}
   // 時計ページへ、色・秒・空の色・毛色・12/24時間を知らせる
   function post(){
     const w = $('face-frame').contentWindow;
-    if (w) w.postMessage({ sky: app.dataset.sky, breed, h12, scheme, secs }, '*');
+    if (w) w.postMessage({ sky: app.dataset.sky, breed, h12, scheme, font, secs }, '*');
   }
   $('face-frame').addEventListener('load', post);
 
@@ -250,6 +260,7 @@ nav.hide{display:none}
     else if (face === 3) { breed = BREED[(BREED.indexOf(breed) + 1) % BREED.length]; store.set('breed', breed); }
     applyState();
   };
+  $('b-font').onclick = () => { font = FONT[(FONT.indexOf(font) + 1) % FONT.length]; store.set('font', font); applyState(); };
   $('b-sec').onclick = () => { secs = !secs; store.set('secs', secs ? '1' : '0'); applyState(); };
   $('b-fmt').onclick = () => { h12 = !h12; store.set('h12', h12 ? '1' : '0'); applyState(); };
   if (document.documentElement.requestFullscreen) {
