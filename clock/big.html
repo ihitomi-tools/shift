@@ -6,7 +6,7 @@
 <title>でっかい時計</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@700&family=Atkinson+Hyperlegible:wght@700&family=M+PLUS+Rounded+1c:wght@800&family=Barlow+Condensed:wght@800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@700&family=Barlow+Condensed:wght@800&display=swap" rel="stylesheet">
 <style>
 html,body{margin:0; height:100%; overflow:hidden; background:#000}
 canvas{display:block; position:absolute; inset:0}
@@ -18,34 +18,17 @@ canvas{display:block; position:absolute; inset:0}
 (() => {
   // 文字を画面いっぱいに描く時計。canvasに描くので、どんな画面でも文字の大きさをぴったり計算できる
   const FALL = '"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif';
-  // 数字のフォント（日付の漢字は、どれを選んでもBIZ UDゴシックで描く）
-  const FONTS = {
-    biz:      { weight: 700, family: 'BIZ UDGothic' },
-    atkinson: { weight: 700, family: 'Atkinson Hyperlegible' },
-    mplus:    { weight: 800, family: 'M PLUS Rounded 1c' },
-    barlow:   { weight: 800, family: 'Barlow Condensed' }
-  };
-  // 色（背景 / 文字）
-  const SCHEMES = {
-    white:      { bg: '#000000', fg: '#ffffff' },   // 黒地に白
-    yellow:     { bg: '#000000', fg: '#ffe600' },   // 黒地に黄
-    amber:      { bg: '#000000', fg: '#ffb000' },   // 黒地にアンバー
-    cyan:       { bg: '#000000', fg: '#00e5ff' },   // 黒地に水色
-    navy:       { bg: '#0a1f44', fg: '#ffffff' },   // 紺地に白
-    navyyellow: { bg: '#0a1f44', fg: '#ffe600' },   // 紺地に黄
-    yellowbg:   { bg: '#ffd400', fg: '#000000' },   // 黄地に黒
-    light:      { bg: '#ffffff', fg: '#000000' }    // 白地に黒
-  };
+  // 数字は Barlow Condensed（太字）。日付の漢字はBarlowに無いので、BIZ UDゴシックで描く
+  const WEIGHT = 800, FAMILY = 'Barlow Condensed';
+  // 色: 黒地に水色（コントラスト比 約13.6:1）
+  const BG = '#000000', FG = '#00e5ff';
   const DJ = ['日','月','火','水','木','金','土'];
   const cv = document.getElementById('c'), ctx = cv.getContext('2d');
   const get = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch { return d; } };
-  let scheme = get('scheme', 'cyan'), font = get('font', 'barlow'), secs = get('secs', '1') === '1', h12 = get('h12', '0') === '1';
-  if (!SCHEMES[scheme]) scheme = 'cyan';
-  if (!FONTS[font]) font = 'barlow';
+  let secs = get('secs', '1') === '1', h12 = get('h12', '0') === '1';
   let W = 0, H = 0, timer = 0;
 
-  const stack = () => `"${FONTS[font].family}","BIZ UDGothic","BIZ UDPGothic",${FALL}`;
-  const spec = px => `${FONTS[font].weight} ${px}px ${stack()}`;
+  const spec = px => `${WEIGHT} ${px}px "${FAMILY}","BIZ UDGothic","BIZ UDPGothic",${FALL}`;
 
   function resize(){
     const dpr = Math.max(1, window.devicePixelRatio || 1);
@@ -74,13 +57,13 @@ canvas{display:block; position:absolute; inset:0}
 
   function draw(){
     clearTimeout(timer);
-    const th = SCHEMES[scheme], now = new Date(), h = now.getHours();
+    const now = new Date(), h = now.getHours();
     const hh = String(h12 ? (h % 12 || 12) : h).padStart(2, '0'), mm = String(now.getMinutes()).padStart(2, '0');
     const ss = String(now.getSeconds()).padStart(2, '0');
     const date = (h12 ? (h < 12 ? '午前 ' : '午後 ') : '') + `${now.getMonth() + 1}月${now.getDate()}日（${DJ[now.getDay()]}）`;
     const m = metrics(), wide = W / H >= 1.15, pad = Math.min(W, H) * 0.035;
-    ctx.fillStyle = th.bg; ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = th.fg; ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = FG; ctx.textBaseline = 'alphabetic';
 
     // 日付・秒の行を、幅に収まる最大の大きさにする
     const fitRow = (maxFs, parts, maxW) => {
@@ -121,21 +104,18 @@ canvas{display:block; position:absolute; inset:0}
     timer = setTimeout(draw, 1000 - (Date.now() % 1000) + 15);
   }
 
-  // 選んだフォントが読み込めたら、もう一度ぴったり描き直す
+  // フォントが読み込めたら、もう一度ぴったり描き直す
   function loadFonts(){
     if (!(document.fonts && document.fonts.load)) return;
-    const f = FONTS[font];
-    document.fonts.load(`${f.weight} 100px "${f.family}"`, '0123456789:秒').then(draw).catch(() => {});
+    document.fonts.load(`${WEIGHT} 100px "${FAMILY}"`, '0123456789:秒').then(draw).catch(() => {});
     document.fonts.load('700 100px "BIZ UDGothic"', '月日（）火水木金土曜午前後秒0123456789').then(draw).catch(() => {});
   }
 
   addEventListener('resize', () => { resize(); draw(); });
   document.addEventListener('visibilitychange', () => { if (!document.hidden) draw(); });
-  // 親の時計アプリから、色・フォント・秒・12/24時間の指定を受け取る
+  // 親の時計アプリから、秒の表示と12/24時間の指定を受け取る
   addEventListener('message', e => {
     const d = e.data || {};
-    if (SCHEMES[d.scheme]) scheme = d.scheme;
-    if (FONTS[d.font] && d.font !== font) { font = d.font; loadFonts(); }
     if (typeof d.secs === 'boolean') secs = d.secs;
     if (typeof d.h12 === 'boolean') h12 = d.h12;
     draw();

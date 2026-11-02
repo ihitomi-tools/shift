@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#26211e">
-<title>ねこ時計</title>
+<meta name="theme-color" content="#000000">
+<title>でっかい時計</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
@@ -19,42 +19,11 @@ svg{display:block}
 button{font-family:inherit}
 button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
 
-/* ===== 着せ替えパレット ===== */
+/* ===== 配色（黒地に水色: 薄暗い部屋でもはっきり読める） ===== */
 #app{
-  --text:#fff; --sub:rgba(255,255,255,.75); --panel:rgba(15,23,42,.72); --line:#8b7bd8;
-  --accent:#fbbf24; --accent-text:#1a1025; --danger:#ff8a8a; --bg:#1e1b4b;
-  --cat:#14101c; --rim:rgba(255,255,255,.3); --catH:min(15cqh,14cqw);
-}
-/* でっかい時計（読みやすさ最優先: 黒地に白がいちばんコントラストが高い） */
-#app[data-face="1"]{--bg:#000; --text:#fff; --sub:#d0d0d0; --panel:#111; --line:#fff; --accent:#ffe600; --accent-text:#000; --danger:#ff7b7b; --rim:rgba(255,255,255,.35)}
-#app[data-face="1"][data-scheme="yellow"]{--text:#ffe600; --sub:#ffe600; --line:#ffe600}
-#app[data-face="1"][data-scheme="amber"]{--text:#ffb000; --sub:#ffb000; --line:#ffb000; --accent:#ffb000}
-#app[data-face="1"][data-scheme="cyan"]{--text:#00e5ff; --sub:#00e5ff; --line:#00e5ff; --accent:#00e5ff}
-#app[data-face="1"][data-scheme="navy"]{--bg:#0a1f44; --panel:#0f2a5c; --text:#fff; --sub:#e6ecf7; --line:#fff}
-#app[data-face="1"][data-scheme="navyyellow"]{--bg:#0a1f44; --panel:#0f2a5c; --text:#ffe600; --sub:#ffe600; --line:#ffe600; --accent:#ffe600; --accent-text:#0a1f44}
-#app[data-face="1"][data-scheme="yellowbg"]{--bg:#ffd400; --panel:#ffe566; --text:#000; --sub:#000; --line:#000; --accent:#000; --accent-text:#ffd400; --danger:#a00000; --rim:transparent}
-#app[data-face="1"][data-scheme="light"]{--bg:#fff; --text:#000; --sub:#333; --panel:#f2f2f2; --line:#000; --accent:#000; --accent-text:#fff; --danger:#c00000; --rim:transparent}
-/* 窓辺（空は時間帯で変わる） */
-#app[data-face="2"][data-sky="night"]{--bg:linear-gradient(180deg,#1e1b4b,#3b0764 55%,#0f172a)}
-#app[data-face="2"][data-sky="day"]{
-  --bg:linear-gradient(180deg,#38bdf8,#7dd3fc 60%,#fef3c7); --text:#0b2540; --sub:rgba(11,37,64,.78);
-  --panel:rgba(255,255,255,.85); --line:#0b2540; --accent:#0c4a6e; --accent-text:#fff; --danger:#b91c1c; --rim:transparent;
-}
-#app[data-face="2"][data-sky="sunset"]{
-  --bg:linear-gradient(180deg,#312e81,#f43f5e 60%,#fbbf24); --panel:rgba(30,10,45,.72); --line:#ffd1a8;
-}
-/* 気まぐれねこ（毛色で着せ替え） */
-#app[data-face="3"]{
-  --text:#4a3f35; --sub:#7a6a58; --panel:#fff; --line:#4a3f35; --accent:#27272a; --accent-text:#fff; --danger:#c01040; --rim:transparent;
-  --cat-eye:#f5f5f4; --ear-in:#f9a8d4; --stripe:0; --cat-line:transparent; --cat-shadow:none; --dot:#27272a;
-  --bg:#f5f5f4; --badge:#e7e5e4; --cat:#27272a;
-}
-#app[data-face="3"][data-breed="tabby"]{--bg:#fffdf7; --badge:#f3ece1; --cat:#f59e0b; --stripe:1; --cat-eye:#4a3f35; --ear-in:#fde68a; --accent:#b45309; --dot:#f59e0b}
-#app[data-face="3"][data-breed="calico"]{--bg:#fff5f5; --badge:#fce7e7; --cat:#f3f4f6; --cat-eye:#4a3f35; --ear-in:#f9a8d4; --accent:#be185d; --cat-line:#b8a89c; --cat-shadow:drop-shadow(0 0 1px #8a7466); --dot:#f472b6}
-/* ねこ耳フリップ */
-#app[data-face="4"]{
-  --bg:#26211e; --text:#f5ebe6; --sub:#a6968c; --panel:#38302c; --line:#4e423d; --accent:#fbbf24; --accent-text:#26211e;
-  --danger:#ff8a65; --rim:rgba(255,255,255,.28);
+  --bg:#000; --text:#00e5ff; --sub:#00e5ff; --panel:#111; --line:#00e5ff;
+  --accent:#00e5ff; --accent-text:#000; --danger:#ff7b7b;
+  --cat:#14101c; --rim:rgba(0,229,255,.45); --catH:min(15cqh,14cqw);
 }
 #app{height:100dvh; display:flex; flex-direction:column; background:var(--bg); color:var(--text); transition:background .6s}
 #stage{flex:1; min-height:0; position:relative; container-type:size; overflow:hidden}
@@ -62,7 +31,7 @@ button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
 #app[data-view="clock"] #v-clock,#app[data-view="sw"] #v-sw,#app[data-view="tm"] #v-tm{display:block}
 
 /* ===== 時計（iframe） ===== */
-#face-frame{position:absolute; inset:0; width:100%; height:100%; border:0; display:block; background:#26211e}
+#face-frame{position:absolute; inset:0; width:100%; height:100%; border:0; display:block; background:#000}
 
 /* ===== ストップウォッチ / タイマー ===== */
 .vwrap{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:0 3cqw; overflow:auto}
@@ -116,12 +85,12 @@ nav.hide{display:none}
   <symbol id="paw" viewBox="0 0 64 64"><ellipse cx="32" cy="42" rx="14" ry="11"/><ellipse cx="13" cy="28" rx="6" ry="8"/><ellipse cx="25" cy="17" rx="6" ry="8"/><ellipse cx="39" cy="17" rx="6" ry="8"/><ellipse cx="51" cy="28" rx="6" ry="8"/></symbol>
 </defs></svg>
 
-<div id="app" data-face="1" data-scheme="cyan" data-sky="night" data-breed="black" data-view="clock">
+<div id="app" data-view="clock">
 <main id="stage">
   <section class="view" id="v-clock" aria-label="現在時刻">
 
     <!-- 時計のデザイン3種（Gemini版をそのまま別ページ化したもの）を切り替えて表示 -->
-    <iframe id="face-frame" title="時計"></iframe>
+    <iframe id="face-frame" title="時計" src="big.html"></iframe>
   </section>
 
   <section class="view" id="v-sw" aria-label="ストップウォッチ"><div class="vwrap"><div class="vcard">
@@ -157,9 +126,6 @@ nav.hide{display:none}
     <button role="tab" data-v="tm" aria-selected="false">タイマー</button>
   </div>
   <div class="tools">
-    <button id="b-face" aria-label="デザインを切り替え">デザイン</button>
-    <button id="b-var" aria-label="色や毛色を切り替え">いろ</button>
-    <button id="b-font" aria-label="数字のフォントを切り替え">もじ</button>
     <button id="b-sec" aria-label="秒の表示切り替え">秒</button>
     <button id="b-fmt" aria-label="12時間/24時間の切り替え">24h</button>
     <button id="b-fs" aria-label="全画面">全画面</button>
@@ -179,43 +145,18 @@ nav.hide{display:none}
   const DJ = ['日','月','火','水','木','金','土'], DE = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 
   /* ---------- 状態 ---------- */
-  let face = +store.get('face2', '1'), scheme = store.get('scheme', 'cyan'), font = store.get('font', 'barlow'), secs = store.get('secs', '1') === '1', skyMode = store.get('sky', 'auto'), breed = store.get('breed', 'black');
-  let h12 = store.get('h12', '0') === '1', view = 'clock';
-  const FACES = ['big.html','window.html','sleepy.html','flip.html'];
-  const SCHEME = ['white','yellow','amber','cyan','navy','navyyellow','yellowbg','light'];
-  const SCHEMEL = {white:'黒地に白', yellow:'黒地に黄', amber:'黒地に橙', cyan:'黒地に水色', navy:'紺地に白', navyyellow:'紺地に黄', yellowbg:'黄地に黒', light:'白地に黒'};
-  const FONT = ['biz','atkinson','mplus','barlow'], FONTL = {biz:'BIZ UD', atkinson:'Atkinson', mplus:'M PLUS', barlow:'Barlow'};
-  const SKY = ['auto','day','sunset','night'], SKYL = {auto:'自動', day:'昼', sunset:'夕方', night:'夜'};
-  const BREED = ['black','tabby','calico'], BREEDL = {black:'黒猫', tabby:'茶トラ', calico:'白ねこ'};
-  if (![1,2,3,4].includes(face)) face = 1;
-  if (!SCHEME.includes(scheme)) scheme = 'cyan';
-  if (!FONT.includes(font)) font = 'barlow';
-  if (!SKY.includes(skyMode)) skyMode = 'auto';
-  if (!BREED.includes(breed)) breed = 'black';
+  let secs = store.get('secs', '1') === '1', h12 = store.get('h12', '0') === '1', view = 'clock';
 
-  const autoSky = h => (h >= 6 && h < 16) ? 'day' : (h >= 16 && h < 19) || h === 5 ? 'sunset' : 'night';
-
-  function applyState(d = new Date()){
-    app.dataset.face = face; app.dataset.breed = breed; app.dataset.view = view; app.dataset.scheme = scheme;
-    app.dataset.sky = skyMode === 'auto' ? autoSky(d.getHours()) : skyMode;
-    $('b-face').textContent = 'デザイン ' + face + '/4';
-    const vb = $('b-var');
-    if (face === 1) { vb.textContent = SCHEMEL[scheme]; vb.disabled = false; }
-    else if (face === 2) { vb.textContent = 'そら:' + SKYL[skyMode]; vb.disabled = false; }
-    else if (face === 3) { vb.textContent = BREEDL[breed]; vb.disabled = false; }
-    else { vb.textContent = 'いろ'; vb.disabled = true; }
-    $('b-sec').style.display = $('b-font').style.display = face === 1 ? '' : 'none';
-    $('b-font').textContent = 'もじ:' + FONTL[font];
+  function applyState(){
+    app.dataset.view = view;
     $('b-sec').textContent = '秒:' + (secs ? 'あり' : 'なし');
     $('b-fmt').textContent = h12 ? '12h' : '24h';
-    const fr = $('face-frame'), want = FACES[face - 1];
-    if (fr.getAttribute('src') !== want) fr.setAttribute('src', want);
     post(); navAwake();
   }
-  // 時計ページへ、色・秒・空の色・毛色・12/24時間を知らせる
+  // 時計ページへ、秒の表示と12/24時間を知らせる
   function post(){
     const w = $('face-frame').contentWindow;
-    if (w) w.postMessage({ sky: app.dataset.sky, breed, h12, scheme, font, secs }, '*');
+    if (w) w.postMessage({ h12, secs }, '*');
   }
   $('face-frame').addEventListener('load', post);
 
@@ -228,13 +169,7 @@ nav.hide{display:none}
   <g class="wh" stroke-width="2" stroke-linecap="round"><path d="M64 80 L30 74M64 85 L32 90M136 80 L170 74M136 85 L168 90"/></g></svg>`;
   document.querySelectorAll('.catslot').forEach(s => s.innerHTML = CAT);
 
-  /* ---------- 時間帯で空の色（自動）を更新 ---------- */
-  function tick(){
-    const s = skyMode === 'auto' ? autoSky(new Date().getHours()) : skyMode;
-    if (app.dataset.sky !== s) { app.dataset.sky = s; post(); }
-  }
-  setInterval(tick, 30000);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) { tick(); lock(); } });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) lock(); });
 
   /* ---------- 切り替え ---------- */
   document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => setView(b.dataset.v));
@@ -242,25 +177,18 @@ nav.hide{display:none}
     view = v; app.dataset.view = v;
     document.querySelectorAll('.tabs button').forEach(x => x.setAttribute('aria-selected', x.dataset.v === v));
     if (v === 'sw') swLoop();
+    ['b-sec', 'b-fmt'].forEach(id => $(id).style.display = v === 'clock' ? '' : 'none');  // 時計にだけ効くボタン
     navAwake();
   }
-  // 「でっかい」を出している間は、操作バーを数秒で隠して時計だけにする（時計をタップするとまた出る）
+  // 時計を出している間は、操作バーを数秒で隠して時計だけにする（時計をタップするとまた出る）
   let navT = 0;
   const nav = document.querySelector('nav');
   function navAwake(){
     nav.classList.remove('hide'); clearTimeout(navT);
-    if (face === 1 && view === 'clock') navT = setTimeout(() => nav.classList.add('hide'), 5000);
+    if (view === 'clock') navT = setTimeout(() => nav.classList.add('hide'), 5000);
   }
   nav.addEventListener('pointerdown', navAwake);
   addEventListener('message', e => { if (e.source === $('face-frame').contentWindow && e.data && e.data.type === 'tap') navAwake(); });
-  $('b-face').onclick = () => { face = face % 4 + 1; store.set('face2', face); applyState(); };
-  $('b-var').onclick = () => {
-    if (face === 1) { scheme = SCHEME[(SCHEME.indexOf(scheme) + 1) % SCHEME.length]; store.set('scheme', scheme); }
-    else if (face === 2) { skyMode = SKY[(SKY.indexOf(skyMode) + 1) % SKY.length]; store.set('sky', skyMode); }
-    else if (face === 3) { breed = BREED[(BREED.indexOf(breed) + 1) % BREED.length]; store.set('breed', breed); }
-    applyState();
-  };
-  $('b-font').onclick = () => { font = FONT[(FONT.indexOf(font) + 1) % FONT.length]; store.set('font', font); applyState(); };
   $('b-sec').onclick = () => { secs = !secs; store.set('secs', secs ? '1' : '0'); applyState(); };
   $('b-fmt').onclick = () => { h12 = !h12; store.set('h12', h12 ? '1' : '0'); applyState(); };
   if (document.documentElement.requestFullscreen) {
