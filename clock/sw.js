@@ -1,7 +1,10 @@
-const CACHE = 'clock-v13';
+const CACHE = 'clock-v14';
 const FILES = ['./', './index.html', './big.html', './manifest.webmanifest', './icon.svg'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
-self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())));
+// 更新のとき、ブラウザが持っている古いコピーを使わず、必ずサーバーから取り直す
+self.addEventListener('install', e => e.waitUntil(
+  caches.open(CACHE).then(c => c.addAll(FILES.map(u => new Request(u, { cache: 'reload' })))).then(() => self.skipWaiting())
+));
 self.addEventListener('activate', e => e.waitUntil(
   caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())
 ));
@@ -16,5 +19,10 @@ self.addEventListener('fetch', e => {
     return;
   }
   if (url.origin !== location.origin) return;
-  e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request)));
+  // 自分のファイルは「ネットがあれば常に最新、なければ保存したもの」
+  e.respondWith(
+    fetch(url.href, { cache: 'no-cache' })
+      .then(res => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); } return res; })
+      .catch(() => caches.match(e.request, { ignoreSearch: true }))
+  );
 });

@@ -31,6 +31,7 @@ button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
 #app[data-view="clock"] #v-clock,#app[data-view="sw"] #v-sw,#app[data-view="tm"] #v-tm{display:block}
 
 /* ===== 時計（iframe） ===== */
+#tapzone{position:absolute; inset:0; z-index:2; touch-action:manipulation}
 #face-frame{position:absolute; inset:0; width:100%; height:100%; border:0; display:block; background:#000}
 
 /* ===== ストップウォッチ / タイマー ===== */
@@ -93,6 +94,7 @@ nav.hide{display:none}
 #dlg input[type=time]{font:inherit; font-size:1.5rem; font-weight:700; color:var(--text); background:transparent; border:2px solid var(--line); border-radius:10px; padding:4px 8px; min-width:7.2em}
 #dlg .note{margin:6px 0 12px; color:var(--sub); font-size:.85rem; line-height:1.5}
 #dlg .btn{width:100%}
+#dlg .ver{margin:8px 0 0; text-align:center; color:var(--sub); font-size:.75rem}
 #dlg .times{flex-wrap:wrap}
 @media (orientation: landscape) and (max-height: 520px){
   #dlg{padding:10px 16px; max-height:96dvh}
@@ -117,6 +119,7 @@ nav.hide{display:none}
 
     <!-- 時計のデザイン3種（Gemini版をそのまま別ページ化したもの）を切り替えて表示 -->
     <iframe id="face-frame" title="時計" src="big.html"></iframe>
+    <div id="tapzone" aria-hidden="true"></div>
   </section>
 
   <section class="view" id="v-sw" aria-label="ストップウォッチ"><div class="vwrap"><div class="vcard">
@@ -168,6 +171,7 @@ nav.hide{display:none}
     <label class="opt"><input type="radio" name="wm" value="off"> スマホの設定どおり（そのうち消える）</label>
     <p class="note">決めた時間より外では、スマホの自動ロックの時間で画面が消えます。ストップウォッチとタイマーが動いている間は、時間に関係なく消えません。</p>
     <button class="btn primary" value="close">とじる</button>
+    <p class="ver">バージョン 14</p>
   </form>
 </dialog>
 </div>
@@ -232,6 +236,9 @@ nav.hide{display:none}
     }, 5000);
   }
   nav.addEventListener('pointerdown', navAwake);
+  // 時計の上をタップしたらメニューを出す。時計ページへの伝言には頼らず、親のページ自身が受ける（指のタップは複数のイベントが出るので、どれでも反応させる）
+  const reveal = () => { store.set('menuSeen', '1'); navAwake(); };
+  ['pointerdown', 'touchstart', 'click'].forEach(t => $('tapzone').addEventListener(t, reveal, { passive: true }));
   addEventListener('message', e => { if (e.source === $('face-frame').contentWindow && e.data && e.data.type === 'tap') { store.set('menuSeen', '1'); navAwake(); } });
   $('b-sec').onclick = () => { secs = !secs; store.set('secs', secs ? '1' : '0'); applyState(); };
   $('b-fmt').onclick = () => { h12 = !h12; store.set('h12', h12 ? '1' : '0'); applyState(); };
@@ -373,7 +380,15 @@ nav.hide{display:none}
 
   /* ---------- 起動 ---------- */
   setTimer(300000); syncSw(); syncTm(); applyState(); $('b-wake').textContent = wakeLabel(); syncWake();
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  if ('serviceWorker' in navigator) {
+    const hadController = !!navigator.serviceWorker.controller;   // 初回インストールのときは開き直さない
+    let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController || reloaded || tmRun || swRun) return;   // タイマー/ストップウォッチが動いている間は邪魔しない
+      reloaded = true; location.reload();                         // 新しい版に切り替わったので、開き直して最新にする
+    });
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
 })();
 </script>
 </body>
