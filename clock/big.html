@@ -25,9 +25,10 @@ canvas{display:block; position:absolute; inset:0}
   const DJ = ['日','月','火','水','木','金','土'];
   const cv = document.getElementById('c'), ctx = cv.getContext('2d');
   const get = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch { return d; } };
-  const EDGES = ['none', 'bold', 'white', 'boldwhite'];   // なし / 太らせる / 白いふち / 両方
+  // 数字のふちどりの色（なし = ふちどりなし）
+  const EDGE_COLORS = { none: null, white: '#ffffff', pink: '#ff3dcb', yellow: '#ffe600', lime: '#39ff14', orange: '#ff8a00', purple: '#b44cff' };
   let secs = get('secs', '1') === '1', h12 = get('h12', '0') === '1', edge = get('edge', 'none');
-  if (!EDGES.includes(edge)) edge = 'none';
+  if (!(edge in EDGE_COLORS)) edge = 'none';
   let W = 0, H = 0, timer = 0;
 
   const spec = px => `${WEIGHT} ${px}px "${FAMILY}","BIZ UDGothic","BIZ UDPGothic",${FALL}`;
@@ -54,14 +55,15 @@ canvas{display:block; position:absolute; inset:0}
     off[':'] = ((cr - cl) / 2 - c.width / 2) / 100;
     return { dw: inkW + GAP, asc, colon: (cl + cr) / 100 + GAP * 1.4, off };
   }
-  // 文字を描く。ふちどりの種類に応じて、太らせたり、外側に白い細線を足したりする（textAlign は呼ぶ側で設定済み）
+  // 文字を描く。ふちどりの色が決まっていれば、文字の外側に細い線を足す（textAlign は呼ぶ側で設定済み）
   function put(str, x, y, fs){
-    const white = edge === 'white' || edge === 'boldwhite', bold = edge === 'bold' || edge === 'boldwhite';
-    const bw = bold ? fs * 0.03 : 0, ow = Math.max(1.5, fs * 0.008);   // 太らせる量 / 白線の見える太さ
-    ctx.lineJoin = 'round'; ctx.miterLimit = 2;
-    if (white) { ctx.strokeStyle = '#ffffff'; ctx.lineWidth = bw + ow * 2; ctx.strokeText(str, x, y); }
+    const col = EDGE_COLORS[edge];
+    if (col) {
+      ctx.lineJoin = 'round'; ctx.miterLimit = 2;
+      ctx.strokeStyle = col; ctx.lineWidth = Math.max(2, fs * 0.01) * 2;   // 文字の内側は塗りつぶしで隠れるので、外側に半分だけ見える
+      ctx.strokeText(str, x, y);
+    }
     ctx.fillText(str, x, y);
-    if (bold) { ctx.strokeStyle = FG; ctx.lineWidth = bw; ctx.strokeText(str, x, y); }
   }
   // 1文字ずつ、同じ幅のマスの真ん中に（見えている部分が中央に来るように）描く。sy>1 なら縦に伸ばす
   function drawCells(str, cx, y, fs, m, sy = 1){
@@ -77,7 +79,7 @@ canvas{display:block; position:absolute; inset:0}
     const now = new Date(), h = now.getHours();
     const hh = String(h12 ? (h % 12 || 12) : h).padStart(2, '0'), mm = String(now.getMinutes()).padStart(2, '0');
     const ss = String(now.getSeconds()).padStart(2, '0');
-    const ampm = h12 ? (h < 12 ? '午前' : '午後') : '';
+    const ampm = h12 ? (h < 12 ? 'AM' : 'PM') : '';   // 午前/午後より見間違えにくい
     const date = `${now.getMonth() + 1}月${now.getDate()}日（${DJ[now.getDay()]}）`;
     const m = metrics(), wide = W / H >= 1.15, pad = Math.min(W, H) * 0.03;
     ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H);
@@ -140,7 +142,7 @@ canvas{display:block; position:absolute; inset:0}
     const d = e.data || {};
     if (typeof d.secs === 'boolean') secs = d.secs;
     if (typeof d.h12 === 'boolean') h12 = d.h12;
-    if (EDGES.includes(d.edge)) edge = d.edge;
+    if (d.edge in EDGE_COLORS) edge = d.edge;
     draw();
   });
   // タップしたら、親に操作バーを出してもらう

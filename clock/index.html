@@ -156,7 +156,7 @@ nav.hide{display:none}
   </div>
   <div class="tools">
     <button id="b-sec" aria-label="秒の表示切り替え">秒</button>
-    <button id="b-edge" aria-label="数字のふちどりを切り替え">ふち</button>
+    <button id="b-edge" aria-label="数字のふちどりの色を切り替え">ふち</button>
     <button id="b-fmt" aria-label="12時間/24時間の切り替え">24h</button>
     <button id="b-wake" aria-label="画面をつけておく時間の設定">点灯</button>
     <button id="b-fs" aria-label="全画面">全画面</button>
@@ -172,7 +172,7 @@ nav.hide{display:none}
     <label class="opt"><input type="radio" name="wm" value="off"> スマホの設定どおり（そのうち消える）</label>
     <p class="note">決めた時間より外では、スマホの自動ロックの時間で画面が消えます。ストップウォッチとタイマーが動いている間は、時間に関係なく消えません。</p>
     <button class="btn primary" value="close">とじる</button>
-    <p class="ver">バージョン 15</p>
+    <p class="ver">バージョン 16</p>
   </form>
 </dialog>
 </div>
@@ -189,7 +189,8 @@ nav.hide{display:none}
   const DJ = ['日','月','火','水','木','金','土'], DE = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 
   /* ---------- 状態 ---------- */
-  const EDGE = ['none', 'bold', 'white', 'boldwhite'], EDGEL = { none: 'ふち:なし', bold: 'ふち:太字', white: 'ふち:白', boldwhite: 'ふち:太字+白' };
+  const EDGE = ['none', 'white', 'pink', 'yellow', 'lime', 'orange', 'purple'];
+  const EDGEL = { none: 'ふち:なし', white: 'ふち:白', pink: 'ふち:ピンク', yellow: 'ふち:黄', lime: 'ふち:ライム', orange: 'ふち:橙', purple: 'ふち:紫' };
   let edge = store.get('edge', 'none'); if (!EDGE.includes(edge)) edge = 'none';
   let secs = store.get('secs', '1') === '1', h12 = store.get('h12', '0') === '1', view = 'clock';
 
