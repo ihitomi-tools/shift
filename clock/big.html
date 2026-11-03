@@ -23,7 +23,10 @@ canvas{display:block; position:absolute; inset:0}
   // 色: 黒地に水色（コントラスト比 約13.6:1）
   const BG = '#000000', FG = '#00e5ff';
   const DJ = ['日','月','火','水','木','金','土'];
-  const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+  const cv = document.getElementById('c'), mainCtx = cv.getContext('2d');
+  let ctx = mainCtx;   // 描く先。時計の絵を別のキャンバスに作るときだけ切り替える
+  const layer = document.createElement('canvas'), lctx = layer.getContext('2d');
+  let dpr = 1;
   const get = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch { return d; } };
   // 時刻の数字だけ、外側に白い細いふちをつける（AM/PM・日付・秒にはつけない）
   const EDGE_COLOR = '#ffffff';
@@ -33,11 +36,12 @@ canvas{display:block; position:absolute; inset:0}
   const spec = px => `${WEIGHT} ${px}px "${FAMILY}","BIZ UDGothic","BIZ UDPGothic",${FALL}`;
 
   function resize(){
-    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    dpr = Math.max(1, window.devicePixelRatio || 1);
     W = innerWidth; H = innerHeight;
-    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    cv.width = layer.width = Math.round(W * dpr); cv.height = layer.height = Math.round(H * dpr);
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    mainCtx.setTransform(dpr, 0, 0, dpr, 0, 0); lctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (cat) cat.key = -1;   // 猫が歩いている最中に画面の大きさが変わったら、時計の絵を作り直す
   }
   // 数字は「実際に見えている幅」で測って、文字どうしの余白を詰める（その分、数字を大きくできる）
   const GAP = 0.07;   // 数字と数字のすき間（文字の高さに対する割合ではなく、フォントサイズに対する割合）
@@ -72,8 +76,7 @@ canvas{display:block; position:absolute; inset:0}
     ctx.restore();
   }
 
-  function draw(){
-    clearTimeout(timer);
+  function paint(){
     const now = new Date(), h = now.getHours();
     const hh = String(h12 ? (h % 12 || 12) : h).padStart(2, '0'), mm = String(now.getMinutes()).padStart(2, '0');
     const ss = String(now.getSeconds()).padStart(2, '0');
@@ -122,9 +125,55 @@ canvas{display:block; position:absolute; inset:0}
       if (secs) { y += rowH * 1.35; put(ss + '秒', W / 2, y, fsD); }
     }
     cv.setAttribute('aria-label', `${h}時${now.getMinutes()}分`);
+  }
+  function draw(){
+    clearTimeout(timer);
+    if (cat) return;   // 猫が歩いている間は、猫のほうの描画ループが時計も描き直す
+    paint();
     // 秒を出すときは毎秒、出さないときは1分ごとに描き直す（電池のため）
     timer = setTimeout(draw, secs ? 1000 - (Date.now() % 1000) + 15 : 60000 - (Date.now() % 60000) + 50);
   }
+
+  /* ---------- 猫（Geminiで作った歩く動画の、足踏みの31コマ） ---------- */
+  // cat-walk.png は、31コマを 6列×6行 に並べたもの。猫は左向き、足先は各コマの下から foot の位置。
+  // speed は「足が地面を滑らない速さ」（1コマ=24分の1秒あたり、コマ画像の画素数）
+  const SH = { n: 31, cols: 6, cw: 584, ch: 486, fps: 24, foot: 475, h: 468, speed: 10.96 };
+  let catOn = get('cat', '1') === '1', catEvery = Number(get('catEvery', '300')) || 300;
+  let cat = null, sheet = null, catTimer = 0;
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const timeKey = () => Math.floor(Date.now() / (secs ? 1000 : 60000));
+  function renderLayer(){ ctx = lctx; paint(); ctx = mainCtx; }
+  function spawnCat(){
+    if (cat || !sheet || document.hidden) return;
+    clearTimeout(timer);                                   // 猫がいる間は、普段の1秒ごとの描き直しを止める
+    cat = { dir: Math.random() < 0.5 ? 1 : -1, t0: performance.now(), last: 0, key: -1 };
+    requestAnimationFrame(catLoop);
+  }
+  function endCat(){ cat = null; draw(); scheduleCat(); }
+  function catLoop(now){
+    if (!cat) return;
+    if (now - cat.last >= 33) {                            // 猫が歩いている間は、1秒に30回まで
+      cat.last = now;
+      const k = Math.min(H * 0.5, W * 0.28) / SH.h, dw = SH.cw * k, dh = SH.ch * k, v = SH.speed * SH.fps * k;   // v: 画面上の歩く速さ(px/秒)
+      const el = (now - cat.t0) / 1000, run = v * el, total = W + dw;
+      if (run >= total) { endCat(); return; }
+      if (cat.key !== timeKey()) { renderLayer(); cat.key = timeKey(); }   // 時計の絵は、数字が変わるときだけ作り直す
+      ctx.drawImage(layer, 0, 0, W, H);
+      const cx = cat.dir > 0 ? -dw / 2 + run : W + dw / 2 - run, f = Math.floor(el * SH.fps) % SH.n;
+      ctx.save(); ctx.translate(cx, H * 0.84 - SH.foot * k); if (cat.dir > 0) ctx.scale(-1, 1);   // 素材は左向きなので、右へ進むときは反転
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(sheet, (f % SH.cols) * SH.cw, Math.floor(f / SH.cols) * SH.ch, SH.cw, SH.ch, -dw / 2, 0, dw, dh);
+      ctx.restore();
+    }
+    requestAnimationFrame(catLoop);
+  }
+  // 次に猫が出るまでの時間は、毎回少しずつずらす
+  function scheduleCat(){
+    clearTimeout(catTimer);
+    if (!catOn || reduceMotion || !sheet) return;
+    catTimer = setTimeout(() => { if (catOn && !cat) spawnCat(); if (!cat) scheduleCat(); }, catEvery * 1000 * (0.7 + Math.random() * 0.6));
+  }
+  (() => { const im = new Image(); im.onload = () => { sheet = im; scheduleCat(); }; im.src = 'cat-walk.png'; })();
 
   // フォントが読み込めたら、もう一度ぴったり描き直す
   function loadFonts(){
@@ -140,7 +189,10 @@ canvas{display:block; position:absolute; inset:0}
     const d = e.data || {};
     if (typeof d.secs === 'boolean') secs = d.secs;
     if (typeof d.h12 === 'boolean') h12 = d.h12;
-    draw();
+    if (typeof d.catEvery === 'number' && d.catEvery > 0) catEvery = d.catEvery;
+    if (typeof d.cat === 'boolean') { catOn = d.cat; if (!catOn && cat) cat = null; }
+    if (d.catNow) spawnCat();                               // 設定画面の「猫を今すぐ呼ぶ」
+    draw(); scheduleCat();
   });
   // タップしたら、親に操作バーを出してもらう
   addEventListener('pointerdown', () => { try { parent.postMessage({ type: 'tap' }, '*'); } catch {} });

@@ -95,6 +95,12 @@ nav.hide{display:none}
 #dlg input[type=time]{font:inherit; font-size:1.5rem; font-weight:700; color:var(--text); background:transparent; border:2px solid var(--line); border-radius:10px; padding:4px 8px; min-width:7.2em}
 #dlg .note{margin:6px 0 12px; color:var(--sub); font-size:.85rem; line-height:1.5}
 #dlg .btn{width:100%}
+#dlg .btn + .btn{margin-top:8px}
+#dlg h2.sub{margin:16px 0 6px; font-size:1.05rem}
+#dlg .catevery{display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 6px}
+#dlg .catevery button{font:inherit; font-weight:700; color:var(--text); background:transparent; border:2px solid var(--line); border-radius:10px; padding:8px 12px; min-height:40px; cursor:pointer}
+#dlg .catevery button[aria-pressed="true"]{background:var(--accent); color:var(--accent-text); border-color:var(--accent)}
+#dlg .catinfo{margin:0 0 10px; color:var(--sub); font-size:.82rem; line-height:1.5}
 #dlg .ver{margin:8px 0 0; text-align:center; color:var(--sub); font-size:.75rem}
 #dlg .times{flex-wrap:wrap}
 @media (orientation: landscape) and (max-height: 520px){
@@ -104,6 +110,12 @@ nav.hide{display:none}
   #dlg .times{padding:0 0 4px 2.4em; gap:6px; font-size:1.1rem}
   #dlg input[type=time]{font-size:1.15rem; min-width:0; padding:2px 6px}
   #dlg .note{display:none}
+  #dlg .btn{display:inline-block; width:calc(50% - 9px); box-sizing:border-box; min-width:0}
+  #dlg .btn + .btn{margin:4px 0 0 4px}
+  #dlg h2.sub{margin:8px 0 2px; font-size:.95rem}
+  #dlg .catevery{gap:6px; margin:2px 0 2px}
+  #dlg .catevery button{padding:4px 10px; min-height:34px; font-size:.9rem}
+  #dlg .catinfo{margin:0 0 4px; font-size:.75rem; line-height:1.3}
   #dlg .btn{padding:8px 16px; font-size:1rem; margin-top:4px}
 }
 </style>
@@ -158,12 +170,13 @@ nav.hide{display:none}
   <div class="tools">
     <button id="b-sec" aria-label="秒の表示切り替え">秒</button>
     <button id="b-fmt" aria-label="12時間/24時間の切り替え">24h</button>
+    <button id="b-cat" aria-label="猫が歩く動きの あり/なし">猫</button>
     <button id="b-wake" aria-label="画面をつけておく時間の設定">点灯</button>
     <button id="b-fs" aria-label="全画面">全画面</button>
   </div>
 </nav>
 <div id="hint" hidden>画面をタップするとメニューが出ます</div>
-<dialog id="dlg" aria-label="画面をつけておく設定">
+<dialog id="dlg" aria-label="設定">
   <form method="dialog">
     <h2>画面をつけておく設定</h2>
     <label class="opt"><input type="radio" name="wm" value="window"> 決めた時間だけ、つけておく</label>
@@ -171,8 +184,14 @@ nav.hide{display:none}
     <label class="opt"><input type="radio" name="wm" value="always"> ずっと、つけておく</label>
     <label class="opt"><input type="radio" name="wm" value="off"> スマホの設定どおり（そのうち消える）</label>
     <p class="note">決めた時間より外では、スマホの自動ロックの時間で画面が消えます。ストップウォッチとタイマーが動いている間は、時間に関係なく消えません。</p>
+    <h2 class="sub">猫が通る間隔</h2>
+    <div class="catevery" id="cat-every" role="group" aria-label="猫が通る間隔">
+      <button type="button" data-v="120">2分ごと</button><button type="button" data-v="300">5分ごと</button><button type="button" data-v="900">15分ごと</button><button type="button" data-v="1800">30分ごと</button>
+    </div>
+    <p class="catinfo" id="cat-info"></p>
+    <button type="button" class="btn" id="cat-now">猫を今すぐ呼ぶ</button>
     <button class="btn primary" value="close">とじる</button>
-    <p class="ver">バージョン 20</p>
+    <p class="ver">バージョン 21</p>
   </form>
 </dialog>
 </div>
@@ -189,18 +208,21 @@ nav.hide{display:none}
   const DJ = ['日','月','火','水','木','金','土'], DE = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 
   /* ---------- 状態 ---------- */
-    let secs = store.get('secs', '1') === '1', h12 = store.get('h12', '0') === '1', view = 'clock';
+    const CATEVERY = ['120', '300', '900', '1800'];
+  let catOn = store.get('cat', '1') === '1', catEvery = store.get('catEvery', '300'); if (!CATEVERY.includes(catEvery)) catEvery = '300';
+  let secs = store.get('secs', '1') === '1', h12 = store.get('h12', '0') === '1', view = 'clock';
 
   function applyState(){
     app.dataset.view = view;
     $('b-sec').textContent = '秒:' + (secs ? 'あり' : 'なし');
     $('b-fmt').textContent = h12 ? '12h' : '24h';
+    $('b-cat').textContent = '猫:' + (catOn ? 'あり' : 'なし');
     post(); navAwake();
   }
   // 時計ページへ、秒の表示と12/24時間を知らせる
   function post(){
     const w = $('face-frame').contentWindow;
-    if (w) w.postMessage({ h12, secs }, '*');
+    if (w) w.postMessage({ h12, secs, cat: catOn, catEvery: Number(catEvery) }, '*');
   }
   $('face-frame').addEventListener('load', post);
 
@@ -221,7 +243,7 @@ nav.hide{display:none}
     view = v; app.dataset.view = v;
     document.querySelectorAll('.tabs button').forEach(x => x.setAttribute('aria-selected', x.dataset.v === v));
     if (v === 'sw') swLoop();
-    ['b-sec', 'b-fmt'].forEach(id => $(id).style.display = v === 'clock' ? '' : 'none');  // 時計にだけ効くボタン
+    ['b-sec', 'b-cat', 'b-fmt'].forEach(id => $(id).style.display = v === 'clock' ? '' : 'none');  // 時計にだけ効くボタン
     navAwake();
   }
   // 時計を出している間は、操作バーを数秒で隠して時計だけにする（時計をタップするとまた出る）
@@ -241,6 +263,7 @@ nav.hide{display:none}
   const reveal = () => { store.set('menuSeen', '1'); navAwake(); };
   ['pointerdown', 'touchstart', 'click'].forEach(t => $('tapzone').addEventListener(t, reveal, { passive: true }));
   addEventListener('message', e => { if (e.source === $('face-frame').contentWindow && e.data && e.data.type === 'tap') { store.set('menuSeen', '1'); navAwake(); } });
+  $('b-cat').onclick = () => { catOn = !catOn; store.set('cat', catOn ? '1' : '0'); applyState(); };
   $('b-sec').onclick = () => { secs = !secs; store.set('secs', secs ? '1' : '0'); applyState(); };
   $('b-fmt').onclick = () => { h12 = !h12; store.set('h12', h12 ? '1' : '0'); applyState(); };
   if (document.documentElement.requestFullscreen) {
@@ -277,7 +300,21 @@ nav.hide{display:none}
   }
   // 設定画面
   const dlg = $('dlg');
+  // 猫の設定(設定画面)
+  const CATSEC = 10;   // 猫が画面を横切るのにかかる時間の目安(秒)。画面の大きさで少し変わる
+  function catInfo(){
+    document.querySelectorAll('#cat-every button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === catEvery)));
+    const pct = CATSEC / Number(catEvery) * 100, shown = pct >= 10 ? Math.round(pct) : Math.round(pct * 10) / 10;
+    $('cat-info').textContent = `猫は1回に約${CATSEC}秒かけて画面を横切ります。この間隔なら、歩いている時間は全体の約${shown}%です。` + (catOn ? '' : '（今は「猫:なし」です）');
+  }
+  $('cat-every').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || !CATEVERY.includes(b.dataset.v)) return; catEvery = b.dataset.v; store.set('catEvery', catEvery); catInfo(); post(); });
+  $('cat-now').addEventListener('click', () => {
+    if (!catOn) { catOn = true; store.set('cat', '1'); applyState(); }
+    const w = $('face-frame').contentWindow; if (w) w.postMessage({ catNow: true }, '*');
+    if (dlg.close) dlg.close();   // 設定画面を閉じて、猫が歩くのを見られるようにする
+  });
   function syncDlg(){
+    catInfo();
     document.querySelectorAll('input[name=wm]').forEach(r => { r.checked = r.value === wakeMode; });
     $('t-from').value = hm(wakeFrom); $('t-to').value = hm(wakeTo);
     $('times').classList.toggle('off', wakeMode !== 'window');
