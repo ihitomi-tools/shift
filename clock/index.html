@@ -32,7 +32,7 @@ button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
 #app[data-view="clock"] #v-clock,#app[data-view="sw"] #v-sw,#app[data-view="tm"] #v-tm{display:block}
 
 /* ===== 時計（iframe） ===== */
-#tapzone{position:absolute; inset:0; z-index:2; touch-action:manipulation}
+#tapzone{position:absolute; inset:0; z-index:2; touch-action:none}   /* スワイプを自分で受けるので、ブラウザのスクロールやダブルタップ拡大は無効にする */
 #face-frame{position:absolute; inset:0; width:100%; height:100%; border:0; display:block; background:#000}
 
 /* ===== ストップウォッチ / タイマー ===== */
@@ -101,6 +101,7 @@ dialog.dlg .catevery{display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 6px}
 dialog.dlg .catevery button{font:inherit; font-weight:700; color:var(--text); background:transparent; border:2px solid var(--line); border-radius:10px; padding:8px 12px; min-height:40px; cursor:pointer}
 dialog.dlg .catevery button[aria-pressed="true"]{background:var(--accent); color:var(--accent-text); border-color:var(--accent)}
 dialog.dlg .catinfo{margin:0 0 10px; color:var(--sub); font-size:.82rem; line-height:1.5}
+dialog.dlg .rowlab{margin:6px 0 2px; font-size:.9rem; font-weight:700; color:var(--sub)}
 dialog.dlg .ver{margin:8px 0 0; text-align:center; color:var(--sub); font-size:.75rem}
 dialog.dlg .times{flex-wrap:wrap}
 @media (orientation: landscape) and (max-height: 520px){
@@ -110,8 +111,13 @@ dialog.dlg .times{flex-wrap:wrap}
   dialog.dlg .times{padding:0 0 4px 2.4em; gap:6px; font-size:1.1rem}
   dialog.dlg input[type=time]{font-size:1.15rem; min-width:0; padding:2px 6px}
   dialog.dlg .note{display:none}
-  dialog.dlg .btn{display:inline-block; width:calc(50% - 9px); box-sizing:border-box; min-width:0}
-  dialog.dlg .btn + .btn{margin:4px 0 0 4px}
+  dialog#wdlg .btn{display:inline-block; width:calc(50% - 9px); box-sizing:border-box; min-width:0}
+  dialog#wdlg .btn + .btn{margin:4px 0 0 4px}
+  dialog#dlg.dlg{width:min(94vw, 820px)}
+  dialog#dlg .cols{display:grid; grid-template-columns:1fr 1fr; gap:0 24px; align-items:start}
+  dialog#dlg .btn{display:block; width:100%; box-sizing:border-box; min-width:0}
+  dialog#dlg .btn + .btn{margin:6px 0 0}
+  dialog.dlg .rowlab{margin:3px 0 0; font-size:.8rem}
   dialog.dlg h2.sub{margin:8px 0 2px; font-size:.95rem}
   dialog.dlg .catevery{gap:6px; margin:2px 0 2px}
   dialog.dlg .catevery button{padding:4px 10px; min-height:34px; font-size:.9rem}
@@ -216,26 +222,34 @@ dialog.dlg .times{flex-wrap:wrap}
     <p class="note">オンのあいだ、決めた時刻に、仕事のチェックリスト（炊飯器・温風庫・食洗機・ポットのお湯・紙）が出ます。</p>
     <div class="times" style="padding-left:0"><span>出す時刻</span><input type="time" id="w-time" aria-label="チェックリストを出す時刻"></div>
     <p class="note">オンのあいだは、画面が消えない時間を、この時刻の10分後まで延ばします。</p>
+    <p class="catinfo">仕事モードのとき、画面を横にスワイプしても、いつでもチェックリストを出せます。</p>
     <button type="button" class="btn" id="w-now">今すぐ出してみる</button>
     <button class="btn primary" value="close">とじる</button>
   </form>
 </dialog>
 <dialog id="dlg" class="dlg" aria-label="設定">
   <form method="dialog">
-    <h2>画面をつけておく設定</h2>
-    <label class="opt"><input type="radio" name="wm" value="window"> 決めた時間だけ、つけておく</label>
-    <div class="times" id="times"><input type="time" id="t-from" aria-label="開始時刻"> 〜 <input type="time" id="t-to" aria-label="終了時刻"></div>
-    <label class="opt"><input type="radio" name="wm" value="always"> ずっと、つけておく</label>
-    <label class="opt"><input type="radio" name="wm" value="off"> スマホの設定どおり（そのうち消える）</label>
-    <p class="note">決めた時間より外では、スマホの自動ロックの時間で画面が消えます。ストップウォッチとタイマーが動いている間は、時間に関係なく消えません。</p>
-    <h2 class="sub">猫が通る間隔</h2>
-    <div class="catevery" id="cat-every" role="group" aria-label="猫が通る間隔">
-      <button type="button" data-v="120">2分ごと</button><button type="button" data-v="300">5分ごと</button><button type="button" data-v="900">15分ごと</button><button type="button" data-v="1800">30分ごと</button>
+    <div class="cols">
+      <section class="col">
+        <h2>画面をつけておく設定</h2>
+        <label class="opt"><input type="radio" name="wm" value="window"> 決めた時間だけ、つけておく</label>
+        <div class="times" id="times"><input type="time" id="t-from" aria-label="開始時刻"> 〜 <input type="time" id="t-to" aria-label="終了時刻"></div>
+        <label class="opt"><input type="radio" name="wm" value="always"> ずっと、つけておく</label>
+        <label class="opt"><input type="radio" name="wm" value="off"> スマホの設定どおり（そのうち消える）</label>
+        <p class="note">決めた時間より外では、スマホの自動ロックの時間で画面が消えます。ストップウォッチとタイマーが動いている間は、時間に関係なく消えません。</p>
+      </section>
+      <section class="col">
+        <h2 class="sub">猫が通る間隔</h2>
+        <div class="rowlab">ふだん</div>
+        <div class="catevery" id="cat-every" role="group" aria-label="ふだんの、猫が通る間隔"><button type="button" data-v="30">30秒</button><button type="button" data-v="60">1分</button><button type="button" data-v="120">2分</button><button type="button" data-v="300">5分</button><button type="button" data-v="900" hidden>15分</button><button type="button" data-v="1800" hidden>30分</button></div>
+        <div class="rowlab">仕事モード中</div>
+        <div class="catevery" id="cat-every-work" role="group" aria-label="仕事モード中の、猫が通る間隔"><button type="button" data-v="30">30秒</button><button type="button" data-v="60">1分</button><button type="button" data-v="120">2分</button><button type="button" data-v="300">5分</button><button type="button" data-v="900" hidden>15分</button><button type="button" data-v="1800" hidden>30分</button></div>
+        <p class="catinfo" id="cat-info"></p>
+        <button type="button" class="btn" id="cat-now">猫を今すぐ呼ぶ</button>
+      </section>
     </div>
-    <p class="catinfo" id="cat-info"></p>
-    <button type="button" class="btn" id="cat-now">猫を今すぐ呼ぶ</button>
     <button class="btn primary" value="close">とじる</button>
-    <p class="ver">バージョン 23</p>
+    <p class="ver">バージョン 24</p>
   </form>
 </dialog>
 </div>
@@ -252,8 +266,12 @@ dialog.dlg .times{flex-wrap:wrap}
   const DJ = ['日','月','火','水','木','金','土'], DE = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 
   /* ---------- 状態 ---------- */
-    const CATEVERY = ['120', '300', '900', '1800'];
-  let catOn = store.get('cat', '1') === '1', catEvery = store.get('catEvery', '300'); if (!CATEVERY.includes(catEvery)) catEvery = '300';
+    // 猫が通る間隔(秒)。15分・30分は、いまは隠している(コードは残してある)。仕事モード中は、ふだんより多めが既定
+  const CATEVERY = ['30', '60', '120', '300', '900', '1800'], CAT_VISIBLE = ['30', '60', '120', '300'];
+  let catOn = store.get('cat', '1') === '1', catEvery = store.get('catEvery', '300'), catEveryWork = store.get('catEveryWork', '120');
+  if (!CAT_VISIBLE.includes(catEvery)) { catEvery = '300'; store.set('catEvery', catEvery); }              // 隠した長い間隔が保存されていたら、既定に戻す
+  if (!CAT_VISIBLE.includes(catEveryWork)) { catEveryWork = '120'; store.set('catEveryWork', catEveryWork); }
+  const catEveryNow = () => Number(workOn ? catEveryWork : catEvery);
   let secs = store.get('secs', '1') === '1', h12 = store.get('h12', '0') === '1', view = 'clock';
 
   function applyState(){
@@ -266,7 +284,7 @@ dialog.dlg .times{flex-wrap:wrap}
   // 時計ページへ、秒の表示と12/24時間を知らせる
   function post(){
     const w = $('face-frame').contentWindow;
-    if (w) w.postMessage({ h12, secs, cat: catOn, catEvery: Number(catEvery) }, '*');
+    if (w) w.postMessage({ h12, secs, cat: catOn, catEvery: catEveryNow() }, '*');
   }
   $('face-frame').addEventListener('load', post);
 
@@ -303,17 +321,19 @@ dialog.dlg .times{flex-wrap:wrap}
     }, 5000);
   }
   nav.addEventListener('pointerdown', navAwake);
-  // 時計の上のタップ: 1回ならメニュー、2回続けたら猫を呼ぶ（タップした場所まで猫が来る）。時計ページへの伝言には頼らず、親のページ自身が受ける。
-  // 指で1回タップすると pointerdown / touchstart / click が少しずれて出るので、1回のタップにつき1つのイベントだけを数える
-  // （pointerdown が使えればそれだけ。使えない端末では touchstart、さらにだめなら click）。
+  // 時計の上の操作:  1回タップ=メニュー / 2回続けてタップ=猫を呼ぶ(タップした場所まで猫が来る) / 横にスワイプ=仕事のチェックリスト(仕事モードのとき)
+  // 指を離したときに、タップかスワイプかを決める(スワイプの途中でメニューが出ないように)。
+  // 指で操作すると pointer / touch / click のイベントが少しずれて出るので、1回の操作につき1種類のイベントだけを使う
+  // (pointer が使えればそれだけ。使えない端末では touch、さらにだめなら click)。
   const reveal = () => { store.set('menuSeen', '1'); navAwake(); };
+  const HINT_TEXT = hint.textContent; let flashT = 0;
+  function flash(msg){ hint.textContent = msg; hint.hidden = false; clearTimeout(flashT); flashT = setTimeout(() => { hint.hidden = true; hint.textContent = HINT_TEXT; }, 3200); }
   const tz = $('tapzone');
-  let tapTimer = 0, firstTap = null, sawPointer = false, lastTouchAt = -1e9;
+  let tapTimer = 0, firstTap = null, sawPointer = false, lastTouchAt = -1e9, gStart = null;
   function callCat(xf){ const w = $('face-frame').contentWindow; if (w) w.postMessage({ call: xf }, '*'); }
-  function onTap(e){
-    const r = tz.getBoundingClientRect(), t = e.touches && e.touches[0] ? e.touches[0] : e;
-    const xf = r.width ? Math.min(1, Math.max(0, (t.clientX - r.left) / r.width)) : 0.5, pt = { xf, x: t.clientX, y: t.clientY };
-    if (tapTimer && firstTap && Math.hypot(pt.x - firstTap.x, pt.y - firstTap.y) < 70) {   // 0.3秒以内に近くをもう一度 = ダブルタップ
+  function onTap(x, y){
+    const r = tz.getBoundingClientRect(), xf = r.width ? Math.min(1, Math.max(0, (x - r.left) / r.width)) : 0.5, pt = { xf, x, y };
+    if (tapTimer && firstTap && Math.hypot(x - firstTap.x, y - firstTap.y) < 70) {          // 0.3秒以内に近くをもう一度 = ダブルタップ
       clearTimeout(tapTimer); tapTimer = 0; firstTap = null;
       if (catOn) callCat(pt.xf); else reveal();                                           // 「猫:なし」のときは猫を呼ばず、メニューを出す
       return;
@@ -321,9 +341,23 @@ dialog.dlg .times{flex-wrap:wrap}
     firstTap = pt; clearTimeout(tapTimer);
     tapTimer = setTimeout(() => { tapTimer = 0; firstTap = null; reveal(); }, 300);       // 2回目が来なければ、メニューを出す
   }
-  tz.addEventListener('pointerdown', e => { sawPointer = true; onTap(e); }, { passive: true });
-  tz.addEventListener('touchstart', e => { lastTouchAt = performance.now(); if (!sawPointer) onTap(e); }, { passive: true });
-  tz.addEventListener('click', e => { if (sawPointer || performance.now() - lastTouchAt < 800) return; onTap(e); }, { passive: true });
+  function onSwipe(){
+    clearTimeout(tapTimer); tapTimer = 0; firstTap = null;
+    if (workOn) openCheck(true); else flash('仕事モードをオンにすると、横にスワイプでチェックリストが出ます');
+  }
+  const gStartAt = (x, y) => { gStart = { x, y, t: performance.now() }; };
+  function gEndAt(x, y){
+    if (!gStart) return;
+    const dx = x - gStart.x, dy = y - gStart.y, dt = performance.now() - gStart.t; gStart = null;
+    if (Math.abs(dx) >= 70 && Math.abs(dx) > 1.8 * Math.abs(dy) && dt < 900) onSwipe();   // 横に70px以上、ほぼ真横に、0.9秒以内
+    else if (Math.hypot(dx, dy) < 25) onTap(x, y);                                        // ほとんど動かさなかった = タップ
+  }
+  tz.addEventListener('pointerdown', e => { sawPointer = true; gStartAt(e.clientX, e.clientY); }, { passive: true });
+  tz.addEventListener('pointerup', e => gEndAt(e.clientX, e.clientY), { passive: true });
+  tz.addEventListener('pointercancel', () => { gStart = null; }, { passive: true });
+  tz.addEventListener('touchstart', e => { lastTouchAt = performance.now(); if (!sawPointer && e.touches[0]) gStartAt(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+  tz.addEventListener('touchend', e => { if (!sawPointer && e.changedTouches[0]) gEndAt(e.changedTouches[0].clientX, e.changedTouches[0].clientY); }, { passive: true });
+  tz.addEventListener('click', e => { if (sawPointer || performance.now() - lastTouchAt < 800) return; onTap(e.clientX, e.clientY); }, { passive: true });
   addEventListener('message', e => { if (e.source === $('face-frame').contentWindow && e.data && e.data.type === 'tap') { store.set('menuSeen', '1'); navAwake(); } });
   $('b-cat').onclick = () => { catOn = !catOn; store.set('cat', catOn ? '1' : '0'); applyState(); };
   $('b-sec').onclick = () => { secs = !secs; store.set('secs', secs ? '1' : '0'); applyState(); };
@@ -367,11 +401,19 @@ dialog.dlg .times{flex-wrap:wrap}
   // 猫の設定(設定画面)
   const CATSEC = 10;   // 猫が画面を横切るのにかかる時間の目安(秒)。画面の大きさで少し変わる
   function catInfo(){
-    document.querySelectorAll('#cat-every button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === catEvery)));
-    const pct = CATSEC / Number(catEvery) * 100, shown = pct >= 10 ? Math.round(pct) : Math.round(pct * 10) / 10;
-    $('cat-info').textContent = `猫は1回に約${CATSEC}秒かけて画面を横切ります（全体の約${shown}%）。画面をダブルタップすると、タップした場所まで猫が来ます。` + (catOn ? '' : '（今は「猫:なし」です）');
+    const mark = (id, v) => document.querySelectorAll(`#${id} button`).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+    mark('cat-every', catEvery); mark('cat-every-work', catEveryWork);
+    const pct = ev => { const q = CATSEC / Number(ev) * 100; return q >= 10 ? Math.round(q) : Math.round(q * 10) / 10; };
+    $('cat-info').textContent = `猫は1回に約${CATSEC}秒かけて横切ります（ふだん約${pct(catEvery)}%・仕事中約${pct(catEveryWork)}%の時間）。ダブルタップすると、その場所まで猫が来ます。` + (catOn ? '' : '（今は「猫:なし」）');
   }
-  $('cat-every').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || !CATEVERY.includes(b.dataset.v)) return; catEvery = b.dataset.v; store.set('catEvery', catEvery); catInfo(); post(); });
+  function bindCatEvery(id, key){
+    $(id).addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b || !CAT_VISIBLE.includes(b.dataset.v)) return;
+      if (key === 'catEvery') catEvery = b.dataset.v; else catEveryWork = b.dataset.v;
+      store.set(key, b.dataset.v); catInfo(); post();
+    });
+  }
+  bindCatEvery('cat-every', 'catEvery'); bindCatEvery('cat-every-work', 'catEveryWork');
   $('cat-now').addEventListener('click', () => {
     if (!catOn) { catOn = true; store.set('cat', '1'); applyState(); }
     const w = $('face-frame').contentWindow; if (w) w.postMessage({ catNow: true }, '*');
@@ -421,11 +463,13 @@ dialog.dlg .times{flex-wrap:wrap}
       b.onclick = () => { workState.checked[i] = !workState.checked[i]; saveWork(); renderCheck(); };
       box.appendChild(b);
     });
-    $('check-later').hidden = $('check-skip').hidden = done; $('check-close').hidden = !done;
+    $('check-later').hidden = $('check-skip').hidden = done || checkManual; $('check-close').hidden = !(done || checkManual);
   }
-  function openCheck(){ if (checkOpen) return; workState = loadWork(); checkOpen = true; $('check').hidden = false; renderCheck(); syncWake(); }
+  let checkManual = false;   // スワイプなど、自分で出したとき
+  function openCheck(manual){ if (checkOpen) return; workState = loadWork(); checkManual = !!manual; checkOpen = true; $('check').hidden = false; renderCheck(); syncWake(); }
   function closeCheck(){
-    const done = allDone(); checkOpen = false; $('check').hidden = true; syncWake();
+    const done = allDone(); if (checkManual && !done) snoozeUntil = Date.now() + 5 * 60 * 1000;   // 手で閉じたあと、すぐ自動で出直さない
+    checkManual = false; checkOpen = false; $('check').hidden = true; syncWake();
     if (done && catOn) { const w = $('face-frame').contentWindow; if (w) w.postMessage({ catNow: true }, '*'); }   // 全部終わったら、ごほうびに猫が歩く
   }
   function workTick(){
@@ -446,7 +490,7 @@ dialog.dlg .times{flex-wrap:wrap}
   $('b-work').onclick = () => { syncWork(); if (wdlg.showModal) wdlg.showModal(); else wdlg.setAttribute('open', ''); };
   $('w-mode').addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
-    workOn = b.dataset.v === '1'; store.set('work', workOn ? '1' : '0'); syncWork(); syncWake(); workTick();
+    workOn = b.dataset.v === '1'; store.set('work', workOn ? '1' : '0'); syncWork(); syncWake(); post(); workTick();
   });
   $('w-time').addEventListener('input', () => { const t = toMin($('w-time').value); if (t !== null) { workTime = t; store.set('workTime', hm(t)); syncWake(); workTick(); } });
   $('w-now').onclick = () => { workState = loadWork(); workState.skipped = false; snoozeUntil = 0; if (wdlg.close) wdlg.close(); openCheck(); };   // 試すとき用
