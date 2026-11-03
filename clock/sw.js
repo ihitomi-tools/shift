@@ -1,5 +1,5 @@
-const CACHE = 'clock-v31';
-const FILES = ['./', './index.html', './big.html', './cat-walk.png', './cat-call1.png', './cat-call2.png', './roll1.png', './roll2.png', './roll3.png', './roll4.png', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
+const CACHE = 'clock-v32';
+const FILES = ['./', './index.html', './big.html', './cat-walk.png', './cat-call1.png', './cat-call2.png', './roll1.png', './roll2.png', './roll3.png', './roll4.png', './roll5.png', './roll6.png', './roll7.png', './roll8.png', './roll9.png', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 // 更新のとき、ブラウザが持っている古いコピーを使わず、必ずサーバーから取り直す
 self.addEventListener('install', e => e.waitUntil(

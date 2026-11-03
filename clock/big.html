@@ -142,16 +142,17 @@ canvas{display:block; position:absolute; inset:0}
   // 立ち止まる動き: 動画のコマ95(歩きのループの2番目と同じ姿勢)〜177(ループの12番目と同じ姿勢)。speed は各コマで進む距離(動画の画素)、stop は完全に止まるコマ
   const CALL = { n: 83, per: 42, cols: 7, cw: 476, ch: 362, scale: 0.6, pad: 8, ox: 323, oy: 89, loopIn: 2, loopOut: 12, stop: 31,
     speed: [11.55,11.55,11.76,11.97,11.97,11.76,11.55,10.92,10.29,9.66,9.45,9.24,9.03,8.61,7.77,6.93,5.67,4.62,4.41,4.62,4.41,4.62,4.62,3.99,3.57,3.15,2.73,2.52,2.1,1.68,1.26,0.84,0.42,0.21,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.21,0.42,1.05,1.68,2.52,3.15,3.99,4.41,5.25,5.88,6.72,7.35,7.98,7.98,8.19,8.61,9.45,10.08,11.34,12.18,12.6,12.81,13.23,13.44,13.86,14.49,14.91,15.12,15.12,15.12,14.91] };
-  // ごろん: 同じ動画の続き。立ち止まり、体を丸め、寝転がって転がり、起き上がって歩き出す(新しい動画のコマ94〜236、143コマ)。全コマ(24コマ/秒)入り、4枚のシートに分けてある。
+  // ごろん: 同じ動画の続き。立ち止まり、体を丸め、寝転がって転がり、起き上がって歩き出す(3本目の動画のコマ95〜450、356コマ。止まっている間は同じ絵を使い回す。cell[n] = n番目の動画コマに使う絵の番号)。24コマ/秒、9枚のシートに分けてある。
   // 止まるまでの速さは CALL と同じ(同じ動画の前半)、止まっている間は0、最後は STEP まで加速して、歩きのループへ blend コマかけて溶かしてつなぐ
-  const ROLL = { n: 143, per: 42, cols: 7, cw: 538, ch: 383, scale: 0.6, pad: 8, ox: 295, oy: 65, loopOut: 16, stop: 28, blend: 6 };
-  ROLL.speed = Array.from({ length: ROLL.n }, (_, i) => i < 28 ? CALL.speed[Math.round(i * 34 / 27)] : 0);   // 止まるまでの28コマは、CALL の減速を縮めて使う
+  const ROLL = { n: 356, per: 42, cols: 7, cw: 530, ch: 405, scale: 0.6, pad: 8, ox: 285, oy: 30, loopOut: 13, stop: 31, blend: 6, joinDx: 38,
+    cell: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,194,195,195,196,196,196,196,196,196,196,196,196,196,196,197,197,197,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288,289,290,291,292,293,294,295,296,297,298,299,300,301,302,303,304,305,306,307,308,309,310,311,312,313,314,315,316,317,318,319,320,321,322,323,324,325,326,327,328,329,330,331,332,333,334,335,336,337,338,339,340] };
+  ROLL.speed = CALL.speed.slice(0, 35).concat(new Array(ROLL.n - 35).fill(0));   // 止まるまでは CALL と同じ減速(同じ動画の前半)
   for (let i = 0; i < 14; i++) ROLL.speed[ROLL.n - 14 + i] = STEP * (i + 1) / 14;
   [CALL, ROLL].forEach(c => { c.cum = [0]; c.speed.forEach(v => c.cum.push(c.cum[c.cum.length - 1] + v)); });   // 先頭から、そのコマまでに進む距離
   let catOn = get('cat', '1') === '1', catEvery = Number(get('catEvery', '300')) || 300;
   const ROLLP = 0.2;   // ふだんの横切りのうち、ごろんになる割合
   let cat = null, catTimer = 0;
-  const NROLL = 4, sheets = { walk: null, c1: null, c2: null, roll: [] };
+  const NROLL = 9, sheets = { walk: null, c1: null, c2: null, roll: [] };
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const timeKey = () => Math.floor(Date.now() / (secs ? 1000 : 60000));
   function renderLayer(){ ctx = lctx; paint(); ctx = mainCtx; }
@@ -171,12 +172,12 @@ canvas{display:block; position:absolute; inset:0}
   }
   function endCat(){ cat = null; draw(); scheduleCat(); }
   // 1コマを描く。spec: WALK か CALL、img: そのシート、f: シート内のコマ番号、cx: 猫の中心の横位置、dir: 進む向き
-  function drawCell(spec, img, f, cx, dir, kv, gy, alpha){
+  function drawCell(spec, img, f, cx, dir, kv, gy, alpha, dxv){
     const Lv = spec.ox - spec.pad / spec.scale, Tv = spec.oy - spec.pad / spec.scale;
     ctx.save(); ctx.globalAlpha = alpha; ctx.translate(cx, 0); if (dir > 0) ctx.scale(-1, 1);   // 素材は左向きなので、右へ進むときは反転
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(img, (f % spec.cols) * spec.cw, Math.floor(f / spec.cols) * spec.ch, spec.cw, spec.ch,
-      (Lv - REFX) * kv, gy + (Tv - GROUND) * kv, spec.cw / spec.scale * kv, spec.ch / spec.scale * kv);
+      (Lv - REFX + (dxv || 0)) * kv, gy + (Tv - GROUND) * kv, spec.cw / spec.scale * kv, spec.ch / spec.scale * kv);
     ctx.restore();
   }
   function catLoop(now){
@@ -185,7 +186,7 @@ canvas{display:block; position:absolute; inset:0}
       cat.last = now;
       const kv = Math.min(H * 0.5, W * 0.28) / 585, gy = H * 0.84, v0 = STEP * FPS * kv;   // 猫の高さは画面の高さの半分(縦向きは幅の28%まで) / v0: 歩く速さ(px/秒)
       const dwW = WALK.cw / WALK.scale * kv, el = (now - cat.t0) / 1000, dir = cat.dir;
-      let cx, spec = WALK, img = sheets.walk, f, blendLoop = -1, ba = 1;
+      let cx, spec = WALK, img = sheets.walk, f, blendLoop = -1, ba = 1, dj = 0;
       const K = cat.clip;
       if (!cat.call) {
         const run = v0 * el;
@@ -201,19 +202,19 @@ canvas{display:block; position:absolute; inset:0}
         } else if (el < tw + tc) {                                                                  // 2) ゆっくりになって止まり、こちらを見て、また歩き出す(動画のまま)
           const q = (el - tw) * FPS, n = Math.min(K.n - 1, Math.floor(q)), fr = q - Math.floor(q);
           cx = xcs + dir * (K.cum[n] + (K.cum[n + 1] - K.cum[n]) * fr) * kv;
-          const k = n;
+          const k = K.cell ? K.cell[n] : n;
           spec = K; img = K === ROLL ? sheets.roll[Math.floor(k / K.per)] : (k < K.per ? sheets.c1 : sheets.c2); f = k % K.per;
           if (K.blend && n >= K.n - K.blend) { const b = n - (K.n - K.blend); ba = (b + 1) / (K.blend + 1); blendLoop = ((K.loopOut + 1 - (K.blend - b)) % WALK.n + WALK.n) % WALK.n; }   // 最後の数コマは、歩きのループへ溶かす
         } else {                                                                                    // 3) そのまま歩いて出ていく
           const e2 = el - tw - tc;
-          cx = xcs + dir * (K.cum[K.n] * kv + v0 * e2); f = (K.loopOut + 1 + Math.floor(e2 * FPS)) % WALK.n;
+          cx = xcs + dir * (K.cum[K.n] * kv + v0 * e2); f = (K.loopOut + 1 + Math.floor(e2 * FPS)) % WALK.n; dj = K.joinDx || 0;   // 歩きのループは、動画の猫と位置が少しずれているので、その分ずらして描く
           if (dir > 0 ? cx - dwW / 2 > W : cx + dwW / 2 < 0) { endCat(); return; }
         }
       }
       if (cat.key !== timeKey()) { renderLayer(); cat.key = timeKey(); }   // 時計の絵は、数字が変わるときだけ作り直す
       ctx.drawImage(layer, 0, 0, W, H);
-      drawCell(spec, img, f, cx, dir, kv, gy, 1);
-      if (blendLoop >= 0) drawCell(WALK, sheets.walk, blendLoop, cx, dir, kv, gy, ba);   // 下の絵はそのまま、上にループの絵をだんだん濃く重ねる(両方を薄くすると透けるため)
+      drawCell(spec, img, f, cx, dir, kv, gy, 1, dj);
+      if (blendLoop >= 0) drawCell(WALK, sheets.walk, blendLoop, cx, dir, kv, gy, ba, K.joinDx);   // 下の絵はそのまま、上にループの絵をだんだん濃く重ねる(両方を薄くすると透けるため)
     }
     requestAnimationFrame(catLoop);
   }
