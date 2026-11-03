@@ -169,9 +169,10 @@ canvas{display:block; position:absolute; inset:0}
     cat = { dir: Math.random() < 0.5 ? 1 : -1, t0: performance.now(), last: 0, key: -1 };
     const rollOk = sheets.roll.filter(Boolean).length === NROLL;
     if (call && sheets.c1 && sheets.c2) { cat.call = true; cat.xf = call.xf; cat.dir = call.xf < 0.5 ? 1 : -1; }   // 近いほうの端から入ってくる
-    if (call && call.roll && rollOk) cat.clip = ROLL;                                                        // 呼ばれて来て、ごろんと寝転がる
+    if (call && call.roll && rollOk) { cat.clip = ROLL; cat.dir = -cat.dir; }                                  // 呼ばれて来て、ごろんと寝転がる。遠い端から入ってきて、近い端から出ていく(起き上がってからの歩きを短くするため)
     else if (!call && rollOk && Math.random() < ROLLP) {                                                     // ふだんの横切りでも、ときどき途中で寝転がる
-      cat.call = true; cat.clip = ROLL; cat.xf = 0.3 + Math.random() * 0.4; cat.dir = cat.xf < 0.5 ? 1 : -1;
+      cat.call = true; cat.clip = ROLL; cat.dir = Math.random() < 0.5 ? 1 : -1;
+      cat.xf = cat.dir > 0 ? 0.76 + Math.random() * 0.1 : 0.14 + Math.random() * 0.1;   // 出ていく側の端の近くで寝転がる
     }
     if (cat.call && !cat.clip) cat.clip = CALL;
     requestAnimationFrame(catLoop);
