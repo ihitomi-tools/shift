@@ -85,38 +85,58 @@ nav.hide{display:none}
 #hint{position:absolute; left:50%; bottom:calc(env(safe-area-inset-bottom) + 12px); transform:translateX(-50%); z-index:6; pointer-events:none; white-space:nowrap;
   background:rgba(0,0,0,.8); color:var(--text); border:2px solid var(--line); border-radius:99px; padding:8px 18px; font-weight:700; font-size:.95rem}
 @media (orientation: portrait){#hint{bottom:auto; top:calc(env(safe-area-inset-top) + 10px)}}
-#dlg{color-scheme:dark; background:var(--panel); color:var(--text); border:3px solid var(--line); border-radius:20px; padding:16px 20px; width:min(92vw,460px); max-height:92dvh; overflow:auto; font-family:inherit}
-#dlg::backdrop{background:rgba(0,0,0,.75)}
-#dlg h2{margin:0 0 10px; font-size:1.15rem}
-#dlg .opt{display:flex; align-items:center; gap:10px; padding:9px 0; font-size:1.05rem; font-weight:700}
-#dlg input[type=radio]{width:1.4em; height:1.4em; accent-color:var(--accent); flex:none}
-#dlg .times{display:flex; align-items:center; gap:10px; padding:2px 0 8px 2.4em; font-size:1.4rem; font-weight:700}
-#dlg .times.off{opacity:.35}
-#dlg input[type=time]{font:inherit; font-size:1.5rem; font-weight:700; color:var(--text); background:transparent; border:2px solid var(--line); border-radius:10px; padding:4px 8px; min-width:7.2em}
-#dlg .note{margin:6px 0 12px; color:var(--sub); font-size:.85rem; line-height:1.5}
-#dlg .btn{width:100%}
-#dlg .btn + .btn{margin-top:8px}
-#dlg h2.sub{margin:16px 0 6px; font-size:1.05rem}
-#dlg .catevery{display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 6px}
-#dlg .catevery button{font:inherit; font-weight:700; color:var(--text); background:transparent; border:2px solid var(--line); border-radius:10px; padding:8px 12px; min-height:40px; cursor:pointer}
-#dlg .catevery button[aria-pressed="true"]{background:var(--accent); color:var(--accent-text); border-color:var(--accent)}
-#dlg .catinfo{margin:0 0 10px; color:var(--sub); font-size:.82rem; line-height:1.5}
-#dlg .ver{margin:8px 0 0; text-align:center; color:var(--sub); font-size:.75rem}
-#dlg .times{flex-wrap:wrap}
+dialog.dlg{color-scheme:dark; background:var(--panel); color:var(--text); border:3px solid var(--line); border-radius:20px; padding:16px 20px; width:min(92vw,460px); max-height:92dvh; overflow:auto; font-family:inherit}
+dialog.dlg::backdrop{background:rgba(0,0,0,.75)}
+dialog.dlg h2{margin:0 0 10px; font-size:1.15rem}
+dialog.dlg .opt{display:flex; align-items:center; gap:10px; padding:9px 0; font-size:1.05rem; font-weight:700}
+dialog.dlg input[type=radio]{width:1.4em; height:1.4em; accent-color:var(--accent); flex:none}
+dialog.dlg .times{display:flex; align-items:center; gap:10px; padding:2px 0 8px 2.4em; font-size:1.4rem; font-weight:700}
+dialog.dlg .times.off{opacity:.35}
+dialog.dlg input[type=time]{font:inherit; font-size:1.5rem; font-weight:700; color:var(--text); background:transparent; border:2px solid var(--line); border-radius:10px; padding:4px 8px; min-width:7.2em}
+dialog.dlg .note{margin:6px 0 12px; color:var(--sub); font-size:.85rem; line-height:1.5}
+dialog.dlg .btn{width:100%}
+dialog.dlg .btn + .btn{margin-top:8px}
+dialog.dlg h2.sub{margin:16px 0 6px; font-size:1.05rem}
+dialog.dlg .catevery{display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 6px}
+dialog.dlg .catevery button{font:inherit; font-weight:700; color:var(--text); background:transparent; border:2px solid var(--line); border-radius:10px; padding:8px 12px; min-height:40px; cursor:pointer}
+dialog.dlg .catevery button[aria-pressed="true"]{background:var(--accent); color:var(--accent-text); border-color:var(--accent)}
+dialog.dlg .catinfo{margin:0 0 10px; color:var(--sub); font-size:.82rem; line-height:1.5}
+dialog.dlg .ver{margin:8px 0 0; text-align:center; color:var(--sub); font-size:.75rem}
+dialog.dlg .times{flex-wrap:wrap}
 @media (orientation: landscape) and (max-height: 520px){
-  #dlg{padding:10px 16px; max-height:96dvh}
-  #dlg h2{margin-bottom:2px; font-size:1rem}
-  #dlg .opt{padding:4px 0; font-size:.95rem}
-  #dlg .times{padding:0 0 4px 2.4em; gap:6px; font-size:1.1rem}
-  #dlg input[type=time]{font-size:1.15rem; min-width:0; padding:2px 6px}
-  #dlg .note{display:none}
-  #dlg .btn{display:inline-block; width:calc(50% - 9px); box-sizing:border-box; min-width:0}
-  #dlg .btn + .btn{margin:4px 0 0 4px}
-  #dlg h2.sub{margin:8px 0 2px; font-size:.95rem}
-  #dlg .catevery{gap:6px; margin:2px 0 2px}
-  #dlg .catevery button{padding:4px 10px; min-height:34px; font-size:.9rem}
-  #dlg .catinfo{margin:0 0 4px; font-size:.75rem; line-height:1.3}
-  #dlg .btn{padding:8px 16px; font-size:1rem; margin-top:4px}
+  dialog.dlg{padding:10px 16px; max-height:96dvh}
+  dialog.dlg h2{margin-bottom:2px; font-size:1rem}
+  dialog.dlg .opt{padding:4px 0; font-size:.95rem}
+  dialog.dlg .times{padding:0 0 4px 2.4em; gap:6px; font-size:1.1rem}
+  dialog.dlg input[type=time]{font-size:1.15rem; min-width:0; padding:2px 6px}
+  dialog.dlg .note{display:none}
+  dialog.dlg .btn{display:inline-block; width:calc(50% - 9px); box-sizing:border-box; min-width:0}
+  dialog.dlg .btn + .btn{margin:4px 0 0 4px}
+  dialog.dlg h2.sub{margin:8px 0 2px; font-size:.95rem}
+  dialog.dlg .catevery{gap:6px; margin:2px 0 2px}
+  dialog.dlg .catevery button{padding:4px 10px; min-height:34px; font-size:.9rem}
+  dialog.dlg .catinfo{margin:0 0 4px; font-size:.75rem; line-height:1.3}
+  dialog.dlg .btn{padding:8px 16px; font-size:1rem; margin-top:4px}
+}
+/* ===== 仕事モードのチェックリスト ===== */
+#check{position:absolute; inset:0; z-index:20; background:var(--bg); color:var(--text); display:flex; flex-direction:column; gap:10px; overflow:auto;
+  padding:max(12px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
+#check[hidden]{display:none}
+#check h2{margin:0; font-size:clamp(1.3rem, 5vh, 2rem); font-weight:800}
+#check-sub{margin:0; color:var(--sub); font-size:clamp(.9rem, 2.8vh, 1.1rem); min-height:1.4em}
+.tiles{flex:1; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap:10px; align-content:center}
+.tile{font:inherit; font-weight:800; font-size:clamp(1.3rem, min(6.5vh, 8vw), 2.4rem); white-space:nowrap; display:flex; align-items:center; gap:.5em; text-align:left; padding:.45em .7em; min-height:64px;
+  border:3px solid var(--line); border-radius:18px; background:transparent; color:var(--text); cursor:pointer}
+.tile .box{flex:none; width:1.2em; height:1.2em; border:3px solid currentColor; border-radius:.25em; display:grid; place-items:center; line-height:1}
+.tile[aria-pressed="true"]{background:var(--accent); color:var(--accent-text); border-color:var(--accent)}
+.tile[aria-pressed="true"] .box::after{content:"✓"; font-weight:900}
+.check-actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:center}
+.check-actions .btn{min-width:0; flex:1 1 200px}
+@media (orientation: landscape) and (max-height: 520px){
+  #check{gap:6px; padding-top:max(6px, env(safe-area-inset-top, 0px)); padding-bottom:max(6px, env(safe-area-inset-bottom, 0px))}
+  #check h2{font-size:1.2rem}
+  .tile{min-height:52px; padding:.3em .6em; font-size:clamp(1.2rem, 8vh, 2rem)}
+  .check-actions .btn{padding:8px 14px; font-size:1rem}
 }
 </style>
 
@@ -171,12 +191,36 @@ nav.hide{display:none}
     <button id="b-sec" aria-label="秒の表示切り替え">秒</button>
     <button id="b-fmt" aria-label="12時間/24時間の切り替え">24h</button>
     <button id="b-cat" aria-label="猫が歩く動きの あり/なし">猫</button>
+    <button id="b-work" aria-label="仕事モードの設定">仕事</button>
     <button id="b-wake" aria-label="画面をつけておく時間の設定">点灯</button>
     <button id="b-fs" aria-label="全画面">全画面</button>
   </div>
 </nav>
+<section id="check" hidden aria-labelledby="check-h">
+  <h2 id="check-h">しごとチェック</h2>
+  <p id="check-sub"></p>
+  <div id="check-list" class="tiles" role="group" aria-label="チェックリスト"></div>
+  <div class="check-actions">
+    <button type="button" class="btn" id="check-later">あとで（5分後）</button>
+    <button type="button" class="btn" id="check-skip">今日はもう出さない</button>
+    <button type="button" class="btn primary" id="check-close" hidden>とじる</button>
+  </div>
+</section>
 <div id="hint" hidden>画面をタップするとメニューが出ます</div>
-<dialog id="dlg" aria-label="設定">
+<dialog id="wdlg" class="dlg" aria-label="仕事モード">
+  <form method="dialog">
+    <h2>仕事モード</h2>
+    <div class="catevery" id="w-mode" role="group" aria-label="仕事モードのオン・オフ">
+      <button type="button" data-v="1">オン</button><button type="button" data-v="0">オフ</button>
+    </div>
+    <p class="note">オンのあいだ、決めた時刻に、仕事のチェックリスト（炊飯器・温風庫・食洗機・ポットのお湯・紙）が出ます。</p>
+    <div class="times" style="padding-left:0"><span>出す時刻</span><input type="time" id="w-time" aria-label="チェックリストを出す時刻"></div>
+    <p class="note">オンのあいだは、画面が消えない時間を、この時刻の10分後まで延ばします。</p>
+    <button type="button" class="btn" id="w-now">今すぐ出してみる</button>
+    <button class="btn primary" value="close">とじる</button>
+  </form>
+</dialog>
+<dialog id="dlg" class="dlg" aria-label="設定">
   <form method="dialog">
     <h2>画面をつけておく設定</h2>
     <label class="opt"><input type="radio" name="wm" value="window"> 決めた時間だけ、つけておく</label>
@@ -191,7 +235,7 @@ nav.hide{display:none}
     <p class="catinfo" id="cat-info"></p>
     <button type="button" class="btn" id="cat-now">猫を今すぐ呼ぶ</button>
     <button class="btn primary" value="close">とじる</button>
-    <p class="ver">バージョン 21</p>
+    <p class="ver">バージョン 22</p>
   </form>
 </dialog>
 </div>
@@ -284,10 +328,12 @@ nav.hide{display:none}
   function inWakeWindow(){
     const d = new Date(), m = d.getHours() * 60 + d.getMinutes();
     if (wakeFrom === wakeTo) return false;
-    return wakeFrom < wakeTo ? (m >= wakeFrom && m < wakeTo) : (m >= wakeFrom || m < wakeTo);
+    return wakeFrom < wakeTo ? (m >= wakeFrom && m < wakeEnd()) : (m >= wakeFrom || m < wakeTo);
   }
+  // 仕事モードがオンで、チェックリストの時刻が終了時刻より後なら、チェックリストの時刻の10分後まで延ばす
+  function wakeEnd(){ return (workOn && workTime >= wakeFrom && workTime + 10 > wakeTo) ? workTime + 10 : wakeTo; }
   // ストップウォッチ・タイマーが動いている間は、時間帯に関係なく消さない
-  const wantAwake = () => !document.hidden && (wakeMode === 'always' || (wakeMode === 'window' && inWakeWindow()) || tmRun || swRun);
+  const wantAwake = () => !document.hidden && (wakeMode === 'always' || (wakeMode === 'window' && inWakeWindow()) || tmRun || swRun || checkOpen);
   async function syncWake(){
     try {
       if (wantAwake()) {
@@ -332,6 +378,62 @@ nav.hide{display:none}
   dlg.addEventListener('input', saveWake); dlg.addEventListener('change', saveWake);
   document.addEventListener('pointerdown', syncWake, { once: true });   // 初回タップでも要求し直す（ブラウザによっては必要）
   setInterval(syncWake, 30000);                                          // 時間帯の開始・終了を拾う
+
+  /* ---------- 仕事モード（チェックリスト） ---------- */
+  const WORK_ITEMS = ['炊飯器', '温風庫', '食洗機', 'ポットのお湯', '紙'];
+  let workOn = store.get('work', '0') === '1', workTime = toMin(store.get('workTime', '18:40')) ?? 18 * 60 + 40;   // 出す時刻の既定は 18:40（仕事モードの設定画面で変えられる）
+  const todayKey = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+  // チェックの状態は「その日だけ」保存する（日付が変わるとリセット）
+  function loadWork(){
+    try { const o = JSON.parse(store.get('workState', '')); if (o && o.date === todayKey() && Array.isArray(o.checked) && o.checked.length === WORK_ITEMS.length) return o; } catch {}
+    return { date: todayKey(), checked: WORK_ITEMS.map(() => false), skipped: false };
+  }
+  let workState = loadWork(), checkOpen = false, snoozeUntil = 0;
+  const saveWork = () => store.set('workState', JSON.stringify(workState));
+  const allDone = () => workState.checked.every(Boolean);
+  function renderCheck(){
+    const done = allDone(), n = workState.checked.filter(Boolean).length;
+    $('check-h').textContent = done ? 'ぜんぶ おわり！ おつかれさま' : 'しごとチェック';
+    $('check-sub').textContent = done ? '' : `押してチェック（${n}/${WORK_ITEMS.length}）`;
+    const box = $('check-list'); box.innerHTML = '';
+    WORK_ITEMS.forEach((name, i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tile'; b.setAttribute('aria-pressed', String(workState.checked[i]));
+      const mark = document.createElement('span'); mark.className = 'box'; mark.setAttribute('aria-hidden', 'true');
+      const label = document.createElement('span'); label.textContent = name; b.append(mark, label);
+      b.onclick = () => { workState.checked[i] = !workState.checked[i]; saveWork(); renderCheck(); };
+      box.appendChild(b);
+    });
+    $('check-later').hidden = $('check-skip').hidden = done; $('check-close').hidden = !done;
+  }
+  function openCheck(){ if (checkOpen) return; workState = loadWork(); checkOpen = true; $('check').hidden = false; renderCheck(); syncWake(); }
+  function closeCheck(){
+    const done = allDone(); checkOpen = false; $('check').hidden = true; syncWake();
+    if (done && catOn) { const w = $('face-frame').contentWindow; if (w) w.postMessage({ catNow: true }, '*'); }   // 全部終わったら、ごほうびに猫が歩く
+  }
+  function workTick(){
+    if (!workOn || checkOpen) return;
+    if (workState.date !== todayKey()) workState = loadWork();
+    const d = new Date(), m = d.getHours() * 60 + d.getMinutes();
+    if (m < workTime || workState.skipped || allDone() || Date.now() < snoozeUntil) return;
+    openCheck();
+  }
+  $('check-later').onclick = () => { snoozeUntil = Date.now() + 5 * 60 * 1000; closeCheck(); };
+  $('check-skip').onclick = () => { workState.skipped = true; saveWork(); closeCheck(); };
+  $('check-close').onclick = closeCheck;
+  const wdlg = $('wdlg');
+  function syncWork(){
+    document.querySelectorAll('#w-mode button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === (workOn ? '1' : '0'))));
+    $('w-time').value = hm(workTime); $('b-work').textContent = '仕事:' + (workOn ? 'オン' : 'オフ');
+  }
+  $('b-work').onclick = () => { syncWork(); if (wdlg.showModal) wdlg.showModal(); else wdlg.setAttribute('open', ''); };
+  $('w-mode').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    workOn = b.dataset.v === '1'; store.set('work', workOn ? '1' : '0'); syncWork(); syncWake(); workTick();
+  });
+  $('w-time').addEventListener('input', () => { const t = toMin($('w-time').value); if (t !== null) { workTime = t; store.set('workTime', hm(t)); syncWake(); workTick(); } });
+  $('w-now').onclick = () => { workState = loadWork(); workState.skipped = false; snoozeUntil = 0; if (wdlg.close) wdlg.close(); openCheck(); };   // 試すとき用
+  setInterval(workTick, 15000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) workTick(); });
 
   /* ---------- ストップウォッチ ---------- */
   let swRun = false, swBase = 0, swStart = 0, lapPrev = 0, lapN = 0;
@@ -417,7 +519,7 @@ nav.hide{display:none}
   }
 
   /* ---------- 起動 ---------- */
-  setTimer(300000); syncSw(); syncTm(); applyState(); $('b-wake').textContent = wakeLabel(); syncWake();
+  setTimer(300000); syncSw(); syncTm(); applyState(); $('b-wake').textContent = wakeLabel(); syncWork(); syncWake(); workTick();
   if ('serviceWorker' in navigator) {
     const hadController = !!navigator.serviceWorker.controller;   // 初回インストールのときは開き直さない
     let reloaded = false;
