@@ -142,16 +142,16 @@ canvas{display:block; position:absolute; inset:0}
   // 立ち止まる動き: 動画のコマ95(歩きのループの2番目と同じ姿勢)〜177(ループの12番目と同じ姿勢)。speed は各コマで進む距離(動画の画素)、stop は完全に止まるコマ
   const CALL = { n: 83, per: 42, cols: 7, cw: 476, ch: 362, scale: 0.6, pad: 8, ox: 323, oy: 89, loopIn: 2, loopOut: 12, stop: 31,
     speed: [11.55,11.55,11.76,11.97,11.97,11.76,11.55,10.92,10.29,9.66,9.45,9.24,9.03,8.61,7.77,6.93,5.67,4.62,4.41,4.62,4.41,4.62,4.62,3.99,3.57,3.15,2.73,2.52,2.1,1.68,1.26,0.84,0.42,0.21,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.21,0.42,1.05,1.68,2.52,3.15,3.99,4.41,5.25,5.88,6.72,7.35,7.98,7.98,8.19,8.61,9.45,10.08,11.34,12.18,12.6,12.81,13.23,13.44,13.86,14.49,14.91,15.12,15.12,15.12,14.91] };
-  // ごろん: 同じ動画の続き。立ち止まり、体を丸め、寝転がって転がり、起き上がって歩き出す(動画のコマ95〜440、346コマ)。全コマ(24コマ/秒)入り、9枚のシートに分けてある。
+  // ごろん: 同じ動画の続き。立ち止まり、体を丸め、寝転がって転がり、起き上がって歩き出す(新しい動画のコマ94〜236、143コマ)。全コマ(24コマ/秒)入り、4枚のシートに分けてある。
   // 止まるまでの速さは CALL と同じ(同じ動画の前半)、止まっている間は0、最後は STEP まで加速して、歩きのループへ blend コマかけて溶かしてつなぐ
-  const ROLL = { n: 346, per: 42, cols: 7, cw: 550, ch: 378, scale: 0.6, pad: 8, ox: 282, oy: 73, loopOut: 30, stop: 31, blend: 6, };
-  ROLL.speed = CALL.speed.slice(0, 35).concat(new Array(ROLL.n - 35).fill(0));
+  const ROLL = { n: 143, per: 42, cols: 7, cw: 538, ch: 383, scale: 0.6, pad: 8, ox: 295, oy: 65, loopOut: 16, stop: 28, blend: 6 };
+  ROLL.speed = Array.from({ length: ROLL.n }, (_, i) => i < 28 ? CALL.speed[Math.round(i * 34 / 27)] : 0);   // 止まるまでの28コマは、CALL の減速を縮めて使う
   for (let i = 0; i < 14; i++) ROLL.speed[ROLL.n - 14 + i] = STEP * (i + 1) / 14;
   [CALL, ROLL].forEach(c => { c.cum = [0]; c.speed.forEach(v => c.cum.push(c.cum[c.cum.length - 1] + v)); });   // 先頭から、そのコマまでに進む距離
   let catOn = get('cat', '1') === '1', catEvery = Number(get('catEvery', '300')) || 300;
   const ROLLP = 0.2;   // ふだんの横切りのうち、ごろんになる割合
   let cat = null, catTimer = 0;
-  const NROLL = 9, sheets = { walk: null, c1: null, c2: null, roll: [] };
+  const NROLL = 4, sheets = { walk: null, c1: null, c2: null, roll: [] };
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const timeKey = () => Math.floor(Date.now() / (secs ? 1000 : 60000));
   function renderLayer(){ ctx = lctx; paint(); ctx = mainCtx; }
