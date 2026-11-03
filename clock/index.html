@@ -235,7 +235,7 @@ dialog.dlg .times{flex-wrap:wrap}
     <p class="catinfo" id="cat-info"></p>
     <button type="button" class="btn" id="cat-now">猫を今すぐ呼ぶ</button>
     <button class="btn primary" value="close">とじる</button>
-    <p class="ver">バージョン 22</p>
+    <p class="ver">バージョン 23</p>
   </form>
 </dialog>
 </div>
@@ -303,9 +303,27 @@ dialog.dlg .times{flex-wrap:wrap}
     }, 5000);
   }
   nav.addEventListener('pointerdown', navAwake);
-  // 時計の上をタップしたらメニューを出す。時計ページへの伝言には頼らず、親のページ自身が受ける（指のタップは複数のイベントが出るので、どれでも反応させる）
+  // 時計の上のタップ: 1回ならメニュー、2回続けたら猫を呼ぶ（タップした場所まで猫が来る）。時計ページへの伝言には頼らず、親のページ自身が受ける。
+  // 指で1回タップすると pointerdown / touchstart / click が少しずれて出るので、1回のタップにつき1つのイベントだけを数える
+  // （pointerdown が使えればそれだけ。使えない端末では touchstart、さらにだめなら click）。
   const reveal = () => { store.set('menuSeen', '1'); navAwake(); };
-  ['pointerdown', 'touchstart', 'click'].forEach(t => $('tapzone').addEventListener(t, reveal, { passive: true }));
+  const tz = $('tapzone');
+  let tapTimer = 0, firstTap = null, sawPointer = false, lastTouchAt = -1e9;
+  function callCat(xf){ const w = $('face-frame').contentWindow; if (w) w.postMessage({ call: xf }, '*'); }
+  function onTap(e){
+    const r = tz.getBoundingClientRect(), t = e.touches && e.touches[0] ? e.touches[0] : e;
+    const xf = r.width ? Math.min(1, Math.max(0, (t.clientX - r.left) / r.width)) : 0.5, pt = { xf, x: t.clientX, y: t.clientY };
+    if (tapTimer && firstTap && Math.hypot(pt.x - firstTap.x, pt.y - firstTap.y) < 70) {   // 0.3秒以内に近くをもう一度 = ダブルタップ
+      clearTimeout(tapTimer); tapTimer = 0; firstTap = null;
+      if (catOn) callCat(pt.xf); else reveal();                                           // 「猫:なし」のときは猫を呼ばず、メニューを出す
+      return;
+    }
+    firstTap = pt; clearTimeout(tapTimer);
+    tapTimer = setTimeout(() => { tapTimer = 0; firstTap = null; reveal(); }, 300);       // 2回目が来なければ、メニューを出す
+  }
+  tz.addEventListener('pointerdown', e => { sawPointer = true; onTap(e); }, { passive: true });
+  tz.addEventListener('touchstart', e => { lastTouchAt = performance.now(); if (!sawPointer) onTap(e); }, { passive: true });
+  tz.addEventListener('click', e => { if (sawPointer || performance.now() - lastTouchAt < 800) return; onTap(e); }, { passive: true });
   addEventListener('message', e => { if (e.source === $('face-frame').contentWindow && e.data && e.data.type === 'tap') { store.set('menuSeen', '1'); navAwake(); } });
   $('b-cat').onclick = () => { catOn = !catOn; store.set('cat', catOn ? '1' : '0'); applyState(); };
   $('b-sec').onclick = () => { secs = !secs; store.set('secs', secs ? '1' : '0'); applyState(); };
@@ -351,7 +369,7 @@ dialog.dlg .times{flex-wrap:wrap}
   function catInfo(){
     document.querySelectorAll('#cat-every button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === catEvery)));
     const pct = CATSEC / Number(catEvery) * 100, shown = pct >= 10 ? Math.round(pct) : Math.round(pct * 10) / 10;
-    $('cat-info').textContent = `猫は1回に約${CATSEC}秒かけて画面を横切ります。この間隔なら、歩いている時間は全体の約${shown}%です。` + (catOn ? '' : '（今は「猫:なし」です）');
+    $('cat-info').textContent = `猫は1回に約${CATSEC}秒かけて画面を横切ります（全体の約${shown}%）。画面をダブルタップすると、タップした場所まで猫が来ます。` + (catOn ? '' : '（今は「猫:なし」です）');
   }
   $('cat-every').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || !CATEVERY.includes(b.dataset.v)) return; catEvery = b.dataset.v; store.set('catEvery', catEvery); catInfo(); post(); });
   $('cat-now').addEventListener('click', () => {

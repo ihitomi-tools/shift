@@ -134,46 +134,80 @@ canvas{display:block; position:absolute; inset:0}
     timer = setTimeout(draw, secs ? 1000 - (Date.now() % 1000) + 15 : 60000 - (Date.now() % 60000) + 50);
   }
 
-  /* ---------- 猫（Geminiで作った歩く動画の、足踏みの31コマ） ---------- */
-  // cat-walk.png は、31コマを 6列×6行 に並べたもの。猫は左向き、足先は各コマの下から foot の位置。
-  // speed は「足が地面を滑らない速さ」（1コマ=24分の1秒あたり、コマ画像の画素数）
-  const SH = { n: 31, cols: 6, cw: 584, ch: 486, fps: 24, foot: 475, h: 468, speed: 10.96 };
+  /* ---------- 猫（Geminiで作った歩く動画から切り出したコマ） ---------- */
+  // 絵は3枚。cat-walk.png=足踏みの31コマ(歩きのループ)、cat-call1/2.png=「歩いてきて、ゆっくりになって立ち止まり、こちらを見て、また歩き出す」83コマ。猫は左向き。
+  // 位置の計算は、すべて「動画の画素」を基準にそろえる(REFX=猫の中心、GROUND=足の裏の高さ)。画面に描くときだけ kv(画面の画素÷動画の画素)を掛ける。
+  const REFX = 676.5, GROUND = 664, STEP = 13.7, FPS = 24;   // STEP: 足が地面を滑らない速さ(動画の画素/コマ)
+  const WALK = { n: 31, cols: 6, cw: 584, ch: 486, scale: 0.8, pad: 9, ox: 323, oy: 81 };
+  // 立ち止まる動き: 動画のコマ95(歩きのループの2番目と同じ姿勢)〜177(ループの12番目と同じ姿勢)。speed は各コマで進む距離(動画の画素)、stop は完全に止まるコマ
+  const CALL = { n: 83, per: 42, cols: 7, cw: 476, ch: 362, scale: 0.6, pad: 8, ox: 323, oy: 89, loopIn: 2, loopOut: 12, stop: 31,
+    speed: [11.55,11.55,11.76,11.97,11.97,11.76,11.55,10.92,10.29,9.66,9.45,9.24,9.03,8.61,7.77,6.93,5.67,4.62,4.41,4.62,4.41,4.62,4.62,3.99,3.57,3.15,2.73,2.52,2.1,1.68,1.26,0.84,0.42,0.21,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.21,0.42,1.05,1.68,2.52,3.15,3.99,4.41,5.25,5.88,6.72,7.35,7.98,7.98,8.19,8.61,9.45,10.08,11.34,12.18,12.6,12.81,13.23,13.44,13.86,14.49,14.91,15.12,15.12,15.12,14.91] };
+  CALL.cum = [0]; CALL.speed.forEach(v => CALL.cum.push(CALL.cum[CALL.cum.length - 1] + v));   // 先頭から、そのコマまでに進む距離
   let catOn = get('cat', '1') === '1', catEvery = Number(get('catEvery', '300')) || 300;
-  let cat = null, sheet = null, catTimer = 0;
+  let cat = null, catTimer = 0;
+  const sheets = { walk: null, c1: null, c2: null };
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const timeKey = () => Math.floor(Date.now() / (secs ? 1000 : 60000));
   function renderLayer(){ ctx = lctx; paint(); ctx = mainCtx; }
-  function spawnCat(){
-    if (cat || !sheet || document.hidden) return;
+  // call を渡すと「呼ばれて来る」動き(xf: 画面の横位置 0〜1)、渡さないと「ただ横切る」動き
+  function spawnCat(call){
+    if (cat || !sheets.walk || document.hidden) return;
     clearTimeout(timer);                                   // 猫がいる間は、普段の1秒ごとの描き直しを止める
     cat = { dir: Math.random() < 0.5 ? 1 : -1, t0: performance.now(), last: 0, key: -1 };
+    if (call && sheets.c1 && sheets.c2) { cat.call = true; cat.xf = call.xf; cat.dir = call.xf < 0.5 ? 1 : -1; }   // 近いほうの端から入ってくる
     requestAnimationFrame(catLoop);
   }
   function endCat(){ cat = null; draw(); scheduleCat(); }
+  // 1コマを描く。spec: WALK か CALL、img: そのシート、f: シート内のコマ番号、cx: 猫の中心の横位置、dir: 進む向き
+  function drawCell(spec, img, f, cx, dir, kv, gy){
+    const Lv = spec.ox - spec.pad / spec.scale, Tv = spec.oy - spec.pad / spec.scale;
+    ctx.save(); ctx.translate(cx, 0); if (dir > 0) ctx.scale(-1, 1);   // 素材は左向きなので、右へ進むときは反転
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, (f % spec.cols) * spec.cw, Math.floor(f / spec.cols) * spec.ch, spec.cw, spec.ch,
+      (Lv - REFX) * kv, gy + (Tv - GROUND) * kv, spec.cw / spec.scale * kv, spec.ch / spec.scale * kv);
+    ctx.restore();
+  }
   function catLoop(now){
     if (!cat) return;
     if (now - cat.last >= 33) {                            // 猫が歩いている間は、1秒に30回まで
       cat.last = now;
-      const k = Math.min(H * 0.5, W * 0.28) / SH.h, dw = SH.cw * k, dh = SH.ch * k, v = SH.speed * SH.fps * k;   // v: 画面上の歩く速さ(px/秒)
-      const el = (now - cat.t0) / 1000, run = v * el, total = W + dw;
-      if (run >= total) { endCat(); return; }
+      const kv = Math.min(H * 0.5, W * 0.28) / 585, gy = H * 0.84, v0 = STEP * FPS * kv;   // 猫の高さは画面の高さの半分(縦向きは幅の28%まで) / v0: 歩く速さ(px/秒)
+      const dwW = WALK.cw / WALK.scale * kv, el = (now - cat.t0) / 1000, dir = cat.dir;
+      let cx, spec = WALK, img = sheets.walk, f;
+      if (!cat.call) {
+        const run = v0 * el;
+        if (run >= W + dwW) { endCat(); return; }
+        cx = dir > 0 ? -dwW / 2 + run : W + dwW / 2 - run; f = Math.floor(el * FPS) % WALK.n;
+      } else {
+        // 呼ばれた場所(xt)で立ち止まるように、歩き始めの位置を逆算する
+        const xt = cat.xf * W, xcs = xt - dir * CALL.cum[CALL.stop] * kv;                         // xcs: 立ち止まる動きの1コマ目の位置
+        const x0 = dir > 0 ? Math.min(-dwW / 2, xcs) : Math.max(W + dwW / 2, xcs);                // 画面の外から歩き出す
+        const tw = Math.abs(xcs - x0) / v0, tc = CALL.n / FPS;
+        if (el < tw) {                                                                              // 1) 歩いてくる。足の姿勢が、立ち止まる動きの1コマ目と合うように位相を合わせる
+          cx = x0 + dir * v0 * el; f = Math.floor(el * FPS + (((CALL.loopIn - tw * FPS) % WALK.n) + WALK.n) % WALK.n) % WALK.n;
+        } else if (el < tw + tc) {                                                                  // 2) ゆっくりになって止まり、こちらを見て、また歩き出す(動画のまま)
+          const q = (el - tw) * FPS, n = Math.min(CALL.n - 1, Math.floor(q)), fr = q - Math.floor(q);
+          cx = xcs + dir * (CALL.cum[n] + (CALL.cum[n + 1] - CALL.cum[n]) * fr) * kv;
+          spec = CALL; img = n < CALL.per ? sheets.c1 : sheets.c2; f = n % CALL.per;
+        } else {                                                                                    // 3) そのまま歩いて出ていく
+          const e2 = el - tw - tc;
+          cx = xcs + dir * (CALL.cum[CALL.n] * kv + v0 * e2); f = (CALL.loopOut + 1 + Math.floor(e2 * FPS)) % WALK.n;
+          if (dir > 0 ? cx - dwW / 2 > W : cx + dwW / 2 < 0) { endCat(); return; }
+        }
+      }
       if (cat.key !== timeKey()) { renderLayer(); cat.key = timeKey(); }   // 時計の絵は、数字が変わるときだけ作り直す
       ctx.drawImage(layer, 0, 0, W, H);
-      const cx = cat.dir > 0 ? -dw / 2 + run : W + dw / 2 - run, f = Math.floor(el * SH.fps) % SH.n;
-      ctx.save(); ctx.translate(cx, H * 0.84 - SH.foot * k); if (cat.dir > 0) ctx.scale(-1, 1);   // 素材は左向きなので、右へ進むときは反転
-      ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(sheet, (f % SH.cols) * SH.cw, Math.floor(f / SH.cols) * SH.ch, SH.cw, SH.ch, -dw / 2, 0, dw, dh);
-      ctx.restore();
+      drawCell(spec, img, f, cx, dir, kv, gy);
     }
     requestAnimationFrame(catLoop);
   }
   // 次に猫が出るまでの時間は、毎回少しずつずらす
   function scheduleCat(){
     clearTimeout(catTimer);
-    if (!catOn || reduceMotion || !sheet) return;
+    if (!catOn || reduceMotion || !sheets.walk) return;
     catTimer = setTimeout(() => { if (catOn && !cat) spawnCat(); if (!cat) scheduleCat(); }, catEvery * 1000 * (0.7 + Math.random() * 0.6));
   }
-  (() => { const im = new Image(); im.onload = () => { sheet = im; scheduleCat(); }; im.src = 'cat-walk.png'; })();
+  Object.entries({ walk: 'cat-walk.png', c1: 'cat-call1.png', c2: 'cat-call2.png' }).forEach(([k, src]) => { const im = new Image(); im.onload = () => { sheets[k] = im; if (k === 'walk') scheduleCat(); }; im.src = src; });
 
   // フォントが読み込めたら、もう一度ぴったり描き直す
   function loadFonts(){
@@ -192,6 +226,7 @@ canvas{display:block; position:absolute; inset:0}
     if (typeof d.catEvery === 'number' && d.catEvery > 0) catEvery = d.catEvery;
     if (typeof d.cat === 'boolean') { catOn = d.cat; if (!catOn && cat) cat = null; }
     if (d.catNow) spawnCat();                               // 設定画面の「猫を今すぐ呼ぶ」
+    if (typeof d.call === 'number') spawnCat({ xf: Math.min(1, Math.max(0, d.call)) });   // 画面のダブルタップ: その場所まで猫が来る
     draw(); scheduleCat();
   });
   // タップしたら、親に操作バーを出してもらう
