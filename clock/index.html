@@ -125,6 +125,21 @@ dialog.dlg .times{flex-wrap:wrap}
   dialog.dlg .catinfo{margin:0 0 4px; font-size:.75rem; line-height:1.3}
   dialog.dlg .btn{padding:8px 16px; font-size:1rem; margin-top:4px}
 }
+/* ===== 起動したときの「仕事モードにしますか？」 ===== */
+#launch{position:absolute; inset:0; z-index:30; background:var(--bg); color:var(--text); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; text-align:center; overflow:auto;
+  padding:max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
+#launch[hidden]{display:none}
+#launch h2{margin:0; font-size:clamp(1.3rem, min(6vh, 7vw), 2.2rem); font-weight:800; text-wrap:balance}
+.bigsw{display:flex; align-items:center; gap:18px; font:inherit; background:transparent; color:var(--text); border:0; cursor:pointer; padding:6px}
+.bigsw .track{position:relative; width:clamp(130px, 28vh, 200px); aspect-ratio:2/1; border-radius:99px; border:4px solid var(--line); box-sizing:border-box; transition:background .15s, border-color .15s}
+.bigsw .track::after{content:""; position:absolute; top:50%; left:8%; width:38%; aspect-ratio:1; transform:translateY(-50%); border-radius:50%; background:var(--line); transition:left .15s, background .15s}
+.bigsw[aria-checked="true"] .track{background:var(--accent); border-color:var(--accent)}
+.bigsw[aria-checked="true"] .track::after{left:54%; background:var(--accent-text)}
+.bigsw .lab{font-size:clamp(1.6rem, 7vh, 2.6rem); font-weight:800; min-width:2.6em; text-align:left}
+.launch-note{margin:0; color:var(--sub); font-size:clamp(.95rem, 3vh, 1.15rem)}
+#launch .btn{min-width:min(70vw, 260px); font-size:clamp(1.1rem, 4vh, 1.4rem)}
+.launch-auto{margin:0; color:var(--sub); font-size:.85rem; min-height:1.3em}
+@media (prefers-reduced-motion: reduce){.bigsw .track, .bigsw .track::after{transition:none}}
 /* ===== 仕事モードのチェックリスト ===== */
 #check{position:absolute; inset:0; z-index:20; background:var(--bg); color:var(--text); display:flex; flex-direction:column; gap:10px; overflow:auto;
   padding:max(12px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
@@ -203,6 +218,13 @@ dialog.dlg .times{flex-wrap:wrap}
     <button id="b-fs" aria-label="全画面">全画面</button>
   </div>
 </nav>
+<section id="launch" hidden role="dialog" aria-modal="true" aria-labelledby="launch-h">
+  <h2 id="launch-h">仕事モードにしますか？</h2>
+  <button type="button" class="bigsw" id="launch-sw" role="switch" aria-checked="false" aria-labelledby="launch-h"><span class="track" aria-hidden="true"></span><span class="lab" id="launch-state">オフ</span></button>
+  <p class="launch-note" id="launch-note"></p>
+  <button type="button" class="btn primary" id="launch-go">はじめる</button>
+  <p class="launch-auto" id="launch-auto"></p>
+</section>
 <section id="check" hidden aria-labelledby="check-h">
   <h2 id="check-h">しごとチェック</h2>
   <p id="check-sub"></p>
@@ -250,7 +272,7 @@ dialog.dlg .times{flex-wrap:wrap}
       </section>
     </div>
     <button class="btn primary" value="close">とじる</button>
-    <p class="ver">バージョン 25</p>
+    <p class="ver">バージョン 26</p>
   </form>
 </dialog>
 </div>
@@ -473,8 +495,9 @@ dialog.dlg .times{flex-wrap:wrap}
     checkManual = false; checkOpen = false; $('check').hidden = true; syncWake();
     if (done && catOn) { const w = $('face-frame').contentWindow; if (w) w.postMessage({ catNow: true }, '*'); }   // 全部終わったら、ごほうびに猫が歩く
   }
+  let launchOpen = false;   // 起動したときの選択画面を出している間は、チェックリストを出さない
   function workTick(){
-    if (!workOn || checkOpen) return;
+    if (!workOn || checkOpen || launchOpen) return;
     if (workState.date !== todayKey()) workState = loadWork();
     const d = new Date(), m = d.getHours() * 60 + d.getMinutes();
     if (m < workTime || workState.skipped || allDone() || Date.now() < snoozeUntil) return;
@@ -581,8 +604,33 @@ dialog.dlg .times{flex-wrap:wrap}
     syncTm();
   }
 
+  /* ---------- 起動したら、すぐ「仕事モードにしますか？」 ---------- */
+  // 新しくアプリを開いたとき(セッションごとに1回)だけ聞く。新しい版への自動の開き直しでは聞かない。
+  // スイッチの初期位置は前回の選択。誰も触らなくても、時計が隠れたままにならないよう、30秒たつとそのままはじまる。
+  const LAUNCH_WAIT = 30;
+  let launchChoice = false, launchTimer = 0;
+  const asked = () => { try { return sessionStorage.getItem('launchAsked') === '1'; } catch { return false; } };
+  function renderLaunch(){
+    $('launch-sw').setAttribute('aria-checked', String(launchChoice)); $('launch-state').textContent = launchChoice ? 'オン' : 'オフ';
+    $('launch-note').textContent = launchChoice ? `${hm(workTime)}に、チェックリストが出ます` : 'チェックリストは出しません';
+  }
+  function endLaunch(){
+    clearInterval(launchTimer); launchTimer = 0;
+    workOn = launchChoice; store.set('work', workOn ? '1' : '0'); try { sessionStorage.setItem('launchAsked', '1'); } catch {}
+    launchOpen = false; $('launch').hidden = true; syncWork(); syncWake(); post(); workTick();
+  }
+  function showLaunch(){
+    if (asked()) return;
+    launchChoice = workOn; launchOpen = true; $('launch').hidden = false; renderLaunch();
+    const until = Date.now() + LAUNCH_WAIT * 1000;
+    const tick = () => { const left = Math.ceil((until - Date.now()) / 1000); if (left <= 0) { endLaunch(); return; } $('launch-auto').textContent = `${left}秒たつと、このままはじまります`; };
+    tick(); launchTimer = setInterval(tick, 1000);
+  }
+  $('launch-sw').onclick = () => { launchChoice = !launchChoice; renderLaunch(); };
+  $('launch-go').onclick = endLaunch;
+
   /* ---------- 起動 ---------- */
-  setTimer(300000); syncSw(); syncTm(); applyState(); $('b-wake').textContent = wakeLabel(); syncWork(); syncWake(); workTick();
+  setTimer(300000); syncSw(); syncTm(); applyState(); $('b-wake').textContent = wakeLabel(); syncWork(); syncWake(); showLaunch(); workTick();
   if ('serviceWorker' in navigator) {
     const hadController = !!navigator.serviceWorker.controller;   // 初回インストールのときは開き直さない
     let reloaded = false;
