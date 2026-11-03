@@ -1,4 +1,4 @@
-const CACHE = 'clock-v19';
+const CACHE = 'clock-v20';
 const FILES = ['./', './index.html', './big.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 // 更新のとき、ブラウザが持っている古いコピーを使わず、必ずサーバーから取り直す

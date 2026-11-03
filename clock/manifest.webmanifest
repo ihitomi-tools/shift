@@ -1,6 +1,6 @@
 {
-  "name": "でっかい時計",
-  "short_name": "時計",
+  "name": "置いとけい！",
+  "short_name": "置いとけい！",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
