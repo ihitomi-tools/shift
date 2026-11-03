@@ -98,14 +98,25 @@ dialog.dlg .note{margin:6px 0 12px; color:var(--sub); font-size:.85rem; line-hei
 dialog.dlg .btn{width:100%}
 dialog.dlg .btn + .btn{margin-top:8px}
 dialog.dlg h2.sub{margin:16px 0 6px; font-size:1.05rem}
-dialog.dlg .catevery{display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 6px}
-dialog.dlg .catevery button{font:inherit; font-weight:700; color:var(--text); background:transparent; border:2px solid var(--line); border-radius:10px; padding:8px 12px; min-height:40px; cursor:pointer}
-dialog.dlg .catevery button[aria-pressed="true"]{background:var(--accent); color:var(--accent-text); border-color:var(--accent)}
+/* 切り替えスイッチ: 選んだほうに、色つきの「つまみ」がすべって動く */
+.seg{position:relative; display:flex; padding:3px; background:var(--panel); border:1px solid var(--line); border-radius:12px; isolation:isolate}
+.seg::before{content:""; position:absolute; z-index:-1; top:3px; bottom:3px; left:3px; width:calc((100% - 6px) / var(--n, 2)); border-radius:9px; background:var(--accent); box-shadow:0 0 14px color-mix(in srgb, var(--accent) 45%, transparent); transition:transform .32s cubic-bezier(.34,1.25,.5,1)}
+.seg:has(> :nth-child(2)[aria-pressed="true"])::before, .seg[aria-checked="true"]::before{transform:translateX(100%)}
+.seg:has(> :nth-child(3)[aria-pressed="true"])::before{transform:translateX(200%)}
+.seg:has(> :nth-child(4)[aria-pressed="true"])::before{transform:translateX(300%)}
+.seg > *{flex:1; min-width:0; font:inherit; font-weight:700; color:var(--text); background:transparent; border:0; border-radius:9px; padding:9px 14px; min-height:40px; text-align:center; cursor:pointer; white-space:nowrap; transition:color .25s}
+.seg > [hidden]{display:none}
+.seg > [aria-pressed="true"]{color:var(--accent-text)}
+.seg[aria-checked="false"] > :first-child, .seg[aria-checked="true"] > :last-child{color:var(--accent-text)}
+.seg[aria-checked="false"] > :last-child, .seg[aria-checked="true"] > :first-child{color:var(--text)}
+.seg:focus-visible, .seg > :focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+@media (prefers-reduced-motion: reduce){.seg::before, .seg > *{transition:none}}
+dialog.dlg .catevery{margin:4px 0 6px}
 dialog.dlg .catinfo{margin:0 0 10px; color:var(--sub); font-size:.82rem; line-height:1.5}
 dialog.dlg .rowlab{margin:6px 0 2px; font-size:.9rem; font-weight:700; color:var(--sub)}
 dialog.dlg .row2{display:flex; align-items:center; gap:10px; margin:2px 0}
 dialog.dlg .row2 .rowlab{margin:0; min-width:2.4em}
-dialog.dlg .row2 .catevery{margin:0}
+dialog.dlg .row2 .catevery{margin:0; min-width:min(14em,60%)}
 dialog.dlg .ver{margin:8px 0 0; text-align:center; color:var(--sub); font-size:.75rem}
 dialog.dlg .times{flex-wrap:wrap}
 @media (orientation: landscape) and (max-height: 520px){
@@ -123,8 +134,8 @@ dialog.dlg .times{flex-wrap:wrap}
   dialog#dlg .btn + .btn{margin:6px 0 0}
   dialog.dlg .rowlab{margin:3px 0 0; font-size:.8rem}
   dialog.dlg h2.sub{margin:8px 0 2px; font-size:.95rem}
-  dialog.dlg .catevery{gap:6px; margin:2px 0 2px}
-  dialog.dlg .catevery button{padding:4px 10px; min-height:34px; font-size:.9rem}
+  dialog.dlg .catevery{margin:2px 0 2px}
+  dialog.dlg .catevery > *{padding:4px 10px; min-height:34px; font-size:.9rem}
   dialog.dlg .catinfo{margin:0 0 4px; font-size:.75rem; line-height:1.3}
   dialog.dlg .btn{padding:8px 16px; font-size:1rem; margin-top:4px}
 }
@@ -133,16 +144,12 @@ dialog.dlg .times{flex-wrap:wrap}
   padding:max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
 #launch[hidden]{display:none}
 #launch h2{margin:0; font-size:clamp(1.3rem, min(6vh, 7vw), 2.2rem); font-weight:800; text-wrap:balance}
-.bigsw{display:flex; align-items:center; gap:18px; font:inherit; background:transparent; color:var(--text); border:0; cursor:pointer; padding:6px}
-.bigsw .track{position:relative; width:clamp(130px, 28vh, 200px); aspect-ratio:2/1; border-radius:99px; border:4px solid var(--line); box-sizing:border-box; transition:background .15s, border-color .15s}
-.bigsw .track::after{content:""; position:absolute; top:50%; left:8%; width:38%; aspect-ratio:1; transform:translateY(-50%); border-radius:50%; background:var(--line); transition:left .15s, background .15s}
-.bigsw[aria-checked="true"] .track{background:var(--accent); border-color:var(--accent)}
-.bigsw[aria-checked="true"] .track::after{left:54%; background:var(--accent-text)}
-.bigsw .lab{font-size:clamp(1.6rem, 7vh, 2.6rem); font-weight:800; min-width:2.6em; text-align:left}
+.bigsw{width:min(80vw, 420px); padding:5px; border-radius:18px; border-width:2px}
+.bigsw::before{top:5px; bottom:5px; left:5px; width:calc((100% - 10px) / 2); border-radius:13px}
+.bigsw > *{font-size:clamp(1.5rem, 7vh, 2.4rem); font-weight:800; padding:clamp(8px, 2.2vh, 18px) 0; border-radius:13px; pointer-events:none}
 .launch-note{margin:0; color:var(--sub); font-size:clamp(.95rem, 3vh, 1.15rem)}
 #launch .btn{min-width:min(70vw, 260px); font-size:clamp(1.1rem, 4vh, 1.4rem)}
 .launch-auto{margin:0; color:var(--sub); font-size:.85rem; min-height:1.3em}
-@media (prefers-reduced-motion: reduce){.bigsw .track, .bigsw .track::after{transition:none}}
 /* 横向きで高さが420px以下の小さめの画面では、設定画面をさらに詰める */
 @media (orientation: landscape) and (max-height: 420px){
   dialog.dlg{padding:6px 14px; max-height:98dvh}
@@ -150,7 +157,7 @@ dialog.dlg .times{flex-wrap:wrap}
   dialog.dlg .opt{padding:2px 0; font-size:.88rem}
   dialog.dlg .times{padding-bottom:2px; gap:4px}
   dialog.dlg input[type=time]{font-size:1rem; padding:1px 4px}
-  dialog.dlg .catevery button{min-height:28px; padding:2px 9px; font-size:.82rem}
+  dialog.dlg .catevery > *{min-height:28px; padding:2px 9px; font-size:.82rem}
   dialog.dlg .rowlab{font-size:.75rem}
   dialog.dlg .catinfo{font-size:.7rem; margin-bottom:2px}
   dialog.dlg .btn{padding:6px 12px; font-size:.95rem}
@@ -234,7 +241,7 @@ dialog.dlg .times{flex-wrap:wrap}
 </nav>
 <section id="launch" hidden role="dialog" aria-modal="true" aria-labelledby="launch-h">
   <h2 id="launch-h">仕事モードにしますか？</h2>
-  <button type="button" class="bigsw" id="launch-sw" role="switch" aria-checked="false" aria-labelledby="launch-h"><span class="track" aria-hidden="true"></span><span class="lab" id="launch-state">オフ</span></button>
+  <button type="button" class="seg bigsw" id="launch-sw" role="switch" aria-checked="false" aria-labelledby="launch-h"><span>オフ</span><span>オン</span></button>
   <p class="launch-note" id="launch-note"></p>
   <button type="button" class="btn primary" id="launch-go">はじめる</button>
   <p class="launch-auto" id="launch-auto"></p>
@@ -253,8 +260,8 @@ dialog.dlg .times{flex-wrap:wrap}
 <dialog id="wdlg" class="dlg" aria-label="仕事モード">
   <form method="dialog">
     <h2>仕事モード</h2>
-    <div class="catevery" id="w-mode" role="group" aria-label="仕事モードのオン・オフ">
-      <button type="button" data-v="1">オン</button><button type="button" data-v="0">オフ</button>
+    <div class="seg catevery" id="w-mode" role="group" aria-label="仕事モードのオン・オフ">
+      <button type="button" data-v="0">オフ</button><button type="button" data-v="1">オン</button>
     </div>
     <p class="note">オンのあいだ、決めた時刻に、仕事のチェックリスト（炊飯器・温風庫・食洗機・ポットのお湯・紙）が出ます。</p>
     <div class="times" style="padding-left:0"><span>出す時刻</span><input type="time" id="w-time" aria-label="チェックリストを出す時刻"></div>
@@ -275,21 +282,21 @@ dialog.dlg .times{flex-wrap:wrap}
         <label class="opt"><input type="radio" name="wm" value="off"> スマホの設定どおり（そのうち消える）</label>
         <p class="note">決めた時間より外では、スマホの自動ロックの時間で画面が消えます。ストップウォッチとタイマーが動いている間は、時間に関係なく消えません。</p>
         <h2 class="sub">時計の表示</h2>
-        <div class="row2"><span class="rowlab">秒</span><div class="catevery" id="set-secs" role="group" aria-label="秒の表示"><button type="button" data-v="1">出す</button><button type="button" data-v="0">出さない</button></div></div>
-        <div class="row2"><span class="rowlab">時刻</span><div class="catevery" id="set-fmt" role="group" aria-label="時刻の表示"><button type="button" data-v="24">24時間</button><button type="button" data-v="12">AM/PM</button></div></div>
+        <div class="row2"><span class="rowlab">秒</span><div class="seg catevery" id="set-secs" role="group" aria-label="秒の表示"><button type="button" data-v="1">出す</button><button type="button" data-v="0">出さない</button></div></div>
+        <div class="row2"><span class="rowlab">時刻</span><div class="seg catevery" id="set-fmt" role="group" aria-label="時刻の表示"><button type="button" data-v="24">24時間</button><button type="button" data-v="12">AM/PM</button></div></div>
       </section>
       <section class="col">
         <h2 class="sub">猫が通る間隔</h2>
         <div class="rowlab">ふだん</div>
-        <div class="catevery" id="cat-every" role="group" aria-label="ふだんの、猫が通る間隔"><button type="button" data-v="30">30秒</button><button type="button" data-v="60">1分</button><button type="button" data-v="120">2分</button><button type="button" data-v="300">5分</button><button type="button" data-v="900" hidden>15分</button><button type="button" data-v="1800" hidden>30分</button></div>
+        <div class="seg catevery" style="--n:4" id="cat-every" role="group" aria-label="ふだんの、猫が通る間隔"><button type="button" data-v="30">30秒</button><button type="button" data-v="60">1分</button><button type="button" data-v="120">2分</button><button type="button" data-v="300">5分</button><button type="button" data-v="900" hidden>15分</button><button type="button" data-v="1800" hidden>30分</button></div>
         <div class="rowlab">仕事モード中</div>
-        <div class="catevery" id="cat-every-work" role="group" aria-label="仕事モード中の、猫が通る間隔"><button type="button" data-v="30">30秒</button><button type="button" data-v="60">1分</button><button type="button" data-v="120">2分</button><button type="button" data-v="300">5分</button><button type="button" data-v="900" hidden>15分</button><button type="button" data-v="1800" hidden>30分</button></div>
+        <div class="seg catevery" style="--n:4" id="cat-every-work" role="group" aria-label="仕事モード中の、猫が通る間隔"><button type="button" data-v="30">30秒</button><button type="button" data-v="60">1分</button><button type="button" data-v="120">2分</button><button type="button" data-v="300">5分</button><button type="button" data-v="900" hidden>15分</button><button type="button" data-v="1800" hidden>30分</button></div>
         <p class="catinfo" id="cat-info"></p>
         <button type="button" class="btn" id="cat-now">猫を今すぐ呼ぶ</button>
       </section>
     </div>
     <button class="btn primary" value="close">とじる</button>
-    <p class="ver">バージョン 27</p>
+    <p class="ver">バージョン 28</p>
   </form>
 </dialog>
 </div>
@@ -631,7 +638,7 @@ dialog.dlg .times{flex-wrap:wrap}
   let launchChoice = false, launchTimer = 0;
   const asked = () => { try { return sessionStorage.getItem('launchAsked') === '1'; } catch { return false; } };
   function renderLaunch(){
-    $('launch-sw').setAttribute('aria-checked', String(launchChoice)); $('launch-state').textContent = launchChoice ? 'オン' : 'オフ';
+    $('launch-sw').setAttribute('aria-checked', String(launchChoice));
     $('launch-note').textContent = launchChoice ? `${hm(workTime)}に、チェックリストが出ます` : 'チェックリストは出しません';
   }
   function endLaunch(){
