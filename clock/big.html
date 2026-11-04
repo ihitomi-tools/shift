@@ -196,7 +196,9 @@ canvas{display:block; position:absolute; inset:0}
   }
   function catLoop(now){
     if (!cat) return;
-    if (now - cat.last >= 15) {                            // 猫が歩いている間は、画面の更新ごと(最大60回/秒)に描く。動画は24コマ/秒なので、30回/秒だと5コマに1回、同じ絵が2回続いてカクつく
+    const fi = Math.floor((now - cat.t0) / 1000 * FPS);
+    if (fi !== cat.fi) {                                   // 動画のコマが変わるときだけ描く(24回/秒)。60回/秒で描くより電池を使わず、同じ絵が2回続くカクつきも出ない
+      cat.fi = fi;
       cat.last = now;
       const kv = Math.min(H * 0.5, W * 0.28) / 585, gy = H * 0.84, v0 = STEP * FPS * kv;   // 猫の高さは画面の高さの半分(縦向きは幅の28%まで) / v0: 歩く速さ(px/秒)
       const dwW = WALK.cw / WALK.scale * kv, el = (now - cat.t0) / 1000, dir = cat.dir;
