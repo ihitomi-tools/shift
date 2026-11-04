@@ -165,16 +165,21 @@ canvas{display:block; position:absolute; inset:0}
   const timeKey = () => Math.floor(Date.now() / (secs ? 1000 : 60000));
   function renderLayer(){ ctx = lctx; paint(); ctx = mainCtx; }
   // call を渡すと「呼ばれて来る」動き(xf: 画面の横位置 0〜1)、渡さないと「ただ横切る」動き
+  // ごろんで、起き上がって歩き出すまでに猫が進む距離 + 猫の頭が出る分(動画の画素)を画面の幅に直す。寝転がる場所は、出ていく側の端からこれ以上離す(顔が見切れないように)
+  function rollMargin(){
+    const kv = Math.min(H * 0.5, W * 0.28) / 585;
+    return Math.min(0.5, ((ROLL.cum[345] - ROLL.cum[ROLL.stop]) + 400) * kv / W + 0.02);
+  }
   function spawnCat(call){
     if (cat || !sheets.walk || document.hidden) return;
     clearTimeout(timer);                                   // 猫がいる間は、普段の1秒ごとの描き直しを止める
     cat = { dir: Math.random() < 0.5 ? 1 : -1, t0: performance.now(), last: 0, key: -1 };
     const rollOk = sheets.roll.filter(Boolean).length === NROLL;
     if (call && sheets.c1 && sheets.c2) { cat.call = true; cat.xf = call.xf; cat.dir = call.xf < 0.5 ? 1 : -1; }   // 近いほうの端から入ってくる
-    if (call && call.roll && rollOk) { cat.clip = ROLL; cat.dir = -cat.dir; }                                  // 呼ばれて来て、ごろんと寝転がる。遠い端から入ってきて、近い端から出ていく(起き上がってからの歩きを短くするため)
+    if (call && call.roll && rollOk) { cat.clip = ROLL; cat.dir = -cat.dir; const mg = rollMargin(); cat.xf = cat.dir < 0 ? Math.max(cat.xf, mg) : Math.min(cat.xf, 1 - mg); }                                  // 呼ばれて来て、ごろんと寝転がる。遠い端から入ってきて、近い端から出ていく(起き上がってからの歩きを短くするため)
     else if (!call && rollOk && Math.random() < ROLLP) {                                                     // ふだんの横切りでも、ときどき途中で寝転がる
       cat.call = true; cat.clip = ROLL; cat.dir = Math.random() < 0.5 ? 1 : -1;
-      cat.xf = cat.dir > 0 ? 0.76 + Math.random() * 0.1 : 0.14 + Math.random() * 0.1;   // 出ていく側の端の近くで寝転がる
+      const mg = rollMargin(); cat.xf = cat.dir > 0 ? 1 - mg - Math.random() * 0.06 : mg + Math.random() * 0.06;   // 出ていく側の端の近くで寝転がる
     }
     if (cat.call && !cat.clip) cat.clip = CALL;
     requestAnimationFrame(catLoop);
