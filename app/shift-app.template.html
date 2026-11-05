@@ -619,6 +619,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
     if (t.length < 2) return t[0] || '';
     return t.join('').length <= 6 ? t.join(' ') : t[0] + '(' + t[1].charAt(0) + ')';
   }
+  var TAGLBL = { '日1': '早番', '日2': '遅番', '日3': '日勤①', '日5': '日勤②', '日4': '日勤③', '夜勤1': '夜勤①', '夜勤2': '夜勤②' };
   function spNotes(a) { return (a || []).filter(function (t) { return /[SＳsｓ][PＰpｐ]/.test(String(t)); }); }
   function notesOn(date) { var c = S.crew[date.slice(0, 7)]; c = c && c.days && c.days[date]; return spNotes(c && c.notes); }
   function notesLine() {
@@ -641,7 +642,7 @@ input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; po
       return '<div class="fr"><span class="fl f' + f + '">' + f + 'F</span>' + chip(fl.am, 'am', f) + chip(fl.pm, 'pm', f) + '</div>';
     }).join('');
     var oth = (c.others || []).map(function (o) {
-      return '<div class="crw"><span class="role ' + (o.role === '看護' ? 'n' : 'h') + '">' + esc(o.role) + '</span><b class="grow">' + esc(o.name) + '</b><span class="sub">' + esc(o.tag || '') + '</span></div>';
+      return '<div class="crw"><span class="role ' + (o.role === '看護' ? 'n' : 'h') + '">' + esc(o.role) + '</span><b class="grow">' + esc(o.name) + '</b><span class="sub">' + esc(TAGLBL[o.tag] || o.tag || '') + '</span></div>';
     }).join('');
     var nts = spNotes(c.notes).map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('');
     return '<section class="card house"><h3>その日の職場' + (nts ? ' ' + nts : '') + '</h3><div class="roof" aria-hidden="true"></div><div class="bld">' + rows + '</div><div class="sub">非常勤（SP）の午前と午後。色つきが自分です。</div>' +
