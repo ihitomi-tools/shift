@@ -289,6 +289,7 @@ dialog.dlg .times{flex-wrap:wrap}
         <h2 class="sub">時計の表示</h2>
         <div class="row2"><span class="rowlab">秒</span><div class="seg catevery" id="set-secs" role="group" aria-label="秒の表示"><button type="button" data-v="1">出す</button><button type="button" data-v="0">出さない</button></div></div>
         <div class="row2"><span class="rowlab">色</span><div class="swatches" id="set-color" role="group" aria-label="数字の色"><button type="button" data-v="#00e5ff" aria-label="水色" style="--c:#00e5ff"></button><button type="button" data-v="#ffe600" aria-label="黄色" style="--c:#ffe600"></button><button type="button" data-v="#ffffff" aria-label="白" style="--c:#ffffff"></button><button type="button" data-v="#3dff7a" aria-label="緑" style="--c:#3dff7a"></button><button type="button" data-v="#ff5ccf" aria-label="ピンク" style="--c:#ff5ccf"></button><button type="button" data-v="#ff9a1f" aria-label="オレンジ" style="--c:#ff9a1f"></button></div></div>
+        <div class="row2"><span class="rowlab">背景</span><div class="swatches" id="set-bg" role="group" aria-label="背景の色"><button type="button" data-v="#000000" aria-label="黒" style="--c:#000000"></button><button type="button" data-v="#0b1a3a" aria-label="紺" style="--c:#0b1a3a"></button><button type="button" data-v="#06250f" aria-label="深緑" style="--c:#06250f"></button><button type="button" data-v="#2b0b1c" aria-label="えんじ" style="--c:#2b0b1c"></button><button type="button" data-v="#1e0f33" aria-label="紫" style="--c:#1e0f33"></button><button type="button" data-v="#262626" aria-label="グレー" style="--c:#262626"></button></div></div>
         <div class="row2"><span class="rowlab">時刻</span><div class="seg catevery" id="set-fmt" role="group" aria-label="時刻の表示"><button type="button" data-v="24">24時間</button><button type="button" data-v="12">AM/PM</button></div></div>
       </section>
       <section class="col">
@@ -302,7 +303,7 @@ dialog.dlg .times{flex-wrap:wrap}
       </section>
     </div>
     <button class="btn primary" value="close">とじる</button>
-    <p class="ver">バージョン 42</p>
+    <p class="ver">バージョン 43</p>
   </form>
 </dialog>
 </div>
@@ -327,6 +328,8 @@ dialog.dlg .times{flex-wrap:wrap}
   const catEveryNow = () => Number(workOn ? catEveryWork : catEvery);
   let secs = store.get('secs', '1') === '1', h12 = store.get('h12', '0') === '1', view = 'clock';
   let fg = store.get('fg', '#00e5ff'); if (!/^#[0-9a-f]{6}$/i.test(fg)) fg = '#00e5ff';   // 数字の色
+  let bg = store.get('bg', '#000000'); if (!/^#[0-9a-f]{6}$/i.test(bg)) bg = '#000000';   // 背景の色
+  const applyBg = () => { $('app').style.setProperty('--bg', bg); $('face-frame').style.background = bg; };
 
   function applyState(){
     app.dataset.view = view;
@@ -337,7 +340,7 @@ dialog.dlg .times{flex-wrap:wrap}
   // 時計ページへ、秒の表示と12/24時間を知らせる
   function post(){
     const w = $('face-frame').contentWindow;
-    if (w) w.postMessage({ h12, secs, fg, cat: catOn, catEvery: catEveryNow() }, '*');
+    if (w) w.postMessage({ h12, secs, fg, bg, cat: catOn, catEvery: catEveryNow() }, '*');
   }
   $('face-frame').addEventListener('load', post);
 
@@ -418,7 +421,10 @@ dialog.dlg .times{flex-wrap:wrap}
     document.querySelectorAll('#set-secs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === (secs ? '1' : '0'))));
     document.querySelectorAll('#set-fmt button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === (h12 ? '12' : '24'))));
     document.querySelectorAll('#set-color button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === fg)));
+    document.querySelectorAll('#set-bg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === bg)));
+    applyBg();
   }
+  $('set-bg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; bg = b.dataset.v; store.set('bg', bg); applyState(); });
   $('set-color').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; fg = b.dataset.v; store.set('fg', fg); applyState(); });
   $('set-secs').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; secs = b.dataset.v === '1'; store.set('secs', secs ? '1' : '0'); applyState(); });
   $('set-fmt').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; h12 = b.dataset.v === '12'; store.set('h12', h12 ? '1' : '0'); applyState(); });
