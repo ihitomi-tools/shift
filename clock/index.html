@@ -7,6 +7,7 @@
 <title>置いとけい！</title>
 <meta name="apple-mobile-web-app-title" content="置いとけい！">
 <link rel="manifest" href="manifest.webmanifest">
+<script src="edition.js"></script>
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -303,7 +304,7 @@ dialog.dlg .times{flex-wrap:wrap}
       </section>
     </div>
     <button class="btn primary" value="close">とじる</button>
-    <p class="ver">バージョン 44</p>
+    <p class="ver">バージョン 45</p>
   </form>
 </dialog>
 </div>
@@ -311,6 +312,8 @@ dialog.dlg .times{flex-wrap:wrap}
 <script>
 (() => {
   const $ = id => document.getElementById(id);
+  // 版の切り替え(edition.js): work が false の版は、仕事モード(チェックリスト・起動時の選択・仕事用の猫の間隔)を使わない
+  const WORK_OK = !(window.EDITION && window.EDITION.work === false);
   const app = $('app');
   const pad = (n, w = 2) => String(n).padStart(w, '0');
   const store = {
@@ -400,6 +403,7 @@ dialog.dlg .times{flex-wrap:wrap}
   }
   function onSwipe(){
     clearTimeout(tapTimer); tapTimer = 0; firstTap = null;
+    if (!WORK_OK) return;
     if (workOn) openCheck(true); else flash('仕事モードをオンにすると、横にスワイプでチェックリストが出ます');
   }
   const gStartAt = (x, y) => { gStart = { x, y, t: performance.now() }; };
@@ -470,7 +474,7 @@ dialog.dlg .times{flex-wrap:wrap}
     const mark = (id, v) => document.querySelectorAll(`#${id} button`).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
     mark('cat-every', catEvery); mark('cat-every-work', catEveryWork);
     const pct = ev => { const q = CATSEC / Number(ev) * 100; return q >= 10 ? Math.round(q) : Math.round(q * 10) / 10; };
-    $('cat-info').textContent = `猫は1回に約${CATSEC}秒かけて横切ります（ふだん約${pct(catEvery)}%・仕事中約${pct(catEveryWork)}%の時間）。ダブルタップすると、その場所まで猫が来ます。` + (catOn ? '' : '（今は「猫:なし」）');
+    $('cat-info').textContent = `猫は1回に約${CATSEC}秒かけて横切ります（${WORK_OK ? `ふだん約${pct(catEvery)}%・仕事中約${pct(catEveryWork)}%` : `約${pct(catEvery)}%`}の時間）。ダブルタップすると、その場所まで猫が来ます。` + (catOn ? '' : '（今は「猫:なし」）');
   }
   function bindCatEvery(id, key){
     $(id).addEventListener('click', e => {
@@ -507,7 +511,7 @@ dialog.dlg .times{flex-wrap:wrap}
 
   /* ---------- 仕事モード（チェックリスト） ---------- */
   const WORK_ITEMS = ['炊飯器', '温風庫', '食洗機', 'ポットのお湯', '紙'];
-  let workOn = store.get('work', '0') === '1', workTime = toMin(store.get('workTime', '18:40')) ?? 18 * 60 + 40;   // 出す時刻の既定は 18:40（仕事モードの設定画面で変えられる）
+  let workOn = WORK_OK && store.get('work', '0') === '1', workTime = toMin(store.get('workTime', '18:40')) ?? 18 * 60 + 40;   // 出す時刻の既定は 18:40（仕事モードの設定画面で変えられる）
   const todayKey = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
   // チェックの状態は「その日だけ」保存する（日付が変わるとリセット）
   function loadWork(){
@@ -663,7 +667,7 @@ dialog.dlg .times{flex-wrap:wrap}
     launchOpen = false; $('launch').hidden = true; syncWork(); syncWake(); post(); workTick();
   }
   function showLaunch(){
-    if (asked()) return;
+    if (!WORK_OK || asked()) return;
     launchChoice = workOn; launchOpen = true; $('launch').hidden = false; renderLaunch();
     const until = Date.now() + LAUNCH_WAIT * 1000;
     const tick = () => { const left = Math.ceil((until - Date.now()) / 1000); if (left <= 0) { endLaunch(); return; } $('launch-auto').textContent = `${left}秒たつと、このままはじまります`; };
@@ -673,6 +677,7 @@ dialog.dlg .times{flex-wrap:wrap}
   $('launch-go').onclick = endLaunch;
 
   /* ---------- 起動 ---------- */
+  if (!WORK_OK) [$('b-work'), $('cat-every-work'), $('cat-every-work').previousElementSibling, $('cat-every').previousElementSibling].forEach(el => { el.style.display = 'none'; });   // 仕事モードのない版は、関係するボタンと設定を隠す
   setTimer(300000); syncSw(); syncTm(); applyState(); syncWork(); syncWake(); showLaunch(); workTick();
   if ('serviceWorker' in navigator) {
     const hadController = !!navigator.serviceWorker.controller;   // 初回インストールのときは開き直さない
