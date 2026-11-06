@@ -161,8 +161,8 @@ canvas{display:block; position:absolute; inset:0}
   // ---- 猫の出方 ----
   // 出方の割合(足して100): ふつうに横切る / 小走りで横切る / ふと立ち止まってこちらを見る / ごろん / 2匹で横切る
   const KINDS = [['walk', 38], ['dash', 10], ['look', 18], ['roll', 27], ['pair', 7]];
-  // ふちの色(水色を基準に色相を回す。体は黒のまま): 水色 / ピンク / 黄 / 緑 / 紫 / オレンジ。ほかに、ごくまれに虹色(色が回る)
-  const HUES = [[40, 0], [15, 133], [12, -132], [10, -67], [10, 83], [8, -162]];
+  // ふちの色(水色を基準に色相を回す。体は黒のまま): 水色 / ピンク / 黄 / 緑 / 青紫 / オレンジ。ほかに、ごくまれに虹色(色が回る)
+  const HUES = [[0, 30], [133, 18], [-132, 16], [-67, 14], [83, 12], [-162, 10]];   // [回す角度, 出る割合]
   const RAINBOW = 0.05;
   const pickW = list => { let r = Math.random() * list.reduce((t, x) => t + x[1], 0); for (const x of list) { r -= x[1]; if (r < 0) return x[0]; } return list[0][0]; };
   let cats = [], catTimer = 0;
@@ -221,7 +221,7 @@ canvas{display:block; position:absolute; inset:0}
     } else if (kind === 'pair') {
       const d = Math.random() < 0.5 ? 1 : -1, small = 0.62 + Math.random() * 0.15;                        // 2匹連れ(後ろの猫は小さめで、少し遅れてついてくる)
       const a = newCat({ dir: d, size }), b = newCat({ dir: d, size: small, t0: t + 700 + Math.random() * 900 });
-      if (b.hue === a.hue) b.hue = HUES[1 + Math.floor(Math.random() * (HUES.length - 1))][1];
+      if (b.hue === a.hue) b.hue = HUES[1 + Math.floor(Math.random() * (HUES.length - 1))][0];
       startCats([a, b]);
     } else startCats([newCat({ size, m: Math.random() < 0.25 ? 0.7 : 1 })]);                               // ふつうに横切る(たまにゆっくり)
   }
