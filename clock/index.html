@@ -289,7 +289,7 @@ dialog.dlg .times{flex-wrap:wrap}
         <h2 class="sub">時計の表示</h2>
         <div class="row2"><span class="rowlab">秒</span><div class="seg catevery" id="set-secs" role="group" aria-label="秒の表示"><button type="button" data-v="1">出す</button><button type="button" data-v="0">出さない</button></div></div>
         <div class="row2"><span class="rowlab">色</span><div class="swatches" id="set-color" role="group" aria-label="数字の色"><button type="button" data-v="#00e5ff" aria-label="水色" style="--c:#00e5ff"></button><button type="button" data-v="#ffe600" aria-label="黄色" style="--c:#ffe600"></button><button type="button" data-v="#ffffff" aria-label="白" style="--c:#ffffff"></button><button type="button" data-v="#3dff7a" aria-label="緑" style="--c:#3dff7a"></button><button type="button" data-v="#ff5ccf" aria-label="ピンク" style="--c:#ff5ccf"></button><button type="button" data-v="#ff9a1f" aria-label="オレンジ" style="--c:#ff9a1f"></button></div></div>
-        <div class="row2"><span class="rowlab">背景</span><div class="swatches" id="set-bg" role="group" aria-label="背景の色"><button type="button" data-v="#000000" aria-label="黒" style="--c:#000000"></button><button type="button" data-v="#0b1a3a" aria-label="紺" style="--c:#0b1a3a"></button><button type="button" data-v="#06250f" aria-label="深緑" style="--c:#06250f"></button><button type="button" data-v="#2b0b1c" aria-label="えんじ" style="--c:#2b0b1c"></button><button type="button" data-v="#1e0f33" aria-label="紫" style="--c:#1e0f33"></button><button type="button" data-v="#262626" aria-label="グレー" style="--c:#262626"></button></div></div>
+        <div class="row2"><span class="rowlab">背景</span><div class="swatches" id="set-bg" role="group" aria-label="背景の色"><button type="button" data-v="#000000" aria-label="黒" style="--c:#000000"></button><button type="button" data-v="#10306e" aria-label="紺" style="--c:#10306e"></button><button type="button" data-v="#0c4a24" aria-label="深緑" style="--c:#0c4a24"></button><button type="button" data-v="#5c1731" aria-label="えんじ" style="--c:#5c1731"></button><button type="button" data-v="#3f1b73" aria-label="紫" style="--c:#3f1b73"></button><button type="button" data-v="#3b3b3b" aria-label="グレー" style="--c:#3b3b3b"></button></div></div>
         <div class="row2"><span class="rowlab">時刻</span><div class="seg catevery" id="set-fmt" role="group" aria-label="時刻の表示"><button type="button" data-v="24">24時間</button><button type="button" data-v="12">AM/PM</button></div></div>
       </section>
       <section class="col">
@@ -303,7 +303,7 @@ dialog.dlg .times{flex-wrap:wrap}
       </section>
     </div>
     <button class="btn primary" value="close">とじる</button>
-    <p class="ver">バージョン 43</p>
+    <p class="ver">バージョン 44</p>
   </form>
 </dialog>
 </div>
@@ -328,7 +328,8 @@ dialog.dlg .times{flex-wrap:wrap}
   const catEveryNow = () => Number(workOn ? catEveryWork : catEvery);
   let secs = store.get('secs', '1') === '1', h12 = store.get('h12', '0') === '1', view = 'clock';
   let fg = store.get('fg', '#00e5ff'); if (!/^#[0-9a-f]{6}$/i.test(fg)) fg = '#00e5ff';   // 数字の色
-  let bg = store.get('bg', '#000000'); if (!/^#[0-9a-f]{6}$/i.test(bg)) bg = '#000000';   // 背景の色
+  const OLDBG = { '#0b1a3a': '#10306e', '#06250f': '#0c4a24', '#2b0b1c': '#5c1731', '#1e0f33': '#3f1b73', '#262626': '#3b3b3b' };   // 前のバージョンで選んだ(暗すぎた)色は、新しい色に置きかえる
+  let bg = store.get('bg', '#000000'); bg = OLDBG[bg] || bg; if (!/^#[0-9a-f]{6}$/i.test(bg)) bg = '#000000';   // 背景の色
   const applyBg = () => { $('app').style.setProperty('--bg', bg); $('face-frame').style.background = bg; };
 
   function applyState(){
