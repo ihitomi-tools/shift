@@ -117,6 +117,9 @@ dialog.dlg .rowlab{margin:6px 0 2px; font-size:.9rem; font-weight:700; color:var
 dialog.dlg .row2{display:flex; align-items:center; gap:10px; margin:2px 0}
 dialog.dlg .row2 .rowlab{margin:0; min-width:2.4em}
 dialog.dlg .row2 .catevery{margin:0; min-width:min(14em,60%)}
+dialog.dlg .swatches{display:flex; gap:10px; flex-wrap:wrap}
+dialog.dlg .swatches button{width:32px; height:32px; padding:0; border-radius:50%; background:var(--c); border:3px solid var(--panel); box-shadow:0 0 0 2px var(--line); cursor:pointer}
+dialog.dlg .swatches button[aria-pressed="true"]{box-shadow:0 0 0 3px #fff; transform:scale(1.12)}
 dialog.dlg .ver{margin:8px 0 0; text-align:center; color:var(--sub); font-size:.75rem}
 dialog.dlg .times{flex-wrap:wrap}
 @media (orientation: landscape) and (max-height: 520px){
@@ -136,6 +139,8 @@ dialog.dlg .times{flex-wrap:wrap}
   dialog.dlg h2.sub{margin:8px 0 2px; font-size:.95rem}
   dialog.dlg .catevery{margin:2px 0 2px}
   dialog.dlg .catevery > *{padding:4px 10px; min-height:34px; font-size:.9rem}
+  dialog.dlg .swatches{gap:8px}
+  dialog.dlg .swatches button{width:26px; height:26px; border-width:2px}
   dialog.dlg .catinfo{margin:0 0 4px; font-size:.75rem; line-height:1.3}
   dialog.dlg .btn{padding:8px 16px; font-size:1rem; margin-top:4px}
 }
@@ -283,6 +288,7 @@ dialog.dlg .times{flex-wrap:wrap}
         <p class="note">決めた時間より外では、スマホの自動ロックの時間で画面が消えます。ストップウォッチとタイマーが動いている間は、時間に関係なく消えません。</p>
         <h2 class="sub">時計の表示</h2>
         <div class="row2"><span class="rowlab">秒</span><div class="seg catevery" id="set-secs" role="group" aria-label="秒の表示"><button type="button" data-v="1">出す</button><button type="button" data-v="0">出さない</button></div></div>
+        <div class="row2"><span class="rowlab">色</span><div class="swatches" id="set-color" role="group" aria-label="数字の色"><button type="button" data-v="#00e5ff" aria-label="水色" style="--c:#00e5ff"></button><button type="button" data-v="#ffe600" aria-label="黄色" style="--c:#ffe600"></button><button type="button" data-v="#ffffff" aria-label="白" style="--c:#ffffff"></button><button type="button" data-v="#3dff7a" aria-label="緑" style="--c:#3dff7a"></button><button type="button" data-v="#ff5ccf" aria-label="ピンク" style="--c:#ff5ccf"></button><button type="button" data-v="#ff9a1f" aria-label="オレンジ" style="--c:#ff9a1f"></button></div></div>
         <div class="row2"><span class="rowlab">時刻</span><div class="seg catevery" id="set-fmt" role="group" aria-label="時刻の表示"><button type="button" data-v="24">24時間</button><button type="button" data-v="12">AM/PM</button></div></div>
       </section>
       <section class="col">
@@ -296,7 +302,7 @@ dialog.dlg .times{flex-wrap:wrap}
       </section>
     </div>
     <button class="btn primary" value="close">とじる</button>
-    <p class="ver">バージョン 41</p>
+    <p class="ver">バージョン 42</p>
   </form>
 </dialog>
 </div>
@@ -320,6 +326,7 @@ dialog.dlg .times{flex-wrap:wrap}
   if (!CAT_VISIBLE.includes(catEveryWork)) { catEveryWork = '120'; store.set('catEveryWork', catEveryWork); }
   const catEveryNow = () => Number(workOn ? catEveryWork : catEvery);
   let secs = store.get('secs', '1') === '1', h12 = store.get('h12', '0') === '1', view = 'clock';
+  let fg = store.get('fg', '#00e5ff'); if (!/^#[0-9a-f]{6}$/i.test(fg)) fg = '#00e5ff';   // 数字の色
 
   function applyState(){
     app.dataset.view = view;
@@ -330,7 +337,7 @@ dialog.dlg .times{flex-wrap:wrap}
   // 時計ページへ、秒の表示と12/24時間を知らせる
   function post(){
     const w = $('face-frame').contentWindow;
-    if (w) w.postMessage({ h12, secs, cat: catOn, catEvery: catEveryNow() }, '*');
+    if (w) w.postMessage({ h12, secs, fg, cat: catOn, catEvery: catEveryNow() }, '*');
   }
   $('face-frame').addEventListener('load', post);
 
@@ -410,7 +417,9 @@ dialog.dlg .times{flex-wrap:wrap}
   function syncDisplay(){
     document.querySelectorAll('#set-secs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === (secs ? '1' : '0'))));
     document.querySelectorAll('#set-fmt button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === (h12 ? '12' : '24'))));
+    document.querySelectorAll('#set-color button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === fg)));
   }
+  $('set-color').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; fg = b.dataset.v; store.set('fg', fg); applyState(); });
   $('set-secs').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; secs = b.dataset.v === '1'; store.set('secs', secs ? '1' : '0'); applyState(); });
   $('set-fmt').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; h12 = b.dataset.v === '12'; store.set('h12', h12 ? '1' : '0'); applyState(); });
   if (document.documentElement.requestFullscreen) {

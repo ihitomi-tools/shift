@@ -22,7 +22,9 @@ canvas{display:block; position:absolute; inset:0}
   // 数字は Barlow Condensed（太字）。日付の漢字はBarlowに無いので、BIZ UDゴシックで描く
   const WEIGHT = 800, FAMILY = 'Barlow Condensed';
   // 色: 黒地に水色（コントラスト比 約13.6:1）
-  const BG = '#000000', FG = '#00e5ff';
+  const BG = '#000000';
+  let FG = '#00e5ff';   // 数字の色(設定で選べる。親の画面から受け取る)
+  try { const v = localStorage.getItem('fg'); if (/^#[0-9a-f]{6}$/i.test(v || '')) FG = v; } catch {}
   const DJ = ['日','月','火','水','木','金','土'];
   const cv = document.getElementById('c'), mainCtx = cv.getContext('2d');
   let ctx = mainCtx;   // 描く先。時計の絵を別のキャンバスに作るときだけ切り替える
@@ -300,6 +302,7 @@ canvas{display:block; position:absolute; inset:0}
     const d = e.data || {};
     if (typeof d.secs === 'boolean') secs = d.secs;
     if (typeof d.h12 === 'boolean') h12 = d.h12;
+    if (typeof d.fg === 'string' && /^#[0-9a-f]{6}$/i.test(d.fg)) FG = d.fg;
     if (typeof d.catEvery === 'number' && d.catEvery > 0) catEvery = d.catEvery;
     if (typeof d.cat === 'boolean') { catOn = d.cat; if (!catOn) cats.slice().forEach(dropCat); }
     if (d.catNow) spawnCat({ demo: true });                               // 設定画面の「猫を今すぐ呼ぶ」
