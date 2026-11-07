@@ -292,6 +292,7 @@ dialog.dlg .times{flex-wrap:wrap}
         <div class="row2"><span class="rowlab">色</span><div class="swatches" id="set-color" role="group" aria-label="数字の色"><button type="button" data-v="#00e5ff" aria-label="水色" style="--c:#00e5ff"></button><button type="button" data-v="#ffe600" aria-label="黄色" style="--c:#ffe600"></button><button type="button" data-v="#ffffff" aria-label="白" style="--c:#ffffff"></button><button type="button" data-v="#3dff7a" aria-label="緑" style="--c:#3dff7a"></button><button type="button" data-v="#ff5ccf" aria-label="ピンク" style="--c:#ff5ccf"></button><button type="button" data-v="#ff9a1f" aria-label="オレンジ" style="--c:#ff9a1f"></button></div></div>
         <div class="row2"><span class="rowlab">背景</span><div class="swatches" id="set-bg" role="group" aria-label="背景の色"><button type="button" data-v="#000000" aria-label="黒" style="--c:#000000"></button><button type="button" data-v="#10306e" aria-label="紺" style="--c:#10306e"></button><button type="button" data-v="#0c4a24" aria-label="深緑" style="--c:#0c4a24"></button><button type="button" data-v="#5c1731" aria-label="えんじ" style="--c:#5c1731"></button><button type="button" data-v="#3f1b73" aria-label="紫" style="--c:#3f1b73"></button><button type="button" data-v="#3b3b3b" aria-label="グレー" style="--c:#3b3b3b"></button></div></div>
         <div class="row2"><span class="rowlab">時刻</span><div class="seg catevery" id="set-fmt" role="group" aria-label="時刻の表示"><button type="button" data-v="24">24時間</button><button type="button" data-v="12">AM/PM</button></div></div>
+        <p class="catinfo" id="pc-hint" hidden>パソコンで、いつも手前に表示するには: 無料ソフト「PowerToys」の「Always on Top」を入れて、この窓を選んで <b>Win + Ctrl + T</b> を押します（もう一度押すと解除）。</p>
       </section>
       <section class="col">
         <h2 class="sub">猫が通る間隔</h2>
@@ -304,7 +305,7 @@ dialog.dlg .times{flex-wrap:wrap}
       </section>
     </div>
     <button class="btn primary" value="close">とじる</button>
-    <p class="ver">バージョン 45</p>
+    <p class="ver">バージョン 48</p>
   </form>
 </dialog>
 </div>
@@ -677,6 +678,8 @@ dialog.dlg .times{flex-wrap:wrap}
   $('launch-go').onclick = endLaunch;
 
   /* ---------- 起動 ---------- */
+  // パソコン(Windows)で開いたときだけ、「いつも手前に表示する」方法の案内を出す(edition.js で pcHint: true の版だけ)
+  if (window.EDITION && window.EDITION.pcHint && /Windows/.test(navigator.userAgent) && matchMedia('(hover: hover) and (pointer: fine)').matches) $('pc-hint').hidden = false;
   if (!WORK_OK) [$('b-work'), $('cat-every-work'), $('cat-every-work').previousElementSibling, $('cat-every').previousElementSibling].forEach(el => { el.style.display = 'none'; });   // 仕事モードのない版は、関係するボタンと設定を隠す
   setTimer(300000); syncSw(); syncTm(); applyState(); syncWork(); syncWake(); showLaunch(); workTick();
   if ('serviceWorker' in navigator) {
